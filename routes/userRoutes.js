@@ -23,14 +23,14 @@ module.exports = app => {
     })
   })
   
-    // GET MY PROFILE INFO (when logged in)
-    // app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
-    //   // console.log(req.user)
-    //   const { _id } = req.user
-    //   User.findById(_id)
-    //     .then(user => res.json(user))
-    //     .catch(e => console.error(e))
-    // })
+  // GET MY INFO (when logged in)
+  app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
+    // console.log(req.user)
+    const { _id } = req.user
+    User.findById(_id)
+      .then(user => res.json(user))
+      .catch(e => console.error(e))
+  })
   
     // EDIT MY PROFILE INFO (when logged in)
     // app.put('/users/:id', (req, res) => {

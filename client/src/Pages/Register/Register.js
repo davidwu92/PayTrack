@@ -34,16 +34,12 @@ const RegisterForm = () => {
   // ADD USER/REGISTER BUTTON
   const handleAddUser = event => {
     event.preventDefault()
-    console.log(registerState.username)
-    console.log(registerState.email)
-    console.log(registerState.password)
     addUser({
       username: registerState.username,
       email: registerState.email,
       password: registerState.password,
     })
       .then(({ data }) => {
-        console.log(data)
         if (data === "OK") {
           history.push('/login')
         }

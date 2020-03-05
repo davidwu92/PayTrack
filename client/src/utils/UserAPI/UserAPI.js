@@ -8,7 +8,6 @@ const UserAPI = {
   //Register new user
   addUser: (user) => axios.post('/users', user),
 
-
   //to get info on logged-in user.
   getUser: (token) => axios.get('/users', {
       headers: {

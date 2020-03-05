@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import UserAPI from '../../utils/UserAPI'
+
 import { useHistory } from 'react-router-dom'
+
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -28,7 +30,7 @@ const LogIn = () => {
   }
 
   //defining function for LOG IN button.
-  loginState.handleLogin = (event) => {
+  const handleLogin = (event) => {
     event.preventDefault()
     loginUser({
       username: loginState.username,
@@ -71,7 +73,7 @@ const LogIn = () => {
             <input className="white-text"  placeholder="Password" type="password" id="password" name="password" value={loginState.password} onChange={loginState.handleInputChange} />
             <label htmlFor="password"></label>
           </div>
-          <button onClick={loginState.handleLogin} id="login" className="btn black waves-effect waves-light col s12 hoverable" type="submit" name="action">Submit
+          <button onClick={handleLogin} id="login" className="btn black waves-effect waves-light col s12 hoverable" type="submit" name="action">Submit
                 <i className="material-icons right">send</i>
           </button>
           <br></br>
