@@ -25,7 +25,6 @@ module.exports = app => {
   
   // GET MY INFO (when logged in)
   app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
-    // console.log(req.user)
     const { _id } = req.user
     User.findById(_id)
       .then(user => res.json(user))

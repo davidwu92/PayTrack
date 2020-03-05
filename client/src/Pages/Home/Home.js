@@ -1,4 +1,4 @@
-//Landing Page
+//Pages/Home.js LANDING PAGE
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import './home.css'

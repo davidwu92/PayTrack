@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const { loginUser, getUser } = UserAPI
 
-const LogIn = () => {
+const Login = () => {
   let history = useHistory()
 
   //State Vars for Login Page
@@ -87,4 +87,4 @@ const LogIn = () => {
   )
 }
 
-export default LogIn
+export default Login
