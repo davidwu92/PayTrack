@@ -8,10 +8,10 @@ module.exports = app => {
       const { username, email } = req.body
       // changed password functionality
       User.register(new User({username, email}), req.body.password,
-      e=>{
-        if (e){console.error(e)}
-        res.sendStatus(200)
-      }
+        e=>{
+          if (e){console.error(e)}
+          res.sendStatus(200)
+        }
       )
   })
   

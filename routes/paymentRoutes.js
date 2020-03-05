@@ -14,8 +14,8 @@ module.exports = app => {
   //POST A NEW PAYMENT
   app.post('/posts', passport.authenticate('jwt', {session: false}), (req, res) =>{
     const { _id: author } = req.user
-    const { title } = req.body
-    Payment.create({title, author})
+    const { title, frequency, amount, category, website, startingDate, notes } = req.body
+    Payment.create({title, frequency, amount, category, website, startingDate, notes, author})
       .then(payment => {
         //When we create a payment, the author needs something pushed into her posts array.
         User.updateOne({_id: author}, {$push: {posts: post}})
