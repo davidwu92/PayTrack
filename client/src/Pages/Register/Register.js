@@ -1,5 +1,6 @@
-import React, { useContext, useState } from 'react'
-import UserContext from '../../utils/UserContext'
+import React, { useState } from 'react'
+// import {useContext} from 'react'
+// import UserContext from '../../utils/UserContext'
 import UserAPI from '../../utils/UserAPI'
 import { useHistory } from 'react-router-dom'
 import './register.css'
@@ -71,7 +72,7 @@ const RegisterForm = () => {
   return (
     <div className="container">
       <form id="registerForm" action="" className="col s12">
-        <h3 className="white-text">Register</h3>
+        <h3 className="white-text center">Register</h3>
         {/* USERNAME */}
         <div className="input-field">
           <label htmlFor="username"></label>

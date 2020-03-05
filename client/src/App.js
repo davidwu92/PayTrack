@@ -13,7 +13,7 @@ import Register from './Pages/Register'
 import MyCalendar from './Pages/MyCalendar'
 import MyTotals from './Pages/MyTotals'
 
-import UserContext from './utils/UserContext'
+// import UserContext from './utils/UserContext'
 import './app.css';
 
 function App() {

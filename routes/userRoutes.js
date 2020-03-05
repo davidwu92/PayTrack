@@ -6,7 +6,6 @@ module.exports = app => {
   // Register new user
   app.post('/users', (req, res) => {
       const { username, email } = req.body
-      // changed password functionality
       User.register(new User({username, email}), req.body.password,
         e=>{
           if (e){console.error(e)}
@@ -19,7 +18,7 @@ module.exports = app => {
   app.post('/login', (req, res) => {
     User.authenticate()(req.body.username, req.body.password, (e, user)=>{
       if(e){console.error(e)}
-      res.json(user ? {token: jwt.sign({id:user._id}. process.env.SECRET)
+      res.json(user ? {token: jwt.sign({id:user._id}, process.env.SECRET)
       } : user)
     })
   })

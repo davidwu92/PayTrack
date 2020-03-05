@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { BrowserRouter as Link } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import UserAPI from '../../utils/UserAPI'
 import { useHistory } from 'react-router-dom'
 import { toast } from 'react-toastify';
@@ -37,7 +37,6 @@ const LogIn = () => {
       .then(({ data }) => {
         // grabbing this before setting it to call getUser
         let tempToken = data.token
-        
         if (data.token && loginUser) {
           localStorage.setItem('token', data.token)
           // get userId to set up LoggedinNavbar for friends request
