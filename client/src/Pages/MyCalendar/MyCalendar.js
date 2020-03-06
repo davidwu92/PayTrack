@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 
 import 'react-toastify/dist/ReactToastify.css';
 import './myCalendar.css';
-import '../../App.css'
+import '../../app.css'
 
 //FullCalendar Imports
 import FullCalendar from '@fullcalendar/react'
