@@ -14,7 +14,7 @@ import MyCalendar from './Pages/MyCalendar'
 import MyTotals from './Pages/MyTotals'
 
 // import UserContext from './utils/UserContext'
-import './app.css';
+import './App.css'
 
 function App() {
   
