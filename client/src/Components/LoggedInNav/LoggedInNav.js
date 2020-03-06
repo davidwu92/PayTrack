@@ -5,7 +5,7 @@ import './loggedInNav.css'
 
 const LoggedinNav = () => {
 
-  let userId = JSON.parse(JSON.stringify(localStorage.getItem("userId")))
+  // let userId = JSON.parse(JSON.stringify(localStorage.getItem("userId")))
 
   const logout = (e) => {
     e.preventDefault()
