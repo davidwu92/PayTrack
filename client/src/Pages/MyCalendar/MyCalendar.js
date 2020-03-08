@@ -21,7 +21,7 @@ import interactionPlugin from "@fullcalendar/interaction"
 //https://fullcalendar.io/docs#toc
 
 import ColorPreferences from '../../Components/ColorPreferences'
-import '../../App.css'
+import '../../app.css'
 
 const { addEvent, getEvents, getColors } = UserAPI
 

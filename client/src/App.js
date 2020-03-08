@@ -14,10 +14,9 @@ import MyCalendar from './Pages/MyCalendar'
 import MyTotals from './Pages/MyTotals'
 
 // import UserContext from './utils/UserContext'
-import './App.css'
+import './app.css'
 
 function App() {
-  
 
   return (
     // <UserContext.Provider value={userState}>
