@@ -50,7 +50,6 @@ const ColorPreferences = () => {
   return(
     <>
       <div className="row">
-        <p>Change the colors of events that have certain tags.</p>
         <div className="center" style={paletteVisibility}>
           <Button style={{marginRight: "3px"}} className="white btn-floating" onClick={closePalette}>
             <i className="material-icons black-text">close</i>
@@ -70,7 +69,7 @@ const ColorPreferences = () => {
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"grey", marginRight: "3px", marginBottom: "3px"}} value="grey"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"black", marginRight: "3px", marginBottom: "3px"}} value="black"></Button>
         </div>
-        <p className="center">
+        <div className="center">
           <Button onClick={categorySelect} className={colorState.selectedCategory == 0 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
             value="0" style={{backgroundColor: colorState.colorArray[0]}}>Housing</Button>
           <Button onClick={categorySelect} className={colorState.selectedCategory == 1 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
@@ -87,7 +86,7 @@ const ColorPreferences = () => {
             value="6" style={{backgroundColor: colorState.colorArray[6]}}>Income</Button>
           <Button onClick={categorySelect} className={colorState.selectedCategory == 7 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
             value="7" style={{backgroundColor: colorState.colorArray[7]}}>Other</Button>
-        </p>
+        </div>
       </div>
     </>
   )

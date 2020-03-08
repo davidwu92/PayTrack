@@ -56,18 +56,7 @@ const MyCalendar = () => {
         //   classNames: ['Family'],
         //   endRecur: '2020-12-25' //no more piano lessons after Christmas.
         // },
-    ],
-    //MOVING THIS TO ColorPreferences.js
-    // colorPreferences: [      
-    //   "red",//housing
-    //   "orange",//insurance
-    //   "blue",//loan
-    //   "purple",//taxes
-    //   "chocolate",//family
-    //   "black",//recreation
-    //   "green",//income
-    //   "grey" //other
-    // ],
+    ]
   })
   const handleDateClick = (e) =>{
     console.log(e) //Gives me a fat object
@@ -167,8 +156,8 @@ useEffect(()=>{
   dateState.handleEndDate = (date) => setDateState({...dateState, endDate: date})
 
   //Button that triggers modal.
-  const createEvent = <Button id="newPayment" className="purple white-text waves-effect waves-light center-align black-text">
-    Add Payment or Income Event</Button>;
+  const createEvent = <Button id="newPayment" className="purple right white-text waves-effect waves-light">
+    Add New Event</Button>;
   
   //modal: payment vs income switch
   const switchFunction = () => setNewEventState({...newEventState, isPayment: !document.getElementById('paymentOrIncome').checked})
@@ -367,10 +356,11 @@ useEffect(()=>{
     <>
       <div className="container">
         {/* PAGE HEADER */}
-        <h1 className = 'center white-text'>Upcoming Events</h1>
+        <h1 className = 'center white-text'>My Calendar</h1>
         {/* MODAL with New Payment Form */}
         {/* https://react-materialize.github.io/react-materialize/?path=/story/javascript-modal--default */}
         <div className = "row"> 
+          
           <Modal id="newPaymentModal" className="center-align"
               actions={[
                 <Button onClick={cancelEvent} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
@@ -518,17 +508,20 @@ useEffect(()=>{
 
               </form>
             </Modal>
+          <ColorPreferences/>
         </div>
         
         {/* CALENDAR CUSTOMIZATION (not functional)*/}
-        <ColorPreferences/>
+        
         
         {/* CALENDAR STUFF (contained in div.row) */}
-        <div className = "row">
+        <div className = "row" style={{backgroundColor: "ghostwhite", padding: "1vw"}}>
           <FullCalendar 
             defaultView="dayGridMonth"
             header={{
-              center: 'dayGridMonth,dayGridWeek',
+              center: "title",
+              left: "prevYear,prev",
+              right: "next,nextYear"
             }}
             droppable= {true} //lets me drag and drop events.
             plugins={[ dayGridPlugin, interactionPlugin ]}
