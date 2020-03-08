@@ -4,12 +4,11 @@ module.exports = (model, Schema) => {
       groupId: String,
       amount: Number,
       isPayment: Boolean,
-      
       frequency: String,
       website: String,
       category: String,
       notes: String,
-      startingDate: { type: Date },
+      date: { type: Date },
       // endingDate: {type: Date },
       author: {
         type: Schema.Types.ObjectId, ref: 'User'

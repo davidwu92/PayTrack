@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 // import { BrowserRouter as Link } from 'react-router-dom'
 import UserAPI from '../../utils/UserAPI'
 // import { useHistory } from 'react-router-dom'
@@ -13,6 +13,7 @@ import {
   DatePicker,
 } from 'react-materialize'
 
+import moment from 'moment'
 //FullCalendar Imports
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -20,7 +21,7 @@ import interactionPlugin, { Draggable } from "@fullcalendar/interaction"
 //https://fullcalendar.io/docs#toc
 
 
-const { addEvent } = UserAPI
+const { addEvent, getEvents } = UserAPI
 
 const MyCalendar = () => {
 //~~~~~~~~~~~~~~~~~~~~~~~~~CALENDAR VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -46,14 +47,14 @@ const MyCalendar = () => {
             url: 'www.google.com'
           }
         },
-        {
-          title: `Lil Jon's Piano Lessons`,
-          groupId: 'pianoLessons', // recurrent events in this group move together
-          daysOfWeek: [ '4' ],  //WEEKLY stuff ONLY.
-          allDay: true, 
-          classNames: ['Family'],
-          endRecur: '2020-12-25' //no more piano lessons after Christmas.
-        },
+        // {
+        //   title: `Lil Jon's Piano Lessons`,
+        //   groupId: 'pianoLessons', // recurrent events in this group move together
+        //   daysOfWeek: [ '4' ],  //WEEKLY stuff ONLY.
+        //   allDay: true, 
+        //   classNames: ['Family'],
+        //   endRecur: '2020-12-25' //no more piano lessons after Christmas.
+        // },
     ],
     tagColors: [{insurance: "blue"}, {family: "orange"}, {house: "purple"}, {income: "green"}],
   })
@@ -69,6 +70,41 @@ const MyCalendar = () => {
     //gives {event, el (html element), jsEvent (click info), view (current view object)}
     //Ideally triggers a viewing/editing modal.
   }
+
+//~~~~~~~~~~~~~~~~~POPULATE EVENTS on pageload~~~~~~~~~~~~~~~~~~
+let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
+useEffect(()=>{
+  getEvents(token)
+    .then(({data})=>{
+      //STILL NEED to grab user preferences (for tagColors) here.
+      let myEvents = []
+      if (data.length) {
+        data.forEach((element) => {
+          let calendarEvent = {
+            id: element._id,
+            groupId: element.groupId,
+            title: element.title, 
+            date: element.date,
+            allDay: true, 
+            // classNames: ['Insurance'],
+            editable: true,
+            backgroundColor: 'blue', //call some functions using user preferences for colors here.
+            borderColor: 'black',
+            textColor: 'red',
+            extendedProps: {
+              amount: "$"+ element.amount,
+              category: element.category,
+              notes: element.notes,
+              url: element.website
+            }
+          }
+          myEvents.push(calendarEvent)
+        })
+      }
+      setCalendarState({...calendarState, events: myEvents})
+    })
+}, [])
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~NEW PAYMENT VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [newEventState, setNewEventState] = useState( {
@@ -106,7 +142,7 @@ const MyCalendar = () => {
     : 
       <div className="row">
         <div className="col s5 m2 l2">
-          <p className="center">End date? (10 years from start date by default)</p>
+          <p className="center">End date? (5 years from start date by default)</p>
         </div>
         <div className="col s7 m10 l10">
           <DatePicker
@@ -124,7 +160,7 @@ const MyCalendar = () => {
                 weekdaysAbbrev: ['S','M','T','W','T','F','S'],
                 weekdaysShort: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
               },
-              isRTL: false,maxDate: null,minDate: new Date(),onClose: null,onDraw: null,onOpen: null,onSelect: null,
+              isRTL: false,maxDate: null,minDate: new Date(dateState.startDate),onClose: null,onDraw: null,onOpen: null,onSelect: null,
               parse: null,setDefaultDate: false,showClearBtn: false,showDaysInNextAndPreviousMonths: true,showMonthAfterYear: false,
               yearRange: 10
             }}
@@ -141,30 +177,152 @@ const MyCalendar = () => {
 
   //modal: hitting "Add" (add event).
   const addNewEvent = () => {
-    console.log("You saved the new event.")
-    console.log(newEventState)
-    console.log(dateState)
     //CURRENTLY WORKS FOR EVENTS THAT OCCUR ONCE.
-    //In order for us to have multiple events...
-    // 1. CALCULATE an array of every future occurence's date.
-    // 2. run addEvent() FOR EVERY occurance of a recurring event.
-    let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
-    let newEvent = {
-      title: newEventState.title,
-      groupId: newEventState.title + Date.now(),
-      amount: newEventState.amount,
-      isPayment: newEventState.isPayment,
-      frequency: newEventState.frequency,
-      website: newEventState.url,
-      category: newEventState.category,
-      notes: newEventState.notes,
-      startingDate: dateState.startDate,
+    
+    //In order for us to have multiple events, first calculate how many occurences to create.
+    
+    let startingDay = moment(dateState.startDate).format('X')
+    let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'hour').format('X') : moment(dateState.startDate).add(5, 'years').format('X')
+    let duration = endingDay - startingDay
+    let newEvents = []
+    let occurences = 0
+    switch (newEventState.frequency) {
+      case "once":
+        newEvents.push({
+            title: newEventState.title,
+            groupId: newEventState.title + "group",
+            amount: newEventState.amount,
+            isPayment: newEventState.isPayment,
+            frequency: newEventState.frequency,
+            website: newEventState.url,
+            category: newEventState.category,
+            notes: newEventState.notes,
+            date: dateState.startDate,}
+        )
+        break;
+      case "weekly":
+        occurences = Math.ceil(duration / 604800)
+        for (let i = 0; i<occurences; i++){
+          newEvents.push({
+            title: newEventState.title,
+            groupId: newEventState.title + "group",
+            amount: newEventState.amount,
+            isPayment: newEventState.isPayment,
+            frequency: newEventState.frequency,
+            website: newEventState.url,
+            category: newEventState.category,
+            notes: newEventState.notes,
+            date: moment(dateState.startDate).add(i, "week").format(),
+          })
+        }
+        break;
+      case "biweekly":
+        occurences = Math.ceil(duration / 1209600)
+        for (let i = 0; i<occurences; i++){
+          newEvents.push({
+            title: newEventState.title,
+            groupId: newEventState.title + "group",
+            amount: newEventState.amount,
+            isPayment: newEventState.isPayment,
+            frequency: newEventState.frequency,
+            website: newEventState.url,
+            category: newEventState.category,
+            notes: newEventState.notes,
+            date: moment(dateState.startDate).add(2*i, "week").format(),
+          })
+        }
+        break;
+      case "monthly":
+        occurences = Math.ceil(duration / 2628333)
+        for (let i = 0; i<occurences; i++){
+          newEvents.push({
+            title: newEventState.title,
+            groupId: newEventState.title + "group",
+            amount: newEventState.amount,
+            isPayment: newEventState.isPayment,
+            frequency: newEventState.frequency,
+            website: newEventState.url,
+            category: newEventState.category,
+            notes: newEventState.notes,
+            date: moment(dateState.startDate).add(i, "month").format(),
+          })
+        }
+        break;
+      case "quarterly":
+        occurences = Math.ceil(duration / 7885000)
+        for (let i = 0; i<occurences; i++){
+          newEvents.push({
+            title: newEventState.title,
+            groupId: newEventState.title + "group",
+            amount: newEventState.amount,
+            isPayment: newEventState.isPayment,
+            frequency: newEventState.frequency,
+            website: newEventState.url,
+            category: newEventState.category,
+            notes: newEventState.notes,
+            date: moment(dateState.startDate).add(3*i, "month").format(),
+          })
+        }
+        break;
+      case "biannual":
+        occurences = Math.ceil(duration / 15770000)
+        for (let i = 0; i<occurences; i++){
+          newEvents.push({
+            title: newEventState.title,
+            groupId: newEventState.title + "group",
+            amount: newEventState.amount,
+            isPayment: newEventState.isPayment,
+            frequency: newEventState.frequency,
+            website: newEventState.url,
+            category: newEventState.category,
+            notes: newEventState.notes,
+            date: moment(dateState.startDate).add(6*i, "month").format(),
+          })
+        }
+        break;
+      case "annual":
+        occurences = Math.ceil(duration / 31536000)
+        for (let i = 0; i<occurences; i++){
+          newEvents.push({
+            title: newEventState.title,
+            groupId: newEventState.title + "group",
+            amount: newEventState.amount,
+            isPayment: newEventState.isPayment,
+            frequency: newEventState.frequency,
+            website: newEventState.url,
+            category: newEventState.category,
+            notes: newEventState.notes,
+            date: moment(dateState.startDate).add(i, "year").format(),
+          })
+        }
+        break;
+      case "biennial":
+        occurences = Math.ceil(duration / 63080000)
+        for (let i = 0; i<occurences; i++){
+          newEvents.push({
+            title: newEventState.title,
+            groupId: newEventState.title + "group",
+            amount: newEventState.amount,
+            isPayment: newEventState.isPayment,
+            frequency: newEventState.frequency,
+            website: newEventState.url,
+            category: newEventState.category,
+            notes: newEventState.notes,
+            date: moment(dateState.startDate).add(2*i, "year").format(),
+          })
+        }
+        break;
     }
-    addEvent(token, newEvent)
+
+    let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
+    newEvents.forEach((newEvent)=>{
+      addEvent(token, newEvent)
       .then(()=>{
+        console.log("You posted a new event or series of events.")
         cancelEvent()
       })
       .catch(e=>console.error(e))
+    })
   }
 
 

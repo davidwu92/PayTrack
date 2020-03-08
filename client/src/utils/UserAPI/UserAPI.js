@@ -30,15 +30,15 @@ const UserAPI = {
       website: event.website,
       category: event.category,
       notes: event.notes,
-      startingDate: event.startingDate
+      date: event.date
     },
     headers: {
       "Authorization": `Bearer ${token}`,
       "Content-Type": "application/json"
     }
   }),
-
-  getEvent: (token) => axios({
+  //get all events.
+  getEvents: (token) => axios({
     method: 'get',
     url: '/events',
     headers: {
