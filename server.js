@@ -8,6 +8,11 @@ const { Strategy } = require('passport-local')
 const {User} = require('./models')
 const { Strategy: JWTStrategy, ExtractJwt } = require('passport-jwt')
 
+//DEPLOYING TO HEROKU
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"))
+}
+
 //MONGODB
 const mongoURI = process.env.NODE_ENV === 'production' ? process.env.MONGODB_URI : 'mongodb://localhost/paymentTrackerdb'
 const mongoose = require('mongoose')
@@ -40,11 +45,6 @@ passport.use(new JWTStrategy({
       .catch(e => cb(e))
     )
 )
-
-//DEPLOYING TO HEROKU
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"))
-}
 
 //routes
 require('./routes')(app)
