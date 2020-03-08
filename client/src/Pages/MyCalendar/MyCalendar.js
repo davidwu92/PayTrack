@@ -56,7 +56,7 @@ const MyCalendar = () => {
         //   endRecur: '2020-12-25' //no more piano lessons after Christmas.
         // },
     ],
-    tagColors: [{insurance: "blue"}, {family: "orange"}, {house: "purple"}, {income: "green"}],
+    categoryColors: [{housing: "red"}, {insurance: "orange"}, {loan: "blue"}, {income: "green"}],
   })
 
   const handleDateClick = (e) =>{
@@ -76,10 +76,29 @@ let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
 useEffect(()=>{
   getEvents(token)
     .then(({data})=>{
-      //STILL NEED to grab user preferences (for tagColors) here.
+      //STILL NEED to grab user preferences (for categoryColors) here.
       let myEvents = []
       if (data.length) {
         data.forEach((element) => {
+          //COLOR FUNCTION.
+          const colorFunction = (category) =>{
+            switch (category) {
+              case "housing": return("red")
+              break;
+              case "insurance": return("orange")
+              break;
+              case "loan": return("blue")
+              break;
+              case "taxes": return("purple")
+              break;
+              case "family": return("chocolate")
+              break;
+              case "recreation": return("black")
+              break;
+              case "income": return("green")
+              break;
+            }
+          }
           let calendarEvent = {
             id: element._id,
             groupId: element.groupId,
@@ -88,9 +107,9 @@ useEffect(()=>{
             allDay: true, 
             // classNames: ['Insurance'],
             editable: true,
-            backgroundColor: 'blue', //call some functions using user preferences for colors here.
+            backgroundColor: colorFunction(element.category), //call some functions using user preferences for colors here.
             borderColor: 'black',
-            textColor: 'red',
+            textColor: 'white',
             extendedProps: {
               amount: "$"+ element.amount,
               category: element.category,
@@ -452,9 +471,18 @@ useEffect(()=>{
                     <input id="newURL" name="url" value={newEventState.url} onChange={newEventState.handleInputChange} />                
                   </div>
                   <div className="col s6 m6 l6">
-                    <span style={{visibility:'hidden'}}>space stuff</span>
+                    <span 
+                      // style={{visibility:'hidden'}}
+                    >
+                      Category</span>
                     <select id="categorySelect" className="browser-default" onChange={categorySelect}>
-                      <option value="" selected>Choose a category.</option>
+                      {newEventState.isPayment ? 
+                        <><option value="" selected>Choose a category.</option></>
+                        :
+                        <><option value="income" selected>Income</option></>
+                      }
+                      {/* <option value="" selected>Choose a category.</option>
+                      <option value="income">Income</option> */}
                       <option value="housing">Housing Expense</option>
                       <option value="insurance">Insurance Payment</option>
                       <option value="loan">Loan Payment</option>
@@ -477,9 +505,9 @@ useEffect(()=>{
         {/* CALENDAR CUSTOMIZATION (not functional)*/}
         <div className="row">
           <p>Change the colors of events that have certain tags.</p>
-          {calendarState.tagColors.map(tag => (
+          {calendarState.categoryColors.map(category => (
             <>
-              {tag[0]}
+              {category[0]}
             </>
           ))}
         </div>
