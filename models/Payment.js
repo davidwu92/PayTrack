@@ -1,12 +1,15 @@
 module.exports = (model, Schema) => {
   const Payment = new Schema({
       title: String,
-      frequency: Number,
+      groupId: String,
       amount: Number,
-      category: String,
+      isPayment: Boolean,
+      frequency: Number,
       website: String,
-      startingDate: { type: Date, default: Date.now },
+      category: String,
       notes: String,
+      startingDate: { type: Date },
+      endingDate: {type: Date },
       author: {
         type: Schema.Types.ObjectId, ref: 'User'
       }

@@ -1,3 +1,5 @@
+//NO LONGER BEING USED AS COMPONENT; KEPT FOR REFERRENCE
+
 import React, {useState} from 'react'
 import '../../App.css'
 import FullCalendar from '@fullcalendar/react'

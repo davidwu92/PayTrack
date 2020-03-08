@@ -1,0 +1,20 @@
+/* INCOME VS PAYMENT SWITCH */
+.switch label input[type=checkbox] + .lever { 
+  /* Making Payment selected */
+  background-color: red; 
+}
+/* Receiving income selected */
+.switch label input[type=checkbox]:checked + .lever {
+  background-color: green;
+}
+.switch label input[type=checkbox]:checked + .lever:after {
+  background-color: #ffffff;
+}
+
+/* animated circle on lever */
+.switch label input[type=checkbox]+.lever:before {
+  background-color: #770081;
+}
+.switch label input[type=checkbox]:checked+.lever:before {
+  background-color: #770081;
+}
