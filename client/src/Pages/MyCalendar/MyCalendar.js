@@ -21,6 +21,7 @@ import interactionPlugin, { Draggable } from "@fullcalendar/interaction"
 //https://fullcalendar.io/docs#toc
 
 import ColorPreferences from '../../Components/ColorPreferences'
+import '../../App.css'
 
 const { addEvent, getEvents, getColors } = UserAPI
 
