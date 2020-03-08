@@ -485,13 +485,8 @@ useEffect(()=>{
                     >
                       Category</span>
                     <select id="categorySelect" className="browser-default" onChange={categorySelect}>
-                      {newEventState.isPayment ? 
-                        <><option value="" selected>Choose a category.</option></>
-                        :
-                        <><option value="income" selected>Income</option></>
-                      }
-                      {/* <option value="" selected>Choose a category.</option>
-                      <option value="income">Income</option> */}
+                      <option value="" selected disabled>Choose a category.</option>
+                      <option value="income">Income</option>
                       <option value="housing">Housing Expense</option>
                       <option value="insurance">Insurance Payment</option>
                       <option value="loan">Loan Payment</option>
