@@ -45,7 +45,7 @@ passport.use(new JWTStrategy({
 // GoogleStrategy with Passport
 passport.use(new GoogleStrategy({
     clientID: '116685853039-25srr7221cqiuooi0d3parj8l92rp1p4.apps.googleusercontent.com',
-    clientSecret: '',
+    clientSecret: 'cv8xqBKLu0tRhYDo6z8CyFxe',
     callbackURL: 'https://www.google.com'
   },
   function (accessToken, refreshToken, profile, cb) {

@@ -38,14 +38,16 @@ module.exports = app => {
     //     .catch(e => console.error(e))
     // })
 
+  ///////////////
+  // TEST CODE //
+  ///////////////
+  
   // Test route for the GoogleStrategy
-  app.get('/auth/google', (req, res) => {
-    console.log('Trying to authenticate')
-  }
-    // passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login']},
-    // function( req, res) {
-    //   console.log('Hello')
-    // })
+  app.get('/auth/google',
+    passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login']},
+    function( req, res) {
+      console.log('Hello')
+    })
   )
   // Google Oauth 2.0 callback route
   app.get('/auth/google/callback',
