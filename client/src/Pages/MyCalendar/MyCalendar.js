@@ -56,48 +56,59 @@ const MyCalendar = () => {
         //   endRecur: '2020-12-25' //no more piano lessons after Christmas.
         // },
     ],
-    categoryColors: [{housing: "red"}, {insurance: "orange"}, {loan: "blue"}, {income: "green"}],
+    colorPreferences: [
+      {housing: "red"},
+      {insurance: "orange"},
+      {loan: "blue"},
+      {taxes: "purple"},
+      {family: "chocolate"},
+      {recreation: "black"},
+      {income: "green"},
+      {other: "grey"}
+    ],
   })
-
   const handleDateClick = (e) =>{
     console.log(e) //Gives me a fat object
     console.log(e.date)
   }
-  
   const handleEventClick = (e) => {
     console.log(e)
     console.log(e.event.extendedProps)
     //gives {event, el (html element), jsEvent (click info), view (current view object)}
     //Ideally triggers a viewing/editing modal.
   }
-
 //~~~~~~~~~~~~~~~~~POPULATE EVENTS on pageload~~~~~~~~~~~~~~~~~~
 let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
 useEffect(()=>{
   getEvents(token)
     .then(({data})=>{
-      //STILL NEED to grab user preferences (for categoryColors) here.
+      //STILL NEED to grab user preferences (for colorPreferences) here.
       let myEvents = []
       if (data.length) {
         data.forEach((element) => {
           //COLOR FUNCTION.
           const colorFunction = (category) =>{
+            let color
             switch (category) {
-              case "housing": return("red")
+              case "housing": color ="red"
               break;
-              case "insurance": return("orange")
+              case "insurance": color ="orange"
               break;
-              case "loan": return("blue")
+              case "loan": color ="blue"
               break;
-              case "taxes": return("purple")
+              case "taxes": color ="purple"
               break;
-              case "family": return("chocolate")
+              case "family": color ="chocolate"
               break;
-              case "recreation": return("black")
+              case "recreation": color ="black"
               break;
-              case "income": return("green")
+              case "income": color ="green"
               break;
+              case "other": color ="grey"
+              break;
+              default: color ="grey"
             }
+            return color
           }
           let calendarEvent = {
             id: element._id,
@@ -196,15 +207,13 @@ useEffect(()=>{
 
   //modal: hitting "Add" (add event).
   const addNewEvent = () => {
-    //CURRENTLY WORKS FOR EVENTS THAT OCCUR ONCE.
-    
-    //In order for us to have multiple events, first calculate how many occurences to create.
-    
     let startingDay = moment(dateState.startDate).format('X')
     let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'hour').format('X') : moment(dateState.startDate).add(5, 'years').format('X')
     let duration = endingDay - startingDay
     let newEvents = []
     let occurences = 0
+    //In order for us to have multiple events, first calculate how many occurences to create.
+    //Calculating number of events to populate newEvents.
     switch (newEventState.frequency) {
       case "once":
         newEvents.push({
@@ -350,10 +359,10 @@ useEffect(()=>{
       <div className="container">
         {/* PAGE HEADER */}
         <h1 className = 'center white-text'>Upcoming Events</h1>
+        {/* MODAL with New Payment Form */}
+        {/* https://react-materialize.github.io/react-materialize/?path=/story/javascript-modal--default */}
         <div className = "row"> 
-            {/* MODAL with New Payment Form */}
-            {/* https://react-materialize.github.io/react-materialize/?path=/story/javascript-modal--default */}
-            <Modal id="newPaymentModal" className="center-align"
+          <Modal id="newPaymentModal" className="center-align"
               actions={[
                 <Button onClick={cancelEvent} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
                   Close
@@ -505,11 +514,10 @@ useEffect(()=>{
         {/* CALENDAR CUSTOMIZATION (not functional)*/}
         <div className="row">
           <p>Change the colors of events that have certain tags.</p>
-          {calendarState.categoryColors.map(category => (
-            <>
-              {category[0]}
-            </>
-          ))}
+          <span>{
+            calendarState.colorPreferences.forEach(object => Object.keys(object))
+          }
+          </span>
         </div>
         
         {/* CALENDAR STUFF (contained in div.row) */}
