@@ -17,7 +17,7 @@ import moment from 'moment'
 //FullCalendar Imports
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin, { Draggable } from "@fullcalendar/interaction"
+import interactionPlugin from "@fullcalendar/interaction"
 //https://fullcalendar.io/docs#toc
 
 import ColorPreferences from '../../Components/ColorPreferences'
@@ -524,7 +524,8 @@ useEffect(()=>{
               left: "prevYear,prev",
               right: "next,nextYear"
             }}
-            droppable= {true} //lets me drag and drop events.
+            // droppable= {true} 
+            //lets me drag and drop events.
             plugins={[ dayGridPlugin, interactionPlugin ]}
             dateClick={handleDateClick}
             eventClick={handleEventClick}
