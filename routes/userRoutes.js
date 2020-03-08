@@ -6,7 +6,18 @@ module.exports = app => {
   // Register new user
   app.post('/users', (req, res) => {
       const { username, email } = req.body
-      User.register(new User({username, email}), req.body.password,
+      //setting default preferences here.
+      let colorPreferences = [
+        "red",//housing
+        "orange",//insurance
+        "blue",//loan
+        "purple",//taxes
+        "chocolate",//family
+        "black",//recreation
+        "green",//income
+        "grey" //other
+      ]
+      User.register(new User({username, email, colorPreferences}), req.body.password,
         e=>{
           if (e){console.error(e)}
           res.sendStatus(200)
@@ -32,9 +43,9 @@ module.exports = app => {
   })
   
     // EDIT MY PROFILE INFO (when logged in)
-    // app.put('/users/:id', (req, res) => {
-    //   User.findByIdAndUpdate(req.params.id, { $set: req.body })
-    //     .then(() => res.sendStatus(200))
-    //     .catch(e => console.error(e))
-    // })
+    app.put('/users/:id', (req, res) => {
+      User.findByIdAndUpdate(req.params.id, { $set: req.body })
+        .then(() => res.sendStatus(200))
+        .catch(e => console.error(e))
+    })
 }

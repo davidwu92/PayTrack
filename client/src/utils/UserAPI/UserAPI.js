@@ -13,9 +13,15 @@ const UserAPI = {
       headers: {
         "Authorization": "Bearer " + token}
     }),
+  //to grab the color preferences of user.
+  getColors: (token) => axios.get('/users', {
+      headers: {
+        "Authorization": "Bearer " + token}
+    }),
     
   //edit profile
   // updateUser: (id, values) => axios.put(`/users/${id}`, values),
+  editColors: (id, values) => axios.put(`/users/${id}`, values),
 
   //PAYMENT STUFF
   addEvent: (token, event) => axios({

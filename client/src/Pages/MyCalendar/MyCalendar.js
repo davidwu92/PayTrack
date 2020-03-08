@@ -20,8 +20,9 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction"
 //https://fullcalendar.io/docs#toc
 
+import ColorPreferences from '../../Components/ColorPreferences'
 
-const { addEvent, getEvents } = UserAPI
+const { addEvent, getEvents, getColors } = UserAPI
 
 const MyCalendar = () => {
 //~~~~~~~~~~~~~~~~~~~~~~~~~CALENDAR VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,23 +31,23 @@ const MyCalendar = () => {
     //https://fullcalendar.io/docs/event-object
     events: [
         //FIRST PAYMENT INSTANCE
-        { id: 0,
-          groupId: 'Car Insurance', //groups events to be dragged
-          title: 'EVENT ONE', 
-          date: '2020-03-05',
-          allDay: true, 
-          classNames: ['Insurance'],
-          editable: true,
-          backgroundColor: 'blue',
-          borderColor: 'black',
-          textColor: 'red',
-          extendedProps: {
-            amount: '$200',
-            tags: ["Family", "Insurance"],
-            paymentNotes: 'I hate this insurance and I need a new one.',
-            url: 'www.google.com'
-          }
-        },
+            // { id: 0,
+            //   groupId: 'Car Insurance', //groups events to be dragged
+            //   title: 'EVENT ONE', 
+            //   date: '2020-03-05',
+            //   allDay: true, 
+            //   classNames: ['Insurance'],
+            //   editable: true,
+            //   backgroundColor: 'blue',
+            //   borderColor: 'black',
+            //   textColor: 'red',
+            //   extendedProps: {
+            //     amount: '$200',
+            //     tags: ["Family", "Insurance"],
+            //     paymentNotes: 'I hate this insurance and I need a new one.',
+            //     url: 'www.google.com'
+            //   }
+            // },
         // {
         //   title: `Lil Jon's Piano Lessons`,
         //   groupId: 'pianoLessons', // recurrent events in this group move together
@@ -56,16 +57,17 @@ const MyCalendar = () => {
         //   endRecur: '2020-12-25' //no more piano lessons after Christmas.
         // },
     ],
-    colorPreferences: [
-      {housing: "red"},
-      {insurance: "orange"},
-      {loan: "blue"},
-      {taxes: "purple"},
-      {family: "chocolate"},
-      {recreation: "black"},
-      {income: "green"},
-      {other: "grey"}
-    ],
+    //MOVING THIS TO ColorPreferences.js
+    // colorPreferences: [      
+    //   "red",//housing
+    //   "orange",//insurance
+    //   "blue",//loan
+    //   "purple",//taxes
+    //   "chocolate",//family
+    //   "black",//recreation
+    //   "green",//income
+    //   "grey" //other
+    // ],
   })
   const handleDateClick = (e) =>{
     console.log(e) //Gives me a fat object
@@ -80,59 +82,66 @@ const MyCalendar = () => {
 //~~~~~~~~~~~~~~~~~POPULATE EVENTS on pageload~~~~~~~~~~~~~~~~~~
 let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
 useEffect(()=>{
-  getEvents(token)
+  //FIRST grab user preferences (for colorPreferences) here.
+  let colorPreferences = []
+  getColors(token)
     .then(({data})=>{
-      //STILL NEED to grab user preferences (for colorPreferences) here.
-      let myEvents = []
-      if (data.length) {
-        data.forEach((element) => {
-          //COLOR FUNCTION.
-          const colorFunction = (category) =>{
-            let color
-            switch (category) {
-              case "housing": color ="red"
-              break;
-              case "insurance": color ="orange"
-              break;
-              case "loan": color ="blue"
-              break;
-              case "taxes": color ="purple"
-              break;
-              case "family": color ="chocolate"
-              break;
-              case "recreation": color ="black"
-              break;
-              case "income": color ="green"
-              break;
-              case "other": color ="grey"
-              break;
-              default: color ="grey"
-            }
-            return color
+      colorPreferences = data.colorPreferences
+      //SECOND grab events.
+        getEvents(token)
+        .then(({data})=>{
+          let myEvents = []
+          if (data.length) {
+            data.forEach((element) => {
+              //COLOR FUNCTION.
+              const colorFunction = (category) =>{
+                let color
+                switch (category) {
+                  case "housing": color=colorPreferences[0]
+                  break;
+                  case "insurance": color=colorPreferences[1]
+                  break;
+                  case "loan": color=colorPreferences[2]
+                  break;
+                  case "taxes": color=colorPreferences[3]
+                  break;
+                  case "family": color=colorPreferences[4]
+                  break;
+                  case "recreation": color=colorPreferences[5]
+                  break;
+                  case "income": color=colorPreferences[6]
+                  break;
+                  case "other": color=colorPreferences[7]
+                  break;
+                  default: color=colorPreferences[7]
+                }
+                return color
+              }
+              let calendarEvent = {
+                id: element._id,
+                groupId: element.groupId,
+                title: element.title, 
+                date: element.date,
+                allDay: true, 
+                // classNames: ['Insurance'],
+                editable: true,
+                backgroundColor: colorFunction(element.category), //call some functions using user preferences for colors here.
+                borderColor: 'black',
+                textColor: 'white',
+                extendedProps: {
+                  amount: "$"+ element.amount,
+                  category: element.category,
+                  notes: element.notes,
+                  url: element.website
+                }
+              }
+              myEvents.push(calendarEvent)
+            })
           }
-          let calendarEvent = {
-            id: element._id,
-            groupId: element.groupId,
-            title: element.title, 
-            date: element.date,
-            allDay: true, 
-            // classNames: ['Insurance'],
-            editable: true,
-            backgroundColor: colorFunction(element.category), //call some functions using user preferences for colors here.
-            borderColor: 'black',
-            textColor: 'white',
-            extendedProps: {
-              amount: "$"+ element.amount,
-              category: element.category,
-              notes: element.notes,
-              url: element.website
-            }
-          }
-          myEvents.push(calendarEvent)
+          setCalendarState({...calendarState, events: myEvents})
         })
-      }
-      setCalendarState({...calendarState, events: myEvents})
     })
+    .catch(e=>console.error(e))
 }, [])
 
 
@@ -205,7 +214,7 @@ useEffect(()=>{
   //modal: hitting "Close" (reset newEventState)
   const cancelEvent = () => setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:''})
 
-  //modal: hitting "Add" (add event).
+  //modal: hitting "Save" (adds event).
   const addNewEvent = () => {
     let startingDay = moment(dateState.startDate).format('X')
     let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'hour').format('X') : moment(dateState.startDate).add(5, 'years').format('X')
@@ -341,19 +350,19 @@ useEffect(()=>{
         }
         break;
     }
-
     let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
     newEvents.forEach((newEvent)=>{
       addEvent(token, newEvent)
       .then(()=>{
         console.log("You posted a new event or series of events.")
         cancelEvent()
+        window.location.reload()
       })
       .catch(e=>console.error(e))
     })
   }
 
-
+//PAGE RENDERING STUFF
   return(
     <>
       <div className="container">
@@ -512,13 +521,7 @@ useEffect(()=>{
         </div>
         
         {/* CALENDAR CUSTOMIZATION (not functional)*/}
-        <div className="row">
-          <p>Change the colors of events that have certain tags.</p>
-          <span>{
-            calendarState.colorPreferences.forEach(object => Object.keys(object))
-          }
-          </span>
-        </div>
+        <ColorPreferences/>
         
         {/* CALENDAR STUFF (contained in div.row) */}
         <div className = "row">
