@@ -2,6 +2,6 @@
 const { model, Schema } = require('mongoose')
 
 const User = require('./User.js')(model, Schema)
-const Payment = require('./Payment.js')(model, Schema)
+const Event = require('./Event.js')(model, Schema)
 
-module.exports = { User, Payment }
+module.exports = { User, Event }
