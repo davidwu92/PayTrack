@@ -18,13 +18,19 @@ const UserAPI = {
   // updateUser: (id, values) => axios.put(`/users/${id}`, values),
 
   //PAYMENT STUFF
-  addPayment: (token, payment) => axios({
+  addEvent: (token, event) => axios({
     method: 'post',
-    url: '/payments',
+    url: '/events',
     data: {
-      // title: payment.newTitle,
-      // body: payment.newBody,
-      // link: payment.newLink
+      title: event.title,
+      groupId: event.groupId,
+      amount: event.amount,
+      isPayment: event.isPayment,
+      frequency: event.frequency,
+      website: event.website,
+      category: event.category,
+      notes: event.notes,
+      startingDate: event.startingDate
     },
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -32,18 +38,18 @@ const UserAPI = {
     }
   }),
 
-  getPayment: (token) => axios({
+  getEvent: (token) => axios({
     method: 'get',
-    url: '/payments',
+    url: '/events',
     headers: {
       "Authorization": `Bearer ${token}`,
       "Content-Type": "application/json"
     }
   }),
 
-  deletePayment: (token, id) => axios({
+  deleteEvent: (token, id) => axios({
     method: 'delete',
-    url: '/payments',
+    url: '/events',
     data: {
       _id: id
     },

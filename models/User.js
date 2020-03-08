@@ -2,7 +2,7 @@ module.exports = (model, Schema) => {
   const User = new Schema({
       username: { type: String, required:true },
       email: {type: String, required:true, unique:true},
-      payments: [{ type: Schema.Types.ObjectId, ref: 'Payment' }]
+      event: [{ type: Schema.Types.ObjectId, ref: 'Event' }]
       // resetPasswordToken: String,
       // resetPasswordExpires: Date,
       // password: { type: String, require: true},

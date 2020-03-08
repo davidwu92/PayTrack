@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 // import { BrowserRouter as Link } from 'react-router-dom'
-// import UserAPI from '../../utils/UserAPI'
+import UserAPI from '../../utils/UserAPI'
 // import { useHistory } from 'react-router-dom'
 // import { toast } from 'react-toastify';
 
@@ -20,8 +20,9 @@ import interactionPlugin, { Draggable } from "@fullcalendar/interaction"
 //https://fullcalendar.io/docs#toc
 
 
-const MyCalendar = () => {
+const { addEvent } = UserAPI
 
+const MyCalendar = () => {
 //~~~~~~~~~~~~~~~~~~~~~~~~~CALENDAR VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [calendarState, setCalendarState] = useState({
     // EVENT OBJECTS to throw into calendar. "All properties are read-only, use methods to modify."
@@ -94,13 +95,13 @@ const MyCalendar = () => {
   const createEvent = <Button id="newPayment" className="purple white-text waves-effect waves-light center-align black-text">
     Add Payment or Income Event</Button>;
   
-  //modal's payment vs income switch
+  //modal: payment vs income switch
   const switchFunction = () => setNewEventState({...newEventState, isPayment: !document.getElementById('paymentOrIncome').checked})
   
-  //modal's frequency selection
+  //modal: frequency selection
   const frequencySelect = () => setNewEventState({...newEventState, frequency: document.getElementById('frequencySelect').value})
   
-  //endDatePicker row (shows up if frequency is anything but "once".)
+  //modal: endDatePicker row (shows up if frequency is anything but "once".)
   const endDatePicker = newEventState.frequency ==='once' ? null
     : 
       <div className="row">
@@ -132,18 +133,38 @@ const MyCalendar = () => {
         </div>
       </div>
 
-  //Choosing a category name to attach to event
+  //modal: category name to attach to event
   const categorySelect = () => setNewEventState({...newEventState, category: document.getElementById('categorySelect').value})
 
-  //hitting "Close" on new event modal (reset newEventState)
+  //modal: hitting "Close" (reset newEventState)
   const cancelEvent = () => setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:''})
 
-  //hitting "Add" on new event modal.
-  const addEvent = () => {
+  //modal: hitting "Add" (add event).
+  const addNewEvent = () => {
     console.log("You saved the new event.")
     console.log(newEventState)
     console.log(dateState)
-    
+    //CURRENTLY WORKS FOR EVENTS THAT OCCUR ONCE.
+    //In order for us to have multiple events...
+    // 1. CALCULATE an array of every future occurence's date.
+    // 2. run addEvent() FOR EVERY occurance of a recurring event.
+    let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
+    let newEvent = {
+      title: newEventState.title,
+      groupId: newEventState.title + Date.now(),
+      amount: newEventState.amount,
+      isPayment: newEventState.isPayment,
+      frequency: newEventState.frequency,
+      website: newEventState.url,
+      category: newEventState.category,
+      notes: newEventState.notes,
+      startingDate: dateState.startDate,
+    }
+    addEvent(token, newEvent)
+      .then(()=>{
+        cancelEvent()
+      })
+      .catch(e=>console.error(e))
   }
 
 
@@ -161,7 +182,7 @@ const MyCalendar = () => {
                   Close
                 </Button>,
                 <span> </span>,
-                <Button onClick={addEvent} modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                <Button onClick={addNewEvent} modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
                   Save <i className="material-icons right">send</i>
                 </Button>
               ]}
