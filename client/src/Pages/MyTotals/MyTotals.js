@@ -7,6 +7,7 @@ import React, { useState } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 
 import './myTotals.css'
+import AddEventModal from '../../Components/AddEventModal'
 
 
 const MyTotals = () => {
@@ -18,6 +19,7 @@ const MyTotals = () => {
   return(
     <>
       <h1>My Totals VIEW</h1>
+      <AddEventModal />
     </>
   )
 }
