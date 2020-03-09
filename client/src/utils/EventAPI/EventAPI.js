@@ -48,7 +48,7 @@ const EventAPI = {
   editEvent: (eventId, values) => axios.put(`/event/${eventId}`, values),
 
   //EDIT GROUP of events.
-  editEvent: (groupId, values) => axios.put(`/events/${groupId}`, values),
+  editEvents: (groupId, values) => axios.put(`/events/${groupId}`, values),
 
   //DELETE ONE EVENT
   deleteEvent: (token, id) => axios({

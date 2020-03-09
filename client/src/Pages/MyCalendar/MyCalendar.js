@@ -7,6 +7,7 @@ import EventAPI from '../../utils/EventAPI'
 
 import 'react-toastify/dist/ReactToastify.css';
 import './myCalendar.css';
+import '../../app.css'
 
 import {
   Modal,
@@ -58,7 +59,7 @@ const MyCalendar = () => {
     let colorPreferences = []
     getColors(token)
       .then(({data})=>{
-        colorPreferences = JSON.parse(JSON.stringify(data))
+        colorPreferences = data.colorPreferences
         //THEN grab events.
           getEvents(token)
           .then(({data})=>{

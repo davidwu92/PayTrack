@@ -13,7 +13,7 @@ module.exports = (model, Schema) => {
       // "green",//...income
       // "grey" //...other/uncategorized]
 
-      event: [{ type: Schema.Types.ObjectId, ref: 'Event' }]
+      events: [{ type: Schema.Types.ObjectId, ref: 'Event' }]
       //IN CASE WE WANT PASSWORD RESET OPTION
       // resetPasswordToken: String,
       // resetPasswordExpires: Date,
