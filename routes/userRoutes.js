@@ -34,15 +34,15 @@ module.exports = app => {
     })
   })
   
-  // GET MY INFO (when logged in)
+  // GET My Info (for color preferences)
   app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
     const { _id } = req.user
     User.findById(_id)
-      .then(user => res.json(user))
+      .then(user => res.json(user.colorPreferences)) //only serve up this array to front end.
       .catch(e => console.error(e))
   })
   
-    // EDIT MY PROFILE INFO (when logged in)
+    // EDIT COLOR PREFERENCES
     app.put('/users/:id', (req, res) => {
       User.findByIdAndUpdate(req.params.id, { $set: req.body })
         .then(() => res.sendStatus(200))
