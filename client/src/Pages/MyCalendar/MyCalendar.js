@@ -490,7 +490,7 @@ const MyCalendar = () => {
               </form>
             </Modal>
           <ColorPreferences/>
-        </div>  
+        </div>
         
         {/* CALENDAR STUFF (contained in div.row) */}
         <div className = "row" style={{backgroundColor: "ghostwhite", padding: "1vw"}}>
