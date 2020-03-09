@@ -7,6 +7,7 @@ import EventAPI from '../../utils/EventAPI'
 
 import 'react-toastify/dist/ReactToastify.css';
 import './myCalendar.css';
+import '../../app.css'
 
 import {
   Modal,
