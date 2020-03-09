@@ -346,6 +346,7 @@ useEffect(()=>{
     newEvents.forEach((newEvent, index, array)=>{
       addEvent(token, newEvent)
       .then(()=>{
+        document.getElementById("loadingBar").innerText=`Adding events... do not reload page. ${Math.floor(index/array.length * 100)}%`
         if(index == array.length-1) {
           cancelEvent()
           window.location.reload()
@@ -354,8 +355,8 @@ useEffect(()=>{
       .catch(e=>console.error(e))
     })
   }
-  let loadingBar = newEventState.isLoading ? <div style={{backgroundColor: "grey", zIndex:"3", width:"100vw", position: "fixed", bottom:0}}>
-  <h6 className="center">Adding events...one moment please.</h6>
+  let loadingBar = newEventState.isLoading ? <div style={{backgroundColor: "violet", textColor:"white", zIndex:"3", width:"100vw", position: "fixed", bottom:0}}>
+  <h6 id="loadingBar" className="center white-text">Adding events...</h6>
 </div> : null
 //PAGE RENDERING STUFF
   return(
