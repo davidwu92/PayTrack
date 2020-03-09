@@ -8,13 +8,14 @@ const UserAPI = {
   //Register new user
   addUser: (user) => axios.post('/users', user),
 
-  //to get info on logged-in user. Apparently not needed.
-  // getUser: (token) => axios.get('/users', {
-  //     headers: {
-  //       "Authorization": "Bearer " + token}
-  //   }),
+  //to get info on logged-in user. Not needed or used atm.
+  getUser: (token) => axios.get('/users', {
+      headers: {
+        "Authorization": "Bearer " + token}
+    }),
 
-  //to grab the color preferences of user.
+
+  //GRAB color preferences of user.
   getColors: (token) => axios.get('/users', {
       headers: {
         "Authorization": "Bearer " + token}
