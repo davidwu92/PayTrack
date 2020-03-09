@@ -24,8 +24,9 @@ const ColorPreferences = () => {
   useEffect(()=>{
     let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
     getColors(token)
-      .then(({data:colorPreferences})=>{
-        setColorState({...colorState, colorArray: colorPreferences})
+      .then(({data})=>{
+        setColorState({...colorState, colorArray: data.colorPreferences})
+        console.log(colorState)
       })
       .catch(e=>console.error(e))
   },[])

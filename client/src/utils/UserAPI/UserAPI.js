@@ -14,6 +14,11 @@ const UserAPI = {
         "Authorization": "Bearer " + token}
     }),
 
+  //get User Info
+  getUser: (token) =>axios.get('/users', {
+    headers: {
+      "Authorization": "Bearer " + token}
+  }),
 
   //GRAB color preferences of user.
   getColors: (token) => axios.get('/users', {

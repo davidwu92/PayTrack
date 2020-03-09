@@ -33,14 +33,22 @@ module.exports = app => {
       } : user)
     })
   })
-  
-  // GET My Info (for color preferences)
+
+  //GET USER INFO (for login)
   app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
     const { _id } = req.user
     User.findById(_id)
-      .then(user => res.json(user.colorPreferences)) //only serve up this array to front end.
+      .then(user => res.json(user)) //only serve up this array to front end.
       .catch(e => console.error(e))
   })
+
+  // GET My Info (for color preferences)
+    app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
+      const { _id } = req.user
+      User.findById(_id)
+        .then(user => res.json(user)) //only serve up this array to front end.
+        .catch(e => console.error(e))
+    })
   
     // EDIT COLOR PREFERENCES
     app.put('/users/:id', (req, res) => {
