@@ -30,109 +30,88 @@ const MyCalendar = () => {
   const [calendarState, setCalendarState] = useState({
     // EVENT OBJECTS to throw into calendar. "All properties are read-only, use methods to modify."
     //https://fullcalendar.io/docs/event-object
-    events: [
-        //FIRST PAYMENT INSTANCE
-            // { id: 0,
-            //   groupId: 'Car Insurance', //groups events to be dragged
-            //   title: 'EVENT ONE', 
-            //   date: '2020-03-05',
-            //   allDay: true, 
-            //   classNames: ['Insurance'],
-            //   editable: true,
-            //   backgroundColor: 'blue',
-            //   borderColor: 'black',
-            //   textColor: 'red',
-            //   extendedProps: {
-            //     amount: '$200',
-            //     tags: ["Family", "Insurance"],
-            //     paymentNotes: 'I hate this insurance and I need a new one.',
-            //     url: 'www.google.com'
-            //   }
-            // },
-        // {
-        //   title: `Lil Jon's Piano Lessons`,
-        //   groupId: 'pianoLessons', // recurrent events in this group move together
-        //   daysOfWeek: [ '4' ],  //WEEKLY stuff ONLY.
-        //   allDay: true, 
-        //   classNames: ['Family'],
-        //   endRecur: '2020-12-25' //no more piano lessons after Christmas.
-        // },
-    ]
+    events: []
   })
   const handleDateClick = (e) =>{
+    //IDEALLY can add event to clicked date.
     console.log(e) //Gives me a fat object
     console.log(e.date)
   }
+
   const handleEventClick = (e) => {
-    console.log(e)
+    console.log(e.event.groupId)
     console.log(e.event.extendedProps)
     //gives {event, el (html element), jsEvent (click info), view (current view object)}
     //Ideally triggers a viewing/editing modal.
   }
+  const handleEventDrop = (e) =>{
+    console.log(e.oldEvent) //info of pre-drop
+    console.log(e.event) //info of after-drop
+  }
+
 //~~~~~~~~~~~~~~~~~POPULATE EVENTS on pageload~~~~~~~~~~~~~~~~~~
-let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
-useEffect(()=>{
-  //FIRST grab user preferences (for colorPreferences) here.
-  let colorPreferences = []
-  getColors(token)
-    .then(({data})=>{
-      colorPreferences = data.colorPreferences
-      //SECOND grab events.
-        getEvents(token)
-        .then(({data})=>{
-          let myEvents = []
-          if (data.length) {
-            data.forEach((element) => {
-              //COLOR FUNCTION.
-              const colorFunction = (category) =>{
-                let color
-                switch (category) {
-                  case "housing": color=colorPreferences[0]
-                  break;
-                  case "insurance": color=colorPreferences[1]
-                  break;
-                  case "loan": color=colorPreferences[2]
-                  break;
-                  case "taxes": color=colorPreferences[3]
-                  break;
-                  case "family": color=colorPreferences[4]
-                  break;
-                  case "recreation": color=colorPreferences[5]
-                  break;
-                  case "income": color=colorPreferences[6]
-                  break;
-                  case "other": color=colorPreferences[7]
-                  break;
-                  default: color=colorPreferences[7]
+  let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
+  useEffect(()=>{
+    //FIRST grab user preferences (for colorPreferences) here.
+    let colorPreferences = []
+    getColors(token)
+      .then(({data})=>{
+        colorPreferences = data.colorPreferences
+        //THEN grab events.
+          getEvents(token)
+          .then(({data})=>{
+            let myEvents = []
+            if (data.length) {
+              data.forEach((element) => {
+                //COLOR FUNCTION.
+                const colorFunction = (category) =>{
+                  let color
+                  switch (category) {
+                    case "housing": color=colorPreferences[0]
+                    break;
+                    case "insurance": color=colorPreferences[1]
+                    break;
+                    case "loan": color=colorPreferences[2]
+                    break;
+                    case "taxes": color=colorPreferences[3]
+                    break;
+                    case "family": color=colorPreferences[4]
+                    break;
+                    case "recreation": color=colorPreferences[5]
+                    break;
+                    case "income": color=colorPreferences[6]
+                    break;
+                    case "other": color=colorPreferences[7]
+                    break;
+                    default: color=colorPreferences[7]
+                  }
+                  return color
                 }
-                return color
-              }
-              let calendarEvent = {
-                id: element._id,
-                groupId: element.groupId,
-                title: element.title, 
-                date: element.date,
-                allDay: true, 
-                // classNames: ['Insurance'],
-                editable: true,
-                backgroundColor: colorFunction(element.category), //call some functions using user preferences for colors here.
-                borderColor: 'black',
-                textColor: 'white',
-                extendedProps: {
-                  amount: "$"+ element.amount,
-                  category: element.category,
-                  notes: element.notes,
-                  url: element.website
+                let calendarEvent = {
+                  id: element._id,
+                  groupId: element.groupId,
+                  title: element.title, 
+                  date: element.date,
+                  allDay: true, 
+                  // classNames: ['Insurance'],
+                  backgroundColor: colorFunction(element.category), //call some functions using user preferences for colors here.
+                  borderColor: 'black',
+                  textColor: 'white',
+                  extendedProps: {
+                    amount: "$"+ element.amount,
+                    category: element.category,
+                    notes: element.notes,
+                    url: element.website
+                  }
                 }
-              }
-              myEvents.push(calendarEvent)
-            })
-          }
-          setCalendarState({...calendarState, events: myEvents})
-        })
-    })
-    .catch(e=>console.error(e))
-}, [])
+                myEvents.push(calendarEvent)
+              })
+            }
+            setCalendarState({...calendarState, events: myEvents})
+          })
+      })
+      .catch(e=>console.error(e))
+  }, [])
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~NEW PAYMENT VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -522,11 +501,11 @@ useEffect(()=>{
               left: "prevYear,prev",
               right: "next,nextYear"
             }}
-            // droppable= {true} 
-            //lets me drag and drop events.
+            eventStartEditable={true}
             plugins={[ dayGridPlugin, interactionPlugin ]}
             dateClick={handleDateClick}
             eventClick={handleEventClick}
+            eventDrop={handleEventDrop}
             events={calendarState.events} //array of events rendered on calendar.
           />
         </div>
