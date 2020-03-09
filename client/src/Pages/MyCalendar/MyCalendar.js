@@ -144,6 +144,7 @@ useEffect(()=>{
     url: '',
     category: '',
     notes: '',
+    isLoading: false,
   })
   newEventState.handleInputChange = (event) => {
     setNewEventState({ ...newEventState, [event.target.name]: event.target.value })
@@ -202,12 +203,13 @@ useEffect(()=>{
   const categorySelect = () => setNewEventState({...newEventState, category: document.getElementById('categorySelect').value})
 
   //modal: hitting "Close" (reset newEventState)
-  const cancelEvent = () => setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:''})
-
+  const cancelEvent = () => setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:'', isLoading: false})
+  
   //modal: hitting "Save" (adds event).
   const addNewEvent = () => {
+    setNewEventState({...newEventState, isLoading: true})
     let startingDay = moment(dateState.startDate).format('X')
-    let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'hour').format('X') : moment(dateState.startDate).add(5, 'years').format('X')
+    let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'day').format('X') : moment(dateState.startDate).add(5, 'years').format('X')
     let duration = endingDay - startingDay
     let newEvents = []
     let occurences = 0
@@ -341,27 +343,31 @@ useEffect(()=>{
         break;
     }
     let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
-    newEvents.forEach((newEvent)=>{
+    newEvents.forEach((newEvent, index, array)=>{
       addEvent(token, newEvent)
       .then(()=>{
-        console.log("You posted a new event or series of events.")
-        cancelEvent()
-        window.location.reload()
+        if(index == array.length-1) {
+          cancelEvent()
+          window.location.reload()
+        }
       })
       .catch(e=>console.error(e))
     })
   }
-
+  let loadingBar = newEventState.isLoading ? <div style={{backgroundColor: "grey", zIndex:"3", width:"100vw", position: "fixed", bottom:0}}>
+  <h6 className="center">Adding events...one moment please.</h6>
+</div> : null
 //PAGE RENDERING STUFF
   return(
     <>
+      {loadingBar}
       <div className="container">
         {/* PAGE HEADER */}
         <h1 className = 'center white-text'>My Calendar</h1>
         {/* MODAL with New Payment Form */}
         {/* https://react-materialize.github.io/react-materialize/?path=/story/javascript-modal--default */}
+
         <div className = "row"> 
-          
           <Modal id="newPaymentModal" className="center-align"
               actions={[
                 <Button onClick={cancelEvent} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
@@ -501,14 +507,10 @@ useEffect(()=>{
                     <label for="eventNotes">Notes</label>
                   </div>
                 </div>
-
               </form>
             </Modal>
           <ColorPreferences/>
-        </div>
-        
-        {/* CALENDAR CUSTOMIZATION (not functional)*/}
-        
+        </div>  
         
         {/* CALENDAR STUFF (contained in div.row) */}
         <div className = "row" style={{backgroundColor: "ghostwhite", padding: "1vw"}}>
