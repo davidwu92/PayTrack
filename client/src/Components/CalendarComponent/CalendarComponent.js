@@ -1,7 +1,7 @@
 //NO LONGER BEING USED AS COMPONENT; KEPT FOR REFERRENCE
 
 import React, {useState} from 'react'
-import '../../App.css'
+import '../../app.css'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from "@fullcalendar/interaction"

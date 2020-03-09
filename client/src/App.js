@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 
 import {
   BrowserRouter as Router,
@@ -17,7 +17,6 @@ import MyTotals from './Pages/MyTotals'
 import './app.css'
 
 function App() {
-  
 
   return (
     // <UserContext.Provider value={userState}>

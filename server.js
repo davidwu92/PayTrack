@@ -9,6 +9,11 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 const {User} = require('./models')
 const { Strategy: JWTStrategy, ExtractJwt } = require('passport-jwt')
 
+//DEPLOYING TO HEROKU
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"))
+}
+
 //MONGODB
 const mongoURI = process.env.NODE_ENV === 'production' ? process.env.MONGODB_URI : 'mongodb://localhost/paymentTrackerdb'
 const mongoose = require('mongoose')
@@ -44,21 +49,16 @@ passport.use(new JWTStrategy({
 
 // GoogleStrategy with Passport
 passport.use(new GoogleStrategy({
-    clientID: '116685853039-25srr7221cqiuooi0d3parj8l92rp1p4.apps.googleusercontent.com',
-    clientSecret: 'cv8xqBKLu0tRhYDo6z8CyFxe',
-    callbackURL: 'https://www.google.com'
-  },
-  function (accessToken, refreshToken, profile, cb) {
-    User.findOne({ googleId: profile.id })
-      .then(user => cb(null, user))
-      .catch(e => cb(e))
-  }
-))
-
-//DEPLOYING TO HEROKU
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"))
+  clientID: '116685853039-25srr7221cqiuooi0d3parj8l92rp1p4.apps.googleusercontent.com',
+  clientSecret: 'cv8xqBKLu0tRhYDo6z8CyFxe',
+  callbackURL: 'https://www.google.com'
+},
+function (accessToken, refreshToken, profile, cb) {
+  User.findOne({ googleId: profile.id })
+    .then(user => cb(null, user))
+    .catch(e => cb(e))
 }
+))
 
 //routes
 require('./routes')(app)

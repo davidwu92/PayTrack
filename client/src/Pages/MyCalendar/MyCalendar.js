@@ -17,10 +17,11 @@ import moment from 'moment'
 //FullCalendar Imports
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
-import interactionPlugin, { Draggable } from "@fullcalendar/interaction"
+import interactionPlugin from "@fullcalendar/interaction"
 //https://fullcalendar.io/docs#toc
 
 import ColorPreferences from '../../Components/ColorPreferences'
+import '../../app.css'
 
 const { addEvent, getEvents, getColors } = UserAPI
 
@@ -143,6 +144,7 @@ useEffect(()=>{
     url: '',
     category: '',
     notes: '',
+    isLoading: false,
   })
   newEventState.handleInputChange = (event) => {
     setNewEventState({ ...newEventState, [event.target.name]: event.target.value })
@@ -201,12 +203,13 @@ useEffect(()=>{
   const categorySelect = () => setNewEventState({...newEventState, category: document.getElementById('categorySelect').value})
 
   //modal: hitting "Close" (reset newEventState)
-  const cancelEvent = () => setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:''})
-
+  const cancelEvent = () => setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:'', isLoading: false})
+  
   //modal: hitting "Save" (adds event).
   const addNewEvent = () => {
+    setNewEventState({...newEventState, isLoading: true})
     let startingDay = moment(dateState.startDate).format('X')
-    let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'hour').format('X') : moment(dateState.startDate).add(5, 'years').format('X')
+    let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'day').format('X') : moment(dateState.startDate).add(5, 'years').format('X')
     let duration = endingDay - startingDay
     let newEvents = []
     let occurences = 0
@@ -340,27 +343,32 @@ useEffect(()=>{
         break;
     }
     let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
-    newEvents.forEach((newEvent)=>{
+    newEvents.forEach((newEvent, index, array)=>{
       addEvent(token, newEvent)
       .then(()=>{
-        console.log("You posted a new event or series of events.")
-        cancelEvent()
-        window.location.reload()
+        document.getElementById("loadingBar").innerText=`Adding events... do not reload page. ${Math.floor(index/array.length * 100)}%`
+        if(index == array.length-1) {
+          cancelEvent()
+          window.location.reload()
+        }
       })
       .catch(e=>console.error(e))
     })
   }
-
+  let loadingBar = newEventState.isLoading ? <div style={{backgroundColor: "violet", textColor:"white", zIndex:"3", width:"100vw", position: "fixed", bottom:0}}>
+  <h6 id="loadingBar" className="center white-text">Adding events...</h6>
+</div> : null
 //PAGE RENDERING STUFF
   return(
     <>
+      {loadingBar}
       <div className="container">
         {/* PAGE HEADER */}
         <h1 className = 'center white-text'>My Calendar</h1>
         {/* MODAL with New Payment Form */}
         {/* https://react-materialize.github.io/react-materialize/?path=/story/javascript-modal--default */}
+
         <div className = "row"> 
-          
           <Modal id="newPaymentModal" className="center-align"
               actions={[
                 <Button onClick={cancelEvent} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
@@ -484,13 +492,8 @@ useEffect(()=>{
                     >
                       Category</span>
                     <select id="categorySelect" className="browser-default" onChange={categorySelect}>
-                      {newEventState.isPayment ? 
-                        <><option value="" selected>Choose a category.</option></>
-                        :
-                        <><option value="income" selected>Income</option></>
-                      }
-                      {/* <option value="" selected>Choose a category.</option>
-                      <option value="income">Income</option> */}
+                      <option value="" selected disabled>Choose a category.</option>
+                      <option value="income">Income</option>
                       <option value="housing">Housing Expense</option>
                       <option value="insurance">Insurance Payment</option>
                       <option value="loan">Loan Payment</option>
@@ -505,14 +508,10 @@ useEffect(()=>{
                     <label for="eventNotes">Notes</label>
                   </div>
                 </div>
-
               </form>
             </Modal>
           <ColorPreferences/>
-        </div>
-        
-        {/* CALENDAR CUSTOMIZATION (not functional)*/}
-        
+        </div>  
         
         {/* CALENDAR STUFF (contained in div.row) */}
         <div className = "row" style={{backgroundColor: "ghostwhite", padding: "1vw"}}>
@@ -523,7 +522,8 @@ useEffect(()=>{
               left: "prevYear,prev",
               right: "next,nextYear"
             }}
-            droppable= {true} //lets me drag and drop events.
+            // droppable= {true} 
+            //lets me drag and drop events.
             plugins={[ dayGridPlugin, interactionPlugin ]}
             dateClick={handleDateClick}
             eventClick={handleEventClick}
