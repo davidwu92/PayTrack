@@ -13,17 +13,16 @@ const UserAPI = {
       headers: {
         "Authorization": "Bearer " + token}
     }),
+
   //to grab the color preferences of user.
   getColors: (token) => axios.get('/users', {
       headers: {
         "Authorization": "Bearer " + token}
     }),
-    
-  //edit profile
-  // updateUser: (id, values) => axios.put(`/users/${id}`, values),
+  //edit user category color preferences
   editColors: (id, values) => axios.put(`/users/${id}`, values),
 
-  //PAYMENT STUFF
+//~~~EVENT/CALENDAR STUFF~~~
   addEvent: (token, event) => axios({
     method: 'post',
     url: '/events',
@@ -52,7 +51,8 @@ const UserAPI = {
       "Content-Type": "application/json"
     }
   }),
-
+  
+  //DELETE ONE EVENT
   deleteEvent: (token, id) => axios({
     method: 'delete',
     url: '/events',
