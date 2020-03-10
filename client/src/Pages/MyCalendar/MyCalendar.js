@@ -374,6 +374,11 @@ const MyCalendar = () => {
     }
     console.log(selectedEvent)
     //using newEventState and dateState for editing modal.
+    setDateState({
+      ...dateState,
+      startDate: selectedEvent.date,
+      endDate: selectedEvent.groupEndDate,
+    })
     setNewEventState({
       title: selectedEvent.title,
       amount: selectedEvent.amount,
@@ -385,16 +390,12 @@ const MyCalendar = () => {
       isLoading: false,
       editingGroup: true,
     })
-    setDateState({
-      ...dateState,
-      startDate: selectedEvent.date,
-      endDate: selectedEvent.groupEndDate,
-    })
-    eventCard.current.click()
+    setTimeout(()=>eventCard.current.click(), 0)
   }
   //clicking EDIT in event card.
   const editModal = useRef()
   const handleEditClick = ()=>{
+    console.log(dateState)
     editModal.current.click()
   }
   //editing modal: group or single event switch
@@ -409,7 +410,7 @@ const MyCalendar = () => {
     </div>
     <div className="col s7 m10 l10">
       <DatePicker
-        placeholder= {moment(dateState.endDate).format('ddd MMM Do, YYYY ')}
+        placeholder= {moment(dateState.endDate).format('ddd MMM Do, YYYY')}
         className="datePicker"
         options={{
           autoClose: false,    container: null,    defaultDate: dateState.endDate,    disableDayFn: null,
@@ -619,25 +620,26 @@ const MyCalendar = () => {
           <a ref={eventCard} className="modal-trigger" href='#eventCard'></a>
           <Modal id="eventCard" className="center-align"
             actions={[
-              <Button flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
-                Close
-              </Button>,
-              <span> </span>,
               <Button onClick={handleEditClick} modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
                 Edit <i className="material-icons right">send</i>
               </Button>,
               <span> </span>,
               <Button onClick={deleteEvent} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
-                Delete <i className="material-icons right">send</i>
-              </Button>
+                Delete <i className="material-icons right">delete</i>
+              </Button>,
+              <span>  </span>,
+              <Button flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                Close
+              </Button>,
             ]}
-            header={newEventState.title}>
+            header={newEventState.title + " " + moment(dateState.startDate).format('MM-DD-YY')}>
               <div>
-                <p>Date: {dateState.date}</p>
+                {/* <p>Date: {moment(dateState.startDate).format('ddd MMM Do, YYYY')}</p> */}
                 <p>Amount: {newEventState.amount}</p>
                 <p>Frequency: {newEventState.frequency}</p>
                 <p>URL: {newEventState.url}</p>
                 <p>Notes: {newEventState.notes}</p>
+                <p>Category: {newEventState.category}</p>
               </div>
           </Modal>
         </div>
