@@ -9,6 +9,7 @@ module.exports = (model, Schema) => {
       category: String,
       notes: String,
       date: { type: Date },
+      groupEndDate: {type: Date},
       // endingDate: {type: Date },
       author: {
         type: Schema.Types.ObjectId, ref: 'User'
