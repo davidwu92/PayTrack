@@ -26,7 +26,7 @@ import ColorPreferences from '../../Components/ColorPreferences'
 import '../../app.css'
 
 const { getColors } = UserAPI
-const {addEvent, addEvents, getEvents } = EventAPI
+const {addEvent, addEvents, getEvents, editEvent, editEvents, deleteEvent, deleteEvents } = EventAPI
 
 const MyCalendar = () => {
 //~~~~~~~~~~~~~~~~~~~~~~~~~CALENDAR VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -485,6 +485,7 @@ const MyCalendar = () => {
   //editing modal: hitting "Save" edits event(s)
   const editEvent = () =>{
     console.log("You changed the events.")
+
   }
 
   //delete modal: choosing to delete group or delete single event.
@@ -493,6 +494,7 @@ const MyCalendar = () => {
   //delete modal: hitting "Delete" permanently deletes event(s)
   const deleteEvent = () =>{
     console.log("You deleted the event(s)")
+
   }
 //PAGE RENDERING STUFF
   return(

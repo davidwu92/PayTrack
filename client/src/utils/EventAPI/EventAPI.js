@@ -47,15 +47,28 @@ const EventAPI = {
   //EDIT ONE event.
   editEvent: (eventId, values) => axios.put(`/event/${eventId}`, values),
 
-  //EDIT GROUP of events.
+  //EDIT GROUP of events via drag-drop.
   editEvents: (groupId, values) => axios.put(`/events/${groupId}`, values),
 
   //DELETE ONE EVENT
   deleteEvent: (token, id) => axios({
     method: 'delete',
-    url: '/events',
+    url: '/event',
     data: {
       _id: id
+    },
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  }),
+
+  //DELETE ONE EVENT
+  deleteEvent: (token, groupId) => axios({
+    method: 'delete',
+    url: '/events',
+    data: {
+      groupId: groupId
     },
     headers: {
       "Authorization": `Bearer ${token}`,
