@@ -1,20 +1,41 @@
-/* INCOME VS PAYMENT SWITCH */
-.switch label input[type=checkbox] + .lever { 
+/* ~~~~INCOME VS PAYMENT SWITCH ~~~~*/
+.moneySwitch label input[type=checkbox] + .lever { 
   /* Making Payment selected */
   background-color: red; 
 }
 /* Receiving income selected */
-.switch label input[type=checkbox]:checked + .lever {
+.moneySwitch label input[type=checkbox]:checked + .lever {
   background-color: green;
 }
-.switch label input[type=checkbox]:checked + .lever:after {
+.moneySwitch label input[type=checkbox]:checked + .lever:after {
   background-color: #ffffff;
 }
 
 /* animated circle on lever */
-.switch label input[type=checkbox]+.lever:before {
+.moneySwitch label input[type=checkbox]+.lever:before {
   background-color: #770081;
 }
-.switch label input[type=checkbox]:checked+.lever:before {
+.moneySwitch label input[type=checkbox]:checked+.lever:before {
+  background-color: #770081;
+}
+
+/* ~~~~EDIT GROUP SWITCH~~~~ */
+/* Single Event Selected */
+.groupSwitch label input[type=checkbox] + .lever { 
+  background-color: blue; 
+}
+/* Group of Events Selected */
+.groupSwitch label input[type=checkbox]:checked + .lever {
+  background-color: deeppink;
+}
+.groupSwitch label input[type=checkbox]:checked + .lever:after {
+  background-color: #ffffff;
+}
+
+/* animated circle on lever */
+.groupSwitch label input[type=checkbox]+.lever:before {
+  background-color: #770081;
+}
+.groupSwitch label input[type=checkbox]:checked+.lever:before {
   background-color: #770081;
 }
