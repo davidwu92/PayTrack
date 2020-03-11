@@ -51,8 +51,8 @@ module.exports = app => {
       .catch(e => console.error(e))
   })
   
-  //EDIT GROUP of events (drag and drop)
-  app.put('/events/:groupId', (req, res) =>{
+  //EDIT GROUP of events
+  app.put('/events/:groupId',passport.authenticate('jwt', {session: false}), (req, res) =>{
     Event.find({groupId: req.params.groupId})
   })
 

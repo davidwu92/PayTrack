@@ -14,8 +14,12 @@ const EventAPI = {
       frequency: event.frequency,
       website: event.website,
       category: event.category,
+      eventDate: event.eventDate,
+      groupStartDate: event.groupStartDate,
+      groupEndDate: event.groupEndDate,
+      eventNumber: event.eventNumber,
+      groupTotal: event.groupTotal,
       notes: event.notes,
-      date: event.date
     },
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -45,10 +49,26 @@ const EventAPI = {
   }),
 
   //EDIT ONE event.
-  editEvent: (eventId, values) => axios.put(`/event/${eventId}`, values),
+  editEvent: (token, eventId, values) => axios({
+    method: 'put',
+    url: `/event/${eventId}`,
+    data: values,
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+      }
+    }),
 
-  //EDIT GROUP of events via drag-drop.
-  editEvents: (groupId, values) => axios.put(`/events/${groupId}`, values),
+  //EDIT GROUP of events
+  editEvents: (token, groupId, values) => axios({
+    method: 'put',
+    url: `/events/${groupId}`,
+    data: values,
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+      }
+    }),
 
   //DELETE ONE EVENT
   deleteEvent: (token, id) => axios({
