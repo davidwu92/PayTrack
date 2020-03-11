@@ -125,6 +125,8 @@ const MyCalendar = () => {
     notes: '',
     isLoading: false,
     editingGroup: false,
+    eventNumber: 1,
+    groupTotal: 1,
   })
   newEventState.handleInputChange = (event) => {
     setNewEventState({ ...newEventState, [event.target.name]: event.target.value })
@@ -204,6 +206,8 @@ const MyCalendar = () => {
         notes: newEventState.notes,
         date: dateState.startDate,
         groupEndDate: dateState.startDate,
+        eventNumber: 1,
+        groupNumber: 1,
       }
       //add single event.
       addEvent(token, newEvent)
@@ -233,7 +237,9 @@ const MyCalendar = () => {
                 category: newEventState.category,
                 notes: newEventState.notes,
                 date: moment(dateState.startDate).add(i, "week").format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format()
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventNumber: i+1,
+                groupTotal: occurences,
               })
             }
             break;
@@ -250,7 +256,9 @@ const MyCalendar = () => {
                 category: newEventState.category,
                 notes: newEventState.notes,
                 date: moment(dateState.startDate).add(2*i, "week").format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format()
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventNumber: i+1,
+                groupTotal: occurences,
               })
             }
             break;
@@ -267,7 +275,9 @@ const MyCalendar = () => {
                 category: newEventState.category,
                 notes: newEventState.notes,
                 date: moment(dateState.startDate).add(i, "month").format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format()
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventNumber: i+1,
+                groupTotal: occurences,
               })
             }
             break;
@@ -284,7 +294,9 @@ const MyCalendar = () => {
                 category: newEventState.category,
                 notes: newEventState.notes,
                 date: moment(dateState.startDate).add(3*i, "month").format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format()
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventNumber: i+1,
+                groupTotal: occurences,
               })
             }
             break;
@@ -301,7 +313,9 @@ const MyCalendar = () => {
                 category: newEventState.category,
                 notes: newEventState.notes,
                 date: moment(dateState.startDate).add(6*i, "month").format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format()
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventNumber: i+1,
+                groupTotal: occurences,
               })
             }
             break;
@@ -318,7 +332,9 @@ const MyCalendar = () => {
                 category: newEventState.category,
                 notes: newEventState.notes,
                 date: moment(dateState.startDate).add(i, "year").format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format()
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventNumber: i+1,
+                groupTotal: occurences,
               })
             }
             break;
@@ -335,7 +351,9 @@ const MyCalendar = () => {
                 category: newEventState.category,
                 notes: newEventState.notes,
                 date: moment(dateState.startDate).add(2*i, "year").format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format()
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventNumber: i+1,
+                groupTotal: occurences,
               })
             }
             break;
@@ -634,20 +652,21 @@ const MyCalendar = () => {
             ]}
             header={newEventState.title + " " + moment(dateState.startDate).format('MM-DD-YY')}>
               <div> {/* CARD BODY */}
-                <div className="switch groupSwitch row"> {/* SEE GROUP OR ONE EVENT */}
-                  <label>
-                    <div className="col s4 m5 l5 right-align">
-                      <h6 style={newEventState.editingGroup ? {display:"inline"}:{color: "blue", display:"inline"}}>Single Event Details</h6>
-                    </div>
-                    <div className="col s3 m2 l2">
-                      <input id="groupSwitch" onChange={groupSwitch} type="checkbox"/>
-                      <span className="lever"></span>
-                    </div>
-                    <div className="col s5 m5 l5 left-align">
-                      <h6 style={newEventState.editingGroup ? {color: "deeppink", display:"inline"}:{display:"inline"}}>Event Group Details</h6>
-                    </div>
-                  </label>
-                </div>
+              {/* SEE GROUP OR ONE EVENT */}
+                  {/* <div className="switch groupSwitch row"> 
+                    <label>
+                      <div className="col s4 m5 l5 right-align">
+                        <h6 style={newEventState.editingGroup ? {display:"inline"}:{color: "blue", display:"inline"}}>Single Event Details</h6>
+                      </div>
+                      <div className="col s3 m2 l2">
+                        <input id="groupSwitch" onChange={groupSwitch} type="checkbox"/>
+                        <span className="lever"></span>
+                      </div>
+                      <div className="col s5 m5 l5 left-align">
+                        <h6 style={newEventState.editingGroup ? {color: "deeppink", display:"inline"}:{display:"inline"}}>Event Group Details</h6>
+                      </div>
+                    </label>
+                  </div> */}
                 <div>
                   <p>Amount: {newEventState.amount}</p>
                   <p>Frequency: {newEventState.frequency}</p>
