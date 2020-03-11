@@ -439,7 +439,7 @@ const MyCalendar = () => {
   //clicking DELETE in event card OR in editing modal.
   const deleteModal = useRef()
   const handleDeleteClick = () =>{
-    console.log("You hit 'delete' button")
+    console.log("You hit 'delete' button from event card.")
     console.log(newEventState)
     console.log(dateState)
     deleteModal.current.click()
@@ -483,7 +483,7 @@ const MyCalendar = () => {
   const changeCategory = () => setNewEventState({...newEventState, category: document.getElementById('changeCategory').value})
 
   //editing modal: hitting "Save" edits event(s)
-  const editEvent = () =>{
+  const confirmEdit = () =>{
     console.log("You changed the events.")
 
   }
@@ -492,10 +492,25 @@ const MyCalendar = () => {
   const deleteGroupSwitch = () => setNewEventState({...newEventState, editingGroup: document.getElementById('deleteGroupSwitch').checked})
 
   //delete modal: hitting "Delete" permanently deletes event(s)
-  const deleteEvent = () =>{
+  const confirmDelete = () =>{
     console.log("You deleted the event(s)")
-
+    if (newEventState.editingGroup) {
+      //Deleting group FUNCTIONING.
+      let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
+      let groupId = newEventState.groupId
+      deleteEvents(token, groupId)
+        .then(()=>console.log(`You deleted the ${newEventState.title} group`))
+        .catch(e=>console.error(e))
+    }else {
+      //Deleting single event FUNCTIONING.
+      let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
+      let id = newEventState.eventId
+      deleteEvent(token, id)
+        .then(()=>console.log(`You deleted ${newEventState.title}`))
+        .catch(e=>console.error(e))
+    }
   }
+  
 //PAGE RENDERING STUFF
   return(
     <>
@@ -719,7 +734,7 @@ const MyCalendar = () => {
                   Cancel
                 </Button>,
                 <span> </span>,
-                <Button onClick={editEvent} modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                <Button onClick={confirmEdit} modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
                   Save Changes <i className="material-icons right">send</i>
                 </Button>,
                 <span> </span>,
@@ -905,7 +920,7 @@ const MyCalendar = () => {
           <a ref={deleteModal} className="modal-trigger" href='#deleteModal'></a>
           <Modal id="deleteModal" className="center-align"
               actions={[
-                <Button onClick={deleteEvent} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
+                <Button onClick={confirmDelete} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
                   {newEventState.editingGroup ? "Delete Group":"Delete Event"} <i className="material-icons right">delete</i>
                 </Button>,
                 <span>  </span>,

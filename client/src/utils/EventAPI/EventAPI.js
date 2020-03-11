@@ -64,7 +64,7 @@ const EventAPI = {
   }),
 
   //DELETE ONE EVENT
-  deleteEvent: (token, groupId) => axios({
+  deleteEvents: (token, groupId) => axios({
     method: 'delete',
     url: '/events',
     data: {

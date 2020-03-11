@@ -65,8 +65,9 @@ module.exports = app => {
   })
   
   //DELETE GROUP of events
-  app.delete('/events/:id', passport.authenticate('jwt', {session: false}), (req, res)=>{
+  app.delete('/events', passport.authenticate('jwt', {session: false}), (req, res)=>{
     const {groupId} = req.body
+    // console.log(groupId)
     Event.deleteMany({groupId: groupId})
       .then(()=>res.sendStatus(200))
       .catch(e=>console.error(e))
