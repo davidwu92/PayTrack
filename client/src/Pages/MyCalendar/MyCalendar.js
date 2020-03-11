@@ -87,7 +87,7 @@ const MyCalendar = () => {
                   id: element._id,
                   groupId: element.groupId,
                   title: element.title, 
-                  date: element.date,
+                  date: element.eventDate,
                   allDay: true, 
                   // classNames: ['Insurance'],
                   backgroundColor: colorFunction(element.category), //call some functions using user preferences for colors here.
@@ -95,13 +95,16 @@ const MyCalendar = () => {
                   textColor: 'white',
                   extendedProps: {
                     amount: element.amount,
-                    groupEndDate: element.groupEndDate,
                     isPayment: element.isPayment,
                     frequency: element.frequency,
                     category: element.category,
                     notes: element.notes,
                     url: element.website,
-                    author: element.author
+                    author: element.author,
+                    groupStartDate: element.groupStartDate,
+                    groupEndDate: element.groupEndDate,
+                    eventNumber: element.eventNumber,
+                    groupTotal: element.groupTotal
                   }
                 }
                 myEvents.push(calendarEvent)
@@ -135,6 +138,7 @@ const MyCalendar = () => {
   const [dateState, setDateState] = useState({
     startDate: '',
     endDate: '',
+    eventDate: '',
   })
   dateState.handleDatePick = (date) => setDateState({...dateState, startDate: date})
   dateState.handleEndDate = (date) => setDateState({...dateState, endDate: date})
@@ -187,7 +191,7 @@ const MyCalendar = () => {
   //modal: hitting "Close" (reset newEventState)
   const cancelEvent = () => {
     setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:'', isLoading: false, editingGroup: false})
-    setDateState({startDate:'', endDate:''})
+    setDateState({startDate:'', endDate:'', eventDate: ''})
   }
 
   //modal: hitting "Save" adds event(s).
@@ -204,7 +208,8 @@ const MyCalendar = () => {
         website: newEventState.url,
         category: newEventState.category,
         notes: newEventState.notes,
-        date: dateState.startDate,
+        eventDate: dateState.startDate,
+        groupStartDate: dateState.startDate,
         groupEndDate: dateState.startDate,
         eventNumber: 1,
         groupNumber: 1,
@@ -236,7 +241,8 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                date: moment(dateState.startDate).add(i, "week").format(),
+                eventDate: moment(dateState.startDate).add(i, "week").format(),
+                groupStartDate: moment(dateState.startDate).format(),
                 groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
@@ -255,7 +261,8 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                date: moment(dateState.startDate).add(2*i, "week").format(),
+                eventDate: moment(dateState.startDate).add(2*i, "week").format(),
+                groupStartDate: moment(dateState.startDate).format(),
                 groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
@@ -274,7 +281,8 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                date: moment(dateState.startDate).add(i, "month").format(),
+                eventDate: moment(dateState.startDate).add(i, "month").format(),
+                groupStartDate: moment(dateState.startDate).format(),
                 groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
@@ -293,7 +301,8 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                date: moment(dateState.startDate).add(3*i, "month").format(),
+                eventDate: moment(dateState.startDate).add(3*i, "month").format(),
+                groupStartDate: moment(dateState.startDate).format(),
                 groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
@@ -312,7 +321,8 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                date: moment(dateState.startDate).add(6*i, "month").format(),
+                eventDate: moment(dateState.startDate).add(6*i, "month").format(),
+                groupStartDate: moment(dateState.startDate).format(),
                 groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
@@ -331,7 +341,8 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                date: moment(dateState.startDate).add(i, "year").format(),
+                eventDate: moment(dateState.startDate).add(i, "year").format(),
+                groupStartDate: moment(dateState.startDate).format(),
                 groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
@@ -350,7 +361,8 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                date: moment(dateState.startDate).add(2*i, "year").format(),
+                eventDate: moment(dateState.startDate).add(2*i, "year").format(),
+                groupStartDate: moment(dateState.startDate).format(),
                 groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
@@ -380,22 +392,26 @@ const MyCalendar = () => {
       id: e.event.id,
       groupId: e.event.groupId,
       title: e.event.title, 
-      date: new Date(e.event.start),
-      groupEndDate: new Date(e.event.extendedProps.groupEndDate),
+      eventDate: new Date(e.event.start),
+      groupStartDate: new Date(e.event.extendedProps.groupStartDate),
+      groupEndDate: new Date(moment(e.event.extendedProps.groupEndDate).subtract(1, "day")),
       amount: e.event.extendedProps.amount,
       isPayment: e.event.extendedProps.isPayment,
       frequency: e.event.extendedProps.frequency,
       category: e.event.extendedProps.category,
       notes: e.event.extendedProps.notes,
       url: e.event.extendedProps.url,
-      author: e.event.extendedProps.author
+      author: e.event.extendedProps.author,
+      eventNumber: e.event.extendedProps.eventNumber,
+      groupTotal: e.event.extendedProps.groupTotal,
     }
     console.log(selectedEvent)
     //using newEventState and dateState for editing modal.
     setDateState({
       ...dateState,
-      startDate: selectedEvent.date,
+      startDate: selectedEvent.groupStartDate,
       endDate: selectedEvent.groupEndDate,
+      eventDate: selectedEvent.eventDate,
     })
     setNewEventState({
       title: selectedEvent.title,
@@ -405,6 +421,8 @@ const MyCalendar = () => {
       url: selectedEvent.url,
       category: selectedEvent.category,
       notes: selectedEvent.notes,
+      eventNumber: selectedEvent.eventNumber,
+      groupTotal: selectedEvent.groupTotal,
       isLoading: false,
       editingGroup: false,
     })
@@ -650,7 +668,8 @@ const MyCalendar = () => {
                 Close
               </Button>,
             ]}
-            header={newEventState.title + " " + moment(dateState.startDate).format('MM-DD-YY')}>
+            // header={newEventState.title + " " + moment(dateState.startDate).format('MM-DD-YY')}
+            >
               <div> {/* CARD BODY */}
               {/* SEE GROUP OR ONE EVENT */}
                   {/* <div className="switch groupSwitch row"> 
@@ -667,24 +686,17 @@ const MyCalendar = () => {
                       </div>
                     </label>
                   </div> */}
+                <h4>
+                  {newEventState.title + " " + newEventState.eventNumber + " of " + newEventState.groupTotal}
+                </h4>
                 <div>
                   <p>Amount: {newEventState.amount}</p>
+                  <p>Date: {moment(newEventState.eventDate).format("MM-DD-YYYY")}</p>
                   <p>Frequency: {newEventState.frequency}</p>
                   <p>URL: {newEventState.url}</p>
                   <p>Notes: {newEventState.notes}</p>
                   <p>Category: {newEventState.category}</p>
                 </div>
-                      {newEventState.editingGroup ? 
-                      <div>
-                        {/* MUST HAVE GROUP START DATE AND TOTAL NUMBER OF EVENTS ATTACHED TO EACH EVENT */}
-                      </div>:
-                      <div>
-                        <p>Amount: {newEventState.amount}</p>
-                        <p>Frequency: {newEventState.frequency}</p>
-                        <p>URL: {newEventState.url}</p>
-                        <p>Notes: {newEventState.notes}</p>
-                        <p>Category: {newEventState.category}</p>
-                      </div>}
               </div> {/* END OF CARD BODY */}
           </Modal>
         </div>

@@ -15,8 +15,8 @@ module.exports = app => {
   //POST ONE new event
   app.post('/event', passport.authenticate('jwt', {session: false}), (req, res) =>{
     const { _id: author } = req.user
-    const { title, groupId, amount, isPayment, frequency, website, category, date, groupEndDate, eventNumber, groupTotal, notes } = req.body
-    Event.create({ title, groupId, amount, isPayment, frequency, website, category, date, groupEndDate, eventNumber, groupTotal, notes, author })
+    const { title, groupId, amount, isPayment, frequency, website, category, eventDate, groupStartDate, groupEndDate, eventNumber, groupTotal, notes } = req.body
+    Event.create({ title, groupId, amount, isPayment, frequency, website, category, eventDate, groupStartDate, groupEndDate, eventNumber, groupTotal, notes, author })
       .then(event => {
         //When we create a payment, the author needs something pushed into her posts array.
         User.updateOne({_id: author}, {$push: {events: event}})
