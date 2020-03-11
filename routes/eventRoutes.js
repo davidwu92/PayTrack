@@ -45,12 +45,20 @@ module.exports = app => {
   })
 
   //EDIT ONE event
-  app.put('/event/:id', (req, res) => {
+  app.put('/event/:id' ,passport.authenticate('jwt', {session: false}), (req, res) => {
     Event.findByIdAndUpdate(req.params.id, { $set: req.body })
       .then(() => res.sendStatus(200))
       .catch(e => console.error(e))
   })
 
+  //DELETE A PAYMENT (DELETE)
+  app.delete('/events/:id', passport.authenticate('jwt', {session: false}), (req, res) => {
+    const _id = req.params.id
+    Event.deleteOne({ _id })
+      .then(() => res.sendStatus(200))
+      .catch(e => console.error(e))
+  })
+  
   //EDIT GROUP of events
   app.put('/events/:groupId', (req, res) =>{
     Event.find({groupId: req.params.groupId})
