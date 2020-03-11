@@ -152,7 +152,6 @@ const MyCalendar = () => {
     console.log(dateState)
   }
 
-
   //Button that triggers add modal.
   const createEvent = <Button id="newPayment" className="purple right white-text waves-effect waves-light">
     Add New Event</Button>;
@@ -187,7 +186,7 @@ const MyCalendar = () => {
                 weekdaysAbbrev: ['S','M','T','W','T','F','S'],
                 weekdaysShort: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
               },
-              isRTL: false,maxDate: null,minDate: new Date(dateState.startDate),onClose: null,onDraw: null,onOpen: null,onSelect: null,
+              isRTL: false,maxDate: null,minDate: null,onClose: null,onDraw: null,onOpen: null,onSelect: null,
               parse: null,setDefaultDate: false,showClearBtn: false,showDaysInNextAndPreviousMonths: true,showMonthAfterYear: false,
               yearRange: 10
             }}
@@ -401,14 +400,15 @@ const MyCalendar = () => {
   const eventCard = useRef()
   const handleEventClick = (e) => {
     // console.log(e.event)
+    console.log("You clicked on an event.")
     let selectedEvent = {
       title: e.event.title,
       id: e.event.id,
       groupId: e.event.groupId,
       title: e.event.title, 
-      eventDate: new Date(e.event.start),
-      groupStartDate: new Date(e.event.extendedProps.groupStartDate),
-      groupEndDate: new Date(moment(e.event.extendedProps.groupEndDate).subtract(1, "day")),
+      eventDate: moment(e.event.start).format(),
+      groupStartDate: moment(e.event.extendedProps.groupStartDate).format(),
+      groupEndDate: moment(e.event.extendedProps.groupEndDate).subtract(1, "day").format(),
       amount: e.event.extendedProps.amount,
       isPayment: e.event.extendedProps.isPayment,
       frequency: e.event.extendedProps.frequency,
@@ -454,8 +454,6 @@ const MyCalendar = () => {
   const deleteModal = useRef()
   const handleDeleteClick = () =>{
     console.log("You hit 'delete' button from event card.")
-    console.log(newEventState)
-    console.log(dateState)
     deleteModal.current.click()
   }
   //editing modal: group or single event switch
@@ -484,7 +482,7 @@ const MyCalendar = () => {
             weekdaysAbbrev: ['S','M','T','W','T','F','S'],
             weekdaysShort: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
           },
-          isRTL: false,maxDate: null,minDate: dateState.startDate,onClose: null,onDraw: null,onOpen: null,onSelect: null,
+          isRTL: false,maxDate: null,minDate: null,onClose: null,onDraw: null,onOpen: null,onSelect: null,
           parse: null,setDefaultDate: true,showClearBtn: false,showDaysInNextAndPreviousMonths: true,showMonthAfterYear: false,
           yearRange: 10
         }}
@@ -506,14 +504,14 @@ const MyCalendar = () => {
       let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
       deleteEvents(token, newEventState.groupId)
       .then(()=>{
-        console.log(newDate)
-        setDateState({...dateState, startDate: newDate.startDate, endDate: newDate.endDate})
+        //Working for everything but the friggin starting and ending dates.
         addNewEvents()
       })
       .catch(e=>console.error(e))
     } else{
-      //editing SINGLE EVENT (works fine)
+      //editing SINGLE EVENT (works for everything but groupStartDate, groupEndDate)
       let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
+      console.log(dateState)
       editEvent(token, newEventState.eventId, {
         amount: newEventState.amount,
         isPayment: newEventState.isPayment,        
@@ -553,6 +551,11 @@ const MyCalendar = () => {
         .then(()=>console.log(`You deleted ${newEventState.title}`))
         .catch(e=>console.error(e))
     }
+  }
+  //testing button for DATE STATE: who knows why it's changing when I click on edit modal DatePicker... >:[
+  const getDateState = (e) =>{
+    e.preventDefault()
+    console.log(dateState)
   }
 
 //PAGE RENDERING STUFF
@@ -643,7 +646,7 @@ const MyCalendar = () => {
                         parse: null,setDefaultDate: false,showClearBtn: false,showDaysInNextAndPreviousMonths: false,showMonthAfterYear: false,
                         yearRange: 10
                       }}
-                      onChange={dateState.handleStartDate}
+                      onChange={newEventState.editingGroup ? dateState.handleStartDate : dateState.handleEventDate}
                     />
                   </div>
                   {/* Frequency */}
@@ -782,13 +785,14 @@ const MyCalendar = () => {
                   Save Changes <i className="material-icons right">send</i>
                 </Button>,
                 <span> </span>,
-                <Button onClick={handleDeleteClick} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
-                  {newEventState.editingGroup ? "Delete Group":"Delete Event"} <i className="material-icons right">send</i>
-                </Button>
+                // <Button onClick={handleDeleteClick} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
+                //   {newEventState.editingGroup ? "Delete Group":"Delete Event"} <i className="material-icons right">send</i>
+                // </Button>
               ]}
               header={"Editing: " + newEventState.title}>
               <br></br>
               <form action="#">
+                <button onClick={getDateState}>GET DATE STATE</button>
                 {/* EDITING MODAL 1st ROW: EditingGroup, isPayment switches */}
                 <div className="row">
                   <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
@@ -830,7 +834,7 @@ const MyCalendar = () => {
                     }}>
                 </div>
                 
-                {/* EDITING MODAL 1.5-TH ROW: TITLE AND AMOUNT */}
+                {/* EDITING MODAL 1.5TH ROW: TITLE AND AMOUNT */}
                 <div className="row">
                     {/* edit event title: should only available if editing GROUP OF EVENTS. */}
                     <div className="input-field col s12 m6 l6">
@@ -871,10 +875,11 @@ const MyCalendar = () => {
                   </div>
                   <div className="col s7 m4 l4">
                     <DatePicker
-                      placeholder={newEventState.editingGroup ? moment(dateState.startDate).format("MMM Do, YYYY"): moment(dateState.eventDate).format("MMM Do, YYYY")}
+                      // {newEventState.editingGroup ? moment(dateState.startDate).format("MMM Do, YYYY"): moment(dateState.eventDate).format("MMM Do, YYYY")}
+                      placeholder="New Start Date"
                       className="datePicker"
                       options={{
-                        autoClose: false,    container: null,    defaultDate: new Date(dateState.startDate),    disableDayFn: null,
+                        autoClose: false,    container: null,    defaultDate: null,    disableDayFn: null,
                         disableWeekends: false,    events: [],    firstDay: 0,    format: 'mmm dd, yyyy',
                         i18n: {cancel: 'Cancel',clear: 'Clear',done: 'Ok',
                           months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
@@ -886,10 +891,13 @@ const MyCalendar = () => {
                           weekdaysShort: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
                         },
                         isRTL: false,maxDate: null,minDate: false,onClose: null,onDraw: null,onOpen: null,onSelect: null,
-                        parse: null,setDefaultDate: true,showClearBtn: false,showDaysInNextAndPreviousMonths: false,showMonthAfterYear: false,
+                        parse: null,setDefaultDate: false,showClearBtn: false,showDaysInNextAndPreviousMonths: false,showMonthAfterYear: false,
                         yearRange: 10
                       }}
-                      onChange={newEventState.editingGroup ? dateState.handleStartDate : dateState.handleEventDate}
+                      onChange={
+                        // dateState.handleStartDate
+                        (date)=>setDateState({...dateState, startDate: date})
+                      }
                     />
                   </div>
                   {/* Frequency -- can't be changed for single date*/}
@@ -915,7 +923,7 @@ const MyCalendar = () => {
                   }
                 </div> {/* end 2nd row */}
 
-                {/* MODAL 3rd ROW: End Date (if frequency > once) */}
+                {/* EDITING MODAL 3rd ROW: End Date (if frequency > once) */}
                 {editEndDate}
                 
                 <div id="modalDivider"
@@ -926,7 +934,7 @@ const MyCalendar = () => {
                     }}>
                 </div>
 
-                {/* MODAL 4th ROW: URL, Category, Notes */}
+                {/* EDITING MODAL 4th ROW: URL, Category, Notes */}
                 <div className="row">
                   <h6>Additional info (optional)</h6>
                   <div className="input-field col s6 m6 l6">
