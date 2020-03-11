@@ -124,7 +124,7 @@ const MyCalendar = () => {
     category: '',
     notes: '',
     isLoading: false,
-    editingGroup: true,
+    editingGroup: false,
   })
   newEventState.handleInputChange = (event) => {
     setNewEventState({ ...newEventState, [event.target.name]: event.target.value })
@@ -184,7 +184,7 @@ const MyCalendar = () => {
 
   //modal: hitting "Close" (reset newEventState)
   const cancelEvent = () => {
-    setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:'', isLoading: false, editingGroup: true})
+    setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:'', isLoading: false, editingGroup: false})
     setDateState({startDate:'', endDate:''})
   }
 
@@ -388,7 +388,7 @@ const MyCalendar = () => {
       category: selectedEvent.category,
       notes: selectedEvent.notes,
       isLoading: false,
-      editingGroup: true,
+      editingGroup: false,
     })
     setTimeout(()=>eventCard.current.click(), 0)
   }
@@ -399,7 +399,7 @@ const MyCalendar = () => {
     editModal.current.click()
   }
   //editing modal: group or single event switch
-  const groupSwitch = () => setNewEventState({...newEventState, editingGroup: !document.getElementById('groupSwitch').checked})
+  const groupSwitch = () => setNewEventState({...newEventState, editingGroup: document.getElementById('groupSwitch').checked})
 
   //editing modal: endDatePicker:
   const editEndDate = !newEventState.editingGroup ? null
@@ -467,7 +467,7 @@ const MyCalendar = () => {
               <form action="#">
                 {/* ADD EVENT MODAL 1st ROW: Title/Amount */}
                 <div className="row">
-                    <div className="switch"> {/* Is this Payment or Income?*/}
+                    <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
                       <label>
                         <div className="col s4 m5 l5 right-align">
                           <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
@@ -633,18 +633,44 @@ const MyCalendar = () => {
               </Button>,
             ]}
             header={newEventState.title + " " + moment(dateState.startDate).format('MM-DD-YY')}>
-              <div>
-                {/* <p>Date: {moment(dateState.startDate).format('ddd MMM Do, YYYY')}</p> */}
-                <p>Amount: {newEventState.amount}</p>
-                <p>Frequency: {newEventState.frequency}</p>
-                <p>URL: {newEventState.url}</p>
-                <p>Notes: {newEventState.notes}</p>
-                <p>Category: {newEventState.category}</p>
-              </div>
+              <div> {/* CARD BODY */}
+                <div className="switch groupSwitch row"> {/* SEE GROUP OR ONE EVENT */}
+                  <label>
+                    <div className="col s4 m5 l5 right-align">
+                      <h6 style={newEventState.editingGroup ? {display:"inline"}:{color: "blue", display:"inline"}}>Single Event Details</h6>
+                    </div>
+                    <div className="col s3 m2 l2">
+                      <input id="groupSwitch" onChange={groupSwitch} type="checkbox"/>
+                      <span className="lever"></span>
+                    </div>
+                    <div className="col s5 m5 l5 left-align">
+                      <h6 style={newEventState.editingGroup ? {color: "deeppink", display:"inline"}:{display:"inline"}}>Event Group Details</h6>
+                    </div>
+                  </label>
+                </div>
+                <div>
+                  <p>Amount: {newEventState.amount}</p>
+                  <p>Frequency: {newEventState.frequency}</p>
+                  <p>URL: {newEventState.url}</p>
+                  <p>Notes: {newEventState.notes}</p>
+                  <p>Category: {newEventState.category}</p>
+                </div>
+                      {newEventState.editingGroup ? 
+                      <div>
+                        {/* MUST HAVE GROUP START DATE AND TOTAL NUMBER OF EVENTS ATTACHED TO EACH EVENT */}
+                      </div>:
+                      <div>
+                        <p>Amount: {newEventState.amount}</p>
+                        <p>Frequency: {newEventState.frequency}</p>
+                        <p>URL: {newEventState.url}</p>
+                        <p>Notes: {newEventState.notes}</p>
+                        <p>Category: {newEventState.category}</p>
+                      </div>}
+              </div> {/* END OF CARD BODY */}
           </Modal>
         </div>
         
-        {/* EDITING/DELETING MODAL */}
+        {/* EDITING MODAL */}
         <div className="row">
           <a ref={editModal} className="modal-trigger" href='#editModal'></a>
           <Modal id="editModal" className="center-align"
@@ -664,24 +690,24 @@ const MyCalendar = () => {
               header={"Editing: " + newEventState.title}>
               <br></br>
               <form action="#">
-                {/* EDITING MODAL 1st ROW: IsGroup, Title/Amount */}
+                {/* EDITING MODAL 1st ROW: EditingGroup, Title/Amount */}
                 <div className="row">
-                    <div className="switch row"> {/* EDIT GROUP OR EDIT ONE EVENT */}
-                      <label>
-                        <div className="col s4 m5 l5 right-align">
-                          <h6 style={newEventState.editingGroup ? {color: "red", display:"inline"}:{display:"inline"}}>Edit event group.</h6>
-                        </div>
-                        <div className="col s3 m2 l2">
-                          <input id="groupSwitch" onChange={groupSwitch} type="checkbox"/>
-                          <span className="lever"></span>
-                        </div>
-                        <div className="col s5 m5 l5 left-align">
-                          <h6 style={newEventState.editingGroup ? {display:"inline"}:{color: "green", display:"inline"}}>Edit single event.</h6>
-                        </div>
-                      </label>
-                    </div>
+                  <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
+                    <label>
+                      <div className="col s4 m5 l5 right-align">
+                        <h6 style={newEventState.editingGroup ? {display:"inline"}:{color: "blue", display:"inline"}}>Edit Single Event</h6>
+                      </div>
+                      <div className="col s3 m2 l2">
+                        <input id="groupSwitch" onChange={groupSwitch} type="checkbox"/>
+                        <span className="lever"></span>
+                      </div>
+                      <div className="col s5 m5 l5 left-align">
+                        <h6 style={newEventState.editingGroup ? {color: "deeppink", display:"inline"}:{display:"inline"}}>Edit Group of Events</h6>
+                      </div>
+                    </label>
+                  </div>
                     <br></br>
-                    <div className="switch"> {/* Is this Payment or Income?*/}
+                    <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
                       <label>
                         <div className="col s4 m5 l5 right-align">
                           <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
@@ -813,6 +839,7 @@ const MyCalendar = () => {
 
           </Modal>
         </div>
+      
       </div> {/* END CONTAINER */}
     </>
   )
