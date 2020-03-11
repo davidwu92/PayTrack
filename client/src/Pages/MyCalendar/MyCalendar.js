@@ -119,17 +119,13 @@ const MyCalendar = () => {
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~NEW PAYMENT VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [newEventState, setNewEventState] = useState( {
-    title: '',
-    amount: 0,
-    isPayment: true,
-    frequency: 'once',
-    url: '',
-    category: '',
-    notes: '',
-    isLoading: false,
-    editingGroup: false,
-    eventNumber: 1,
-    groupTotal: 1,
+    title: '',    amount: 0,    isPayment: true,    frequency: 'once',    url: '',
+    category: '',    notes: '',    isLoading: false,
+    editingGroup: false, //switches if editing single event versus group.
+    
+    eventNumber: 1, groupTotal: 1,
+    
+    eventId: "",    groupId: "",
   })
   newEventState.handleInputChange = (event) => {
     setNewEventState({ ...newEventState, [event.target.name]: event.target.value })
@@ -148,7 +144,8 @@ const MyCalendar = () => {
     Add New Event</Button>;
   
   //add modal: payment vs income switch
-  const switchFunction = () => setNewEventState({...newEventState, isPayment: !document.getElementById('paymentOrIncome').checked})
+  const paymentSwitch = () => setNewEventState({...newEventState, isPayment: !document.getElementById('paymentSwitch').checked})
+  const editPaymentSwitch = () => setNewEventState({...newEventState, isPayment: !document.getElementById('editPaymentSwitch').checked})
   
   //add modal: frequency selection
   const frequencySelect = () => setNewEventState({...newEventState, frequency: document.getElementById('frequencySelect').value})
@@ -190,7 +187,10 @@ const MyCalendar = () => {
 
   //modal: hitting "Close" (reset newEventState)
   const cancelEvent = () => {
-    setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',category:'', notes:'', isLoading: false, editingGroup: false})
+    setNewEventState({title: '',amount: 0,isPayment: true, frequency: 'once',url:'',
+                      category:'', notes:'', isLoading: false, editingGroup: false,
+                      eventNumber: 1, groupTotal: 1,
+                      eventId: "", groupId: ""})
     setDateState({startDate:'', endDate:'', eventDate: ''})
   }
 
@@ -373,7 +373,7 @@ const MyCalendar = () => {
       let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
       addEvents(token, newEvents)
       .then(()=>{
-          cancelEvent()
+          cancelEvent() //reset dateState and newEventState
           window.location.reload()
       })
       .catch(e=>console.error(e))
@@ -421,10 +421,12 @@ const MyCalendar = () => {
       url: selectedEvent.url,
       category: selectedEvent.category,
       notes: selectedEvent.notes,
-      eventNumber: selectedEvent.eventNumber,
-      groupTotal: selectedEvent.groupTotal,
       isLoading: false,
       editingGroup: false,
+      eventNumber: selectedEvent.eventNumber,
+      groupTotal: selectedEvent.groupTotal,
+      eventId: selectedEvent.id,
+      groupId: selectedEvent.groupId,
     })
     setTimeout(()=>eventCard.current.click(), 0)
   }
@@ -433,6 +435,14 @@ const MyCalendar = () => {
   const handleEditClick = ()=>{
     console.log(dateState)
     editModal.current.click()
+  }
+  //clicking DELETE in event card OR in editing modal.
+  const deleteModal = useRef()
+  const handleDeleteClick = () =>{
+    console.log("You hit 'delete' button")
+    console.log(newEventState)
+    console.log(dateState)
+    deleteModal.current.click()
   }
   //editing modal: group or single event switch
   const groupSwitch = () => setNewEventState({...newEventState, editingGroup: document.getElementById('groupSwitch').checked})
@@ -469,13 +479,20 @@ const MyCalendar = () => {
     </div>
   </div>
   
-  //editing modal: hitting Delete button.
-  const deleteEvent = () =>{
-    console.log('you deleted the event.')
-  }
+  //editing modal: changing category of event(s)
+  const changeCategory = () => setNewEventState({...newEventState, category: document.getElementById('changeCategory').value})
+
   //editing modal: hitting "Save" edits event(s)
   const editEvent = () =>{
     console.log("You changed the events.")
+  }
+
+  //delete modal: choosing to delete group or delete single event.
+  const deleteGroupSwitch = () => setNewEventState({...newEventState, editingGroup: document.getElementById('deleteGroupSwitch').checked})
+
+  //delete modal: hitting "Delete" permanently deletes event(s)
+  const deleteEvent = () =>{
+    console.log("You deleted the event(s)")
   }
 //PAGE RENDERING STUFF
   return(
@@ -509,7 +526,7 @@ const MyCalendar = () => {
                           <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
                         </div>
                         <div className="col s3 m2 l2">
-                          <input id="paymentOrIncome" onChange={switchFunction} type="checkbox"/>
+                          <input id="paymentSwitch" onChange={paymentSwitch} type="checkbox"/>
                           <span className="lever"></span>
                         </div>
                         <div className="col s5 m5 l5 left-align">
@@ -650,8 +667,7 @@ const MyCalendar = () => {
           />
         </div>
         
-        {/* EVENT INFO CARD (triggers when calendar event clicked) */}
-        {/* needs styling */}
+        {/* EVENT INFO CARD (when calendar event clicked) */}{/* needs styling */}
         <div className="row">
           <a ref={eventCard} className="modal-trigger" href='#eventCard'></a>
           <Modal id="eventCard" className="center-align"
@@ -660,7 +676,7 @@ const MyCalendar = () => {
                 Edit <i className="material-icons right">send</i>
               </Button>,
               <span> </span>,
-              <Button onClick={deleteEvent} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
+              <Button onClick={handleDeleteClick} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
                 Delete <i className="material-icons right">delete</i>
               </Button>,
               <span>  </span>,
@@ -671,31 +687,22 @@ const MyCalendar = () => {
             // header={newEventState.title + " " + moment(dateState.startDate).format('MM-DD-YY')}
             >
               <div> {/* CARD BODY */}
-              {/* SEE GROUP OR ONE EVENT */}
-                  {/* <div className="switch groupSwitch row"> 
-                    <label>
-                      <div className="col s4 m5 l5 right-align">
-                        <h6 style={newEventState.editingGroup ? {display:"inline"}:{color: "blue", display:"inline"}}>Single Event Details</h6>
-                      </div>
-                      <div className="col s3 m2 l2">
-                        <input id="groupSwitch" onChange={groupSwitch} type="checkbox"/>
-                        <span className="lever"></span>
-                      </div>
-                      <div className="col s5 m5 l5 left-align">
-                        <h6 style={newEventState.editingGroup ? {color: "deeppink", display:"inline"}:{display:"inline"}}>Event Group Details</h6>
-                      </div>
-                    </label>
-                  </div> */}
-                <h4>
-                  {newEventState.title + " " + newEventState.eventNumber + " of " + newEventState.groupTotal}
-                </h4>
+                  {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
+                  <h4>{newEventState.title}</h4>
+                  <h5>{newEventState.frequency ==="once" ?
+                    "Single Event"
+                      :
+                    "Event Number " + newEventState.eventNumber + " of " + newEventState.groupTotal
+                    }</h5>
                 <div>
-                  <p>Amount: {newEventState.amount}</p>
-                  <p>Date: {moment(newEventState.eventDate).format("MM-DD-YYYY")}</p>
+                  <p>{newEventState.isPayment ? "Payment amount: $" + newEventState.amount : "Income amount: $" + newEventState.amount}</p>
+                  <p>Date: {moment(dateState.eventDate).format("MM-DD-YYYY")}</p>
                   <p>Frequency: {newEventState.frequency}</p>
                   <p>URL: {newEventState.url}</p>
                   <p>Notes: {newEventState.notes}</p>
                   <p>Category: {newEventState.category}</p>
+                  <p>Group Start Date: {moment(dateState.startDate).format("MM-DD-YYYY")}</p>
+                  <p>Group End Date: {moment(dateState.endDate).format("MM-DD-YYYY")}</p>
                 </div>
               </div> {/* END OF CARD BODY */}
           </Modal>
@@ -714,14 +721,14 @@ const MyCalendar = () => {
                   Save Changes <i className="material-icons right">send</i>
                 </Button>,
                 <span> </span>,
-                <Button onClick={deleteEvent} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
+                <Button onClick={handleDeleteClick} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
                   {newEventState.editingGroup ? "Delete Group":"Delete Event"} <i className="material-icons right">send</i>
                 </Button>
               ]}
               header={"Editing: " + newEventState.title}>
               <br></br>
               <form action="#">
-                {/* EDITING MODAL 1st ROW: EditingGroup, Title/Amount */}
+                {/* EDITING MODAL 1st ROW: EditingGroup, isPayment switches */}
                 <div className="row">
                   <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
                     <label>
@@ -738,24 +745,45 @@ const MyCalendar = () => {
                     </label>
                   </div>
                     <br></br>
-                    <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
-                      <label>
-                        <div className="col s4 m5 l5 right-align">
-                          <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
-                        </div>
-                        <div className="col s3 m2 l2">
-                          <input id="paymentOrIncome" onChange={switchFunction} type="checkbox"/>
-                          <span className="lever"></span>
-                        </div>
-                        <div className="col s5 m5 l5 left-align">
-                          <h6 style={newEventState.isPayment ? {display:"inline"}:{color: "green", display:"inline"}}>I am receiving income.</h6>
-                        </div>
-                      </label>
-                    </div>
-                    {/* edit event title */}
+                  <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
+                    <label>
+                      <div className="col s4 m5 l5 right-align">
+                        <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
+                      </div>
+                      <div className="col s3 m2 l2">
+                        <input id="editPaymentSwitch" onChange={editPaymentSwitch} type="checkbox"/>
+                        <span className="lever"></span>
+                      </div>
+                      <div className="col s5 m5 l5 left-align">
+                        <h6 style={newEventState.isPayment ? {display:"inline"}:{color: "green", display:"inline"}}>I am receiving income.</h6>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                
+                <div id="modalDivider"
+                  style={{
+                    width: "100%", height: "4px", 
+                    borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                    borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid"
+                    }}>
+                </div>
+                
+                {/* EDITING MODAL 1.5-TH ROW: TITLE AND AMOUNT */}
+                <div className="row">
+                    {/* edit event title: should only available if editing GROUP OF EVENTS. */}
                     <div className="input-field col s12 m6 l6">
-                      <label style={newEventState.title.length ? {visibility: "hidden"} : {visibility: "visible"}} htmlFor="newTitle">Event Title</label>
-                      <input id="newTitle" name="title" value={newEventState.title} onChange={newEventState.handleInputChange} />                
+                      {newEventState.editingGroup ?
+                        <>
+                          <span className="left">New Event Group Title</span>
+                          <label style={newEventState.title.length ? {visibility: "hidden"} : {visibility: "visible"}} htmlFor="newTitle">Event Title</label>
+                          <input id="newTitle" name="title" value={newEventState.title} onChange={newEventState.handleInputChange} />
+                        </>
+                        :
+                        <>
+                          <span className="left">Event Group Title:<h6>{newEventState.title}</h6></span>
+                        </>
+                      }
                     </div>
                     {/* edit dollar amount */}
                     <div className="input-field col s12 m6 l6">
@@ -778,11 +806,11 @@ const MyCalendar = () => {
                 <div className="row">
                   {/* Start Date  */}
                   <div className="col s5 m2 l2">
-                    <p className="center">New start date?</p>
+                  <p className="center">{newEventState.editingGroup ? "New group start date?" : "New event date?"}</p>
                   </div>
                   <div className="col s7 m4 l4">
                     <DatePicker
-                      placeholder={new Date(dateState.startDate)}
+                      placeholder={newEventState.editingGroup ? moment(dateState.startDate).format("MMM Do, YYYY"): moment(dateState.eventDate).format("MMM Do, YYYY")}
                       className="datePicker"
                       options={{
                         autoClose: false,    container: null,    defaultDate: new Date(dateState.startDate),    disableDayFn: null,
@@ -849,8 +877,8 @@ const MyCalendar = () => {
                       // style={{visibility:'hidden'}}
                     >
                       Category</span>
-                    <select id="categorySelect" className="browser-default" onChange={categorySelect}>
-                      <option value="" selected disabled>Choose new category.</option>
+                    <select id="changeCategory" className="browser-default" onChange={changeCategory}>
+                      <option value={newEventState.category} selected disabled>Select Category</option>
                       <option value="income">Income</option>
                       <option value="housing">Housing Expense</option>
                       <option value="insurance">Insurance Payment</option>
@@ -867,10 +895,74 @@ const MyCalendar = () => {
                   </div>
                 </div>
               </form>
-
           </Modal>
-        </div>
+        </div>{/* end editing modal */}
       
+        {/* DELETE MODAL */}
+        <div className="row">
+          <a ref={deleteModal} className="modal-trigger" href='#deleteModal'></a>
+          <Modal id="deleteModal" className="center-align"
+              actions={[
+                <Button onClick={deleteEvent} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
+                  {newEventState.editingGroup ? "Delete Group":"Delete Event"} <i className="material-icons right">delete</i>
+                </Button>,
+                <span>  </span>,
+                <Button onClick={cancelEvent} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                  Cancel
+                </Button>,
+              ]}
+              // header={"Deleting: " + newEventState.title}
+          >
+            <br></br>
+            <form action="#">
+              {/* DELETE MODAL 1st ROW: Group versus single event*/}
+              <div className="row"> 
+                <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
+                  <label>
+                    <div className="col s4 m5 l5 right-align">
+                      <h6 style={newEventState.editingGroup ? {display:"inline"}:{color: "blue", display:"inline"}}>Delete Single Event</h6>
+                    </div>
+                    <div className="col s3 m2 l2">
+                      <input id="deleteGroupSwitch" onChange={deleteGroupSwitch} type="checkbox"/>
+                      <span className="lever"></span>
+                    </div>
+                    <div className="col s5 m5 l5 left-align">
+                      <h6 style={newEventState.editingGroup ? {color: "deeppink", display:"inline"}:{display:"inline"}}>Delete Group of Events</h6>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="row"><div id="modalDivider"
+                style={{
+                  width: "100%", height: "4px", 
+                  borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                  borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid"
+                  }}>
+              </div></div>
+
+              {/* DELETE MODAL 2nd ROW: Selected Event(s) to delete */}
+              {newEventState.editingGroup ? 
+              <>
+                <div className="row">
+                  <h5>Are you sure you want to delete event group? ({newEventState.groupTotal} total)</h5> 
+                  <h5>"{newEventState.title}"</h5>
+                  <h6>starting {moment(dateState.startDate).format("MMMM Do, YYYY")}</h6>
+                  <h6>ending {moment(dateState.endDate).format("MMMM, Do, YYYY")}</h6>
+                </div>
+              </>
+              :
+              <>
+                <div className="row">
+                  <h5>Are you sure you want to delete this event?</h5> 
+                  <h5>"{newEventState.title}" </h5>
+                  <h6>occuring on {moment(dateState.eventDate).format("MMMM Do, YYYY")}</h6>
+                </div>
+              </>}
+            </form>
+          </Modal>
+        </div> {/* end delete modal */}
+
       </div> {/* END CONTAINER */}
     </>
   )
