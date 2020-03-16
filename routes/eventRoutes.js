@@ -50,17 +50,26 @@ module.exports = app => {
       .then(() => res.sendStatus(200))
       .catch(e => console.error(e))
   })
+  
+  //EDIT GROUP of events
+  app.put('/events/:groupId',passport.authenticate('jwt', {session: false}), (req, res) =>{
+    Event.find({groupId: req.params.groupId})
+  })
 
-  //DELETE A PAYMENT (DELETE)
-  app.delete('/events/:id', passport.authenticate('jwt', {session: false}), (req, res) => {
-    const _id = req.params.id
-    Event.deleteOne({ _id })
+  //DELETE ONE EVENT
+  app.delete('/event', passport.authenticate('jwt', {session: false}), (req, res) => {
+    const {_id} = req.body
+    Event.findByIdAndDelete({ _id })
       .then(() => res.sendStatus(200))
       .catch(e => console.error(e))
   })
   
-  //EDIT GROUP of events
-  app.put('/events/:groupId', (req, res) =>{
-    Event.find({groupId: req.params.groupId})
+  //DELETE GROUP of events
+  app.delete('/events', passport.authenticate('jwt', {session: false}), (req, res)=>{
+    const {groupId} = req.body
+    // console.log(groupId)
+    Event.deleteMany({groupId: groupId})
+      .then(()=>res.sendStatus(200))
+      .catch(e=>console.error(e))
   })
 }
