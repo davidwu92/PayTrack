@@ -211,6 +211,8 @@ const MyCalendar = () => {
 
   //add modal: hitting "Save" adds event(s).
   const addNewEvents = () => {
+    console.log("adding new events")
+    console.log(dateState)
     setNewEventState({...newEventState, isLoading: true})
     if(newEventState.frequency =="once"){
       //create single event object.
@@ -223,9 +225,9 @@ const MyCalendar = () => {
         website: newEventState.url,
         category: newEventState.category,
         notes: newEventState.notes,
-        eventDate: dateState.startDate,
-        groupStartDate: dateState.startDate,
-        groupEndDate: moment(dateState.startDate).add(1, "day"),
+        eventDate: dateState.eventDate,
+        groupStartDate: dateState.eventDate,
+        groupEndDate: moment(dateState.eventDate).add(1, "day"),
         eventNumber: 1,
         groupTotal: 1,
       }
@@ -233,14 +235,15 @@ const MyCalendar = () => {
       addEvent(token, newEvent)
       .then(()=>{
           cancelEvent()
-          window.location.reload()
+          // window.location.reload()
       })
       .catch(e=>console.error(e))
     } else {
       //adding MULTIPLE EVENTS. Calculate # of events to create, populate newEvents array.
-      let startingDay = moment(dateState.startDate).format('X')
-      let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'day').format('X') : moment(dateState.startDate).add(5, 'years').format('X')
+      let startingDay = moment(dateState.eventDate).format('X')
+      let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'day').format('X') : moment(dateState.eventDate).add(5, 'years').format('X')
       let duration = endingDay - startingDay
+      console.log(duration)
       let newEvents = []
       let occurences = 0
         switch (newEventState.frequency) {
@@ -256,9 +259,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.startDate).add(i, "week").format(),
-                groupStartDate: moment(dateState.startDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventDate: moment(dateState.eventDate).add(i, "week").format(),
+                groupStartDate: moment(dateState.eventDate).format(),
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -276,9 +279,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.startDate).add(2*i, "week").format(),
-                groupStartDate: moment(dateState.startDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventDate: moment(dateState.eventDate).add(2*i, "week").format(),
+                groupStartDate: moment(dateState.eventDate).format(),
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -296,9 +299,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.startDate).add(i, "month").format(),
-                groupStartDate: moment(dateState.startDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventDate: moment(dateState.eventDate).add(i, "month").format(),
+                groupStartDate: moment(dateState.eventDate).format(),
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -316,9 +319,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.startDate).add(3*i, "month").format(),
-                groupStartDate: moment(dateState.startDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventDate: moment(dateState.eventDate).add(3*i, "month").format(),
+                groupStartDate: moment(dateState.eventDate).format(),
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -336,9 +339,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.startDate).add(6*i, "month").format(),
-                groupStartDate: moment(dateState.startDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventDate: moment(dateState.eventDate).add(6*i, "month").format(),
+                groupStartDate: moment(dateState.eventDate).format(),
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -356,9 +359,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.startDate).add(i, "year").format(),
-                groupStartDate: moment(dateState.startDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventDate: moment(dateState.eventDate).add(i, "year").format(),
+                groupStartDate: moment(dateState.eventDate).format(),
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -376,9 +379,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.startDate).add(2*i, "year").format(),
-                groupStartDate: moment(dateState.startDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.startDate).add(5, 'years').format(),
+                eventDate: moment(dateState.eventDate).add(2*i, "year").format(),
+                groupStartDate: moment(dateState.eventDate).format(),
+                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -389,7 +392,7 @@ const MyCalendar = () => {
       addEvents(token, newEvents)
       .then(()=>{
           cancelEvent() //reset dateState and newEventState
-          window.location.reload()
+          // window.location.reload()
       })
       .catch(e=>console.error(e))
     }
@@ -469,7 +472,7 @@ const MyCalendar = () => {
       <p className="center">New End Date?</p>
     </div>
     <div className="col s7 m10 l10">
-      <DatePicker
+      {/* <DatePicker
         placeholder= {moment(dateState.endDate).format('ddd MMM Do, YYYY')}
         className="datePicker"
         options={{
@@ -489,7 +492,7 @@ const MyCalendar = () => {
           yearRange: 10
         }}
         onChange={dateState.handleEndDate}
-      />
+      /> */}
     </div>
   </div>
   
@@ -584,6 +587,7 @@ const MyCalendar = () => {
               header="Add New Event" trigger={createEvent}>
               <br></br>
               <form action="#">
+              <button onClick={getDateState}>GET DATE STATE</button>
                 {/* ADD EVENT MODAL 1st ROW: Title/Amount */}
                 <div className="row">
                     <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
@@ -648,7 +652,7 @@ const MyCalendar = () => {
                         parse: null,setDefaultDate: false,showClearBtn: false,showDaysInNextAndPreviousMonths: false,showMonthAfterYear: false,
                         yearRange: 10
                       }}
-                      onChange={newEventState.editingGroup ? dateState.handleStartDate : dateState.handleEventDate}
+                      onChange={dateState.handleEventDate}
                     />
                   </div>
                   {/* Frequency */}
@@ -876,7 +880,7 @@ const MyCalendar = () => {
                   <p className="center">{newEventState.editingGroup ? "New group start date?" : "New event date?"}</p>
                   </div>
                   <div className="col s7 m4 l4">
-                    <DatePicker
+                    {/* <DatePicker
                       // {newEventState.editingGroup ? moment(dateState.startDate).format("MMM Do, YYYY"): moment(dateState.eventDate).format("MMM Do, YYYY")}
                       placeholder="New Start Date"
                       className="datePicker"
@@ -900,7 +904,7 @@ const MyCalendar = () => {
                         // dateState.handleStartDate
                         (date)=>setDateState({...dateState, startDate: date})
                       }
-                    />
+                    /> */}
                   </div>
                   {/* Frequency -- can't be changed for single date*/}
                   {!newEventState.editingGroup ? null : 
@@ -967,7 +971,8 @@ const MyCalendar = () => {
                 </div>
               </form>
           </Modal>
-        </div>{/* end editing modal */}
+        </div>
+        {/* end editing modal */}
       
         {/* DELETE MODAL */}
         <div className="row">
