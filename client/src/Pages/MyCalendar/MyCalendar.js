@@ -26,7 +26,9 @@ import ColorPreferences from '../../Components/ColorPreferences'
 import '../../app.css'
 
 const { getColors } = UserAPI
-const {addEvent, addEvents, getEvents, editEvent, editEvents, deleteEvent, deleteEvents } = EventAPI
+const {addEvent, addEvents, getEvents, editEvent, 
+  // editEvents,
+   deleteEvent, deleteEvents } = EventAPI
 
 const MyCalendar = () => {
 //~~~~~~~~~~~~~~~~~~~~~~~~~CALENDAR VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -137,19 +139,19 @@ const MyCalendar = () => {
     eventDate: '',
   })
   dateState.handleStartDate = (date) => {
-    console.log(date)
+    // console.log(date)
     setDateState({...dateState, startDate: date})
-    console.log(dateState)
+    // console.log(dateState)
   }
   dateState.handleEndDate = (date) => {
-    console.log(date)
+    // console.log(date)
     setDateState({...dateState, endDate: date})
-    console.log(dateState)
+    // console.log(dateState)
   }
   dateState.handleEventDate = (date) => {
-    console.log(date)
+    // console.log(date)
     setDateState({...dateState, eventDate: date})
-    console.log(dateState)
+    // console.log(dateState)
   }
 
   //Button that triggers add modal.
