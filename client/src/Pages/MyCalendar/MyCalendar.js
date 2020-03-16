@@ -132,29 +132,21 @@ const MyCalendar = () => {
   newEventState.handleInputChange = (event) => {
     setNewEventState({ ...newEventState, [event.target.name]: event.target.value })
   }
-  // Variables to handle new event Date
-  const [dateState, setDateState] = useState({
-    startDate: '',
-    endDate: '',
-    eventDate: '',
-  })
-  dateState.handleStartDate = (date) => {
-    // console.log(date)
-    setDateState({...dateState, startDate: date})
-    // console.log(dateState)
-  }
-  dateState.handleEndDate = (date) => {
-    // console.log(date)
-    setDateState({...dateState, endDate: date})
-    // console.log(dateState)
-  }
-  dateState.handleEventDate = (date) => {
-    // console.log(date)
-    setDateState({...dateState, eventDate: date})
-    // console.log(dateState)
-  }
 
-  //Button that triggers add modal.
+  //NEW EVENT START DATE
+  const [newStartState, setNewStartState] = useState({
+    startDate: ''
+  })
+  newStartState.handleStartDate = (date) => setNewStartState({startDate: date})
+  
+  //NEW EVENT END DATE
+  const [newEndState, setNewEndState] = useState({
+    endDate: ''
+  })
+  newEndState.handleEndDate = (date) => setNewEndState({endDate: date})
+
+  
+  //Button that triggers ADD modal.
   const createEvent = <Button id="newPayment" className="purple right white-text waves-effect waves-light">
     Add New Event</Button>;
   
@@ -192,7 +184,7 @@ const MyCalendar = () => {
               parse: null,setDefaultDate: false,showClearBtn: false,showDaysInNextAndPreviousMonths: true,showMonthAfterYear: false,
               yearRange: 10
             }}
-            onChange={dateState.handleEndDate}
+            onChange={newEndState.handleEndDate}
           />
         </div>
       </div>
@@ -206,13 +198,18 @@ const MyCalendar = () => {
                       category:'', notes:'', isLoading: false, editingGroup: false,
                       eventNumber: 1, groupTotal: 1,
                       eventId: "", groupId: ""})
-    setDateState({startDate:'', endDate:'', eventDate: ''})
+    setNewStartState({startDate:''})
+    setNewEndState({endDate: ''})
+    setEditEventState({eventDate: ''})
+    setEditStartState({startDate: ''})
+    setEditEndState({endDate: ''})
   }
 
   //add modal: hitting "Save" adds event(s).
   const addNewEvents = () => {
     console.log("adding new events")
-    console.log(dateState)
+    console.log(newStartState)
+    console.log(newEndState)
     setNewEventState({...newEventState, isLoading: true})
     if(newEventState.frequency =="once"){
       //create single event object.
@@ -225,9 +222,9 @@ const MyCalendar = () => {
         website: newEventState.url,
         category: newEventState.category,
         notes: newEventState.notes,
-        eventDate: dateState.eventDate,
-        groupStartDate: dateState.eventDate,
-        groupEndDate: moment(dateState.eventDate).add(1, "day"),
+        eventDate: newStartState.startDate,
+        groupStartDate: newStartState.startDate,
+        groupEndDate: moment(newStartState.startDate).add(1, "day"),
         eventNumber: 1,
         groupTotal: 1,
       }
@@ -235,13 +232,13 @@ const MyCalendar = () => {
       addEvent(token, newEvent)
       .then(()=>{
           cancelEvent()
-          // window.location.reload()
+          window.location.reload()
       })
       .catch(e=>console.error(e))
     } else {
       //adding MULTIPLE EVENTS. Calculate # of events to create, populate newEvents array.
-      let startingDay = moment(dateState.eventDate).format('X')
-      let endingDay = dateState.endDate ? moment(dateState.endDate).add(1, 'day').format('X') : moment(dateState.eventDate).add(5, 'years').format('X')
+      let startingDay = moment(newStartState.startDate).format('X')
+      let endingDay = newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format('X') : moment(newStartState.startDate).add(5, 'years').format('X')
       let duration = endingDay - startingDay
       console.log(duration)
       let newEvents = []
@@ -259,9 +256,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.eventDate).add(i, "week").format(),
-                groupStartDate: moment(dateState.eventDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
+                eventDate: moment(newStartState.startDate).add(i, "week").format(),
+                groupStartDate: moment(newStartState.startDate).format(),
+                groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -279,9 +276,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.eventDate).add(2*i, "week").format(),
-                groupStartDate: moment(dateState.eventDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
+                eventDate: moment(newStartState.startDate).add(2*i, "week").format(),
+                groupStartDate: moment(newStartState.startDate).format(),
+                groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -299,9 +296,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.eventDate).add(i, "month").format(),
-                groupStartDate: moment(dateState.eventDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
+                eventDate: moment(newStartState.startDate).add(i, "month").format(),
+                groupStartDate: moment(newStartState.startDate).format(),
+                groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -319,9 +316,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.eventDate).add(3*i, "month").format(),
-                groupStartDate: moment(dateState.eventDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
+                eventDate: moment(newStartState.startDate).add(3*i, "month").format(),
+                groupStartDate: moment(newStartState.startDate).format(),
+                groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -339,9 +336,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.eventDate).add(6*i, "month").format(),
-                groupStartDate: moment(dateState.eventDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
+                eventDate: moment(newStartState.startDate).add(6*i, "month").format(),
+                groupStartDate: moment(newStartState.startDate).format(),
+                groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -359,9 +356,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.eventDate).add(i, "year").format(),
-                groupStartDate: moment(dateState.eventDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
+                eventDate: moment(newStartState.startDate).add(i, "year").format(),
+                groupStartDate: moment(newStartState.startDate).format(),
+                groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -379,9 +376,9 @@ const MyCalendar = () => {
                 website: newEventState.url,
                 category: newEventState.category,
                 notes: newEventState.notes,
-                eventDate: moment(dateState.eventDate).add(2*i, "year").format(),
-                groupStartDate: moment(dateState.eventDate).format(),
-                groupEndDate: dateState.endDate ? moment(dateState.endDate).add(1, 'day').format() : moment(dateState.eventDate).add(5, 'years').format(),
+                eventDate: moment(newStartState.startDate).add(2*i, "year").format(),
+                groupStartDate: moment(newStartState.startDate).format(),
+                groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
                 eventNumber: i+1,
                 groupTotal: occurences,
               })
@@ -391,8 +388,8 @@ const MyCalendar = () => {
       let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
       addEvents(token, newEvents)
       .then(()=>{
-          cancelEvent() //reset dateState and newEventState
-          // window.location.reload()
+          cancelEvent() //reset newEventState, newStartState, newEndState
+          window.location.reload()
       })
       .catch(e=>console.error(e))
     }
@@ -400,6 +397,23 @@ const MyCalendar = () => {
   let loadingBar = newEventState.isLoading ? <div style={{backgroundColor: "violet", textColor:"white", zIndex:"3", width:"100vw", position: "fixed", bottom:0}}>
   <h6 id="loadingBar" className="center white-text">Adding events...</h6>
   </div> : null
+
+
+  //EDITING EVENT single date (acts as new start date for group)
+  const [editEventState, setEditEventState] = useState({
+    eventDate: ''
+  })
+  editEventState.handleEventDate = (date) => setEditEventState({eventDate: date})
+  //EDIT EVENT GROUP START DATE (stays as group's start date)
+  const [editStartState, setEditStartState] = useState({
+    startDate: ''
+  })
+  editStartState.handleStartDate = (date) => setEditStartState({startDate: date})
+  //EDIT EVENT GROUP END DATE
+  const [editEndState, setEditEndState] = useState({
+    endDate: ''
+  })
+  editEndState.handleEndDate = (date) => setEditEndState({endDate: date})
 
   //handle CLICKING calendar event (SHOW EVENT CARD with options: Edit, Close, Delete)
   const eventCard = useRef()
@@ -425,13 +439,10 @@ const MyCalendar = () => {
       groupTotal: e.event.extendedProps.groupTotal,
     }
     console.log(selectedEvent)
-    //using newEventState and dateState for editing modal.
-    setDateState({
-      ...dateState,
-      startDate: selectedEvent.groupStartDate,
-      endDate: selectedEvent.groupEndDate,
-      eventDate: selectedEvent.eventDate,
-    })
+    //using newEventState and editStartState for editing modal.
+    setEditEventState({eventDate: selectedEvent.eventDate})
+    setEditStartState({startDate: selectedEvent.groupStartDate})
+    setEditEndState({endDate: selectedEvent.groupEndDate})
     setNewEventState({
       title: selectedEvent.title,
       amount: selectedEvent.amount,
@@ -452,7 +463,6 @@ const MyCalendar = () => {
   //clicking EDIT in event card.
   const editModal = useRef()
   const handleEditClick = ()=>{
-    console.log(dateState)
     editModal.current.click()
   }
   //clicking DELETE in event card OR in editing modal.
@@ -472,11 +482,11 @@ const MyCalendar = () => {
       <p className="center">New End Date?</p>
     </div>
     <div className="col s7 m10 l10">
-      {/* <DatePicker
-        placeholder= {moment(dateState.endDate).format('ddd MMM Do, YYYY')}
+      <DatePicker
+        placeholder= {moment(editEndState.endDate).format('ddd MMM Do, YYYY')}
         className="datePicker"
         options={{
-          autoClose: false,    container: null,    defaultDate: dateState.endDate,    disableDayFn: null,
+          autoClose: false,    container: null,    defaultDate: editEndState.endDate,    disableDayFn: null,
           disableWeekends: false,    events: [],    firstDay: 0,    format: 'mmm dd, yyyy',
           i18n: {cancel: 'Cancel',clear: 'Clear',done: 'Ok',
             months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
@@ -491,8 +501,8 @@ const MyCalendar = () => {
           parse: null,setDefaultDate: true,showClearBtn: false,showDaysInNextAndPreviousMonths: true,showMonthAfterYear: false,
           yearRange: 10
         }}
-        onChange={dateState.handleEndDate}
-      /> */}
+        onChange={(date)=>setEditEndState({endDate: moment(date).format()})}
+      />
     </div>
   </div>
   
@@ -506,26 +516,178 @@ const MyCalendar = () => {
     console.log("You changed the events.")
     if(newEventState.editingGroup) {
       //editing GROUP by form means DELETE EVERYTHING in that group, remake.
-      let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
       deleteEvents(token, newEventState.groupId)
       .then(()=>{
-        //Working for everything but the friggin starting and ending dates.
-        addNewEvents()
+        let startingDay = moment(editEventState.eventDate).format('X')
+        let endingDay = editEndState.endDate ? moment(editEndState.endDate).add(1, 'day').format('X') : moment(editEventState.eventDate).add(5, 'years').format('X')
+        let duration = endingDay - startingDay
+        console.log(duration)
+        let newEvents = []
+        let occurences = 0
+          switch (newEventState.frequency) {
+            case "weekly":
+              occurences = Math.ceil(duration / 604800)
+              for (let i = 0; i<occurences; i++){
+                newEvents.push({
+                  title: newEventState.title,
+                  groupId: newEventState.title + "group",
+                  amount: newEventState.amount,
+                  isPayment: newEventState.isPayment,
+                  frequency: newEventState.frequency,
+                  website: newEventState.url,
+                  category: newEventState.category,
+                  notes: newEventState.notes,
+                  eventDate: moment(editEventState.eventDate).add(i, "week").format(),
+                  groupStartDate: moment(editEventState.eventDate).format(),
+                  groupEndDate: editEndState.endDate ? moment(editEndState.endDate).add(1, 'day').format() : moment(editEventState.eventDate).add(5, 'years').format(),
+                  eventNumber: i+1,
+                  groupTotal: occurences,
+                })
+              }
+              break;
+            case "biweekly":
+              occurences = Math.ceil(duration / 1209600)
+              for (let i = 0; i<occurences; i++){
+                newEvents.push({
+                  title: newEventState.title,
+                  groupId: newEventState.title + "group",
+                  amount: newEventState.amount,
+                  isPayment: newEventState.isPayment,
+                  frequency: newEventState.frequency,
+                  website: newEventState.url,
+                  category: newEventState.category,
+                  notes: newEventState.notes,
+                  eventDate: moment(editEventState.eventDate).add(2*i, "week").format(),
+                  groupStartDate: moment(editEventState.eventDate).format(),
+                  groupEndDate: editEndState.endDate ? moment(editEndState.endDate).add(1, 'day').format() : moment(editEventState.eventDate).add(5, 'years').format(),
+                  eventNumber: i+1,
+                  groupTotal: occurences,
+                })
+              }
+              break;
+            case "monthly":
+              occurences = Math.ceil(duration / 2628333)
+              for (let i = 0; i<occurences; i++){
+                newEvents.push({
+                  title: newEventState.title,
+                  groupId: newEventState.title + "group",
+                  amount: newEventState.amount,
+                  isPayment: newEventState.isPayment,
+                  frequency: newEventState.frequency,
+                  website: newEventState.url,
+                  category: newEventState.category,
+                  notes: newEventState.notes,
+                  eventDate: moment(editEventState.eventDate).add(i, "month").format(),
+                  groupStartDate: moment(editEventState.eventDate).format(),
+                  groupEndDate: editEndState.endDate ? moment(editEndState.endDate).add(1, 'day').format() : moment(editEventState.eventDate).add(5, 'years').format(),
+                  eventNumber: i+1,
+                  groupTotal: occurences,
+                })
+              }
+              break;
+            case "quarterly":
+              occurences = Math.ceil(duration / 7885000)
+              for (let i = 0; i<occurences; i++){
+                newEvents.push({
+                  title: newEventState.title,
+                  groupId: newEventState.title + "group",
+                  amount: newEventState.amount,
+                  isPayment: newEventState.isPayment,
+                  frequency: newEventState.frequency,
+                  website: newEventState.url,
+                  category: newEventState.category,
+                  notes: newEventState.notes,
+                  eventDate: moment(editEventState.eventDate).add(3*i, "month").format(),
+                  groupStartDate: moment(editEventState.eventDate).format(),
+                  groupEndDate: editEndState.endDate ? moment(editEndState.endDate).add(1, 'day').format() : moment(editEventState.eventDate).add(5, 'years').format(),
+                  eventNumber: i+1,
+                  groupTotal: occurences,
+                })
+              }
+              break;
+            case "biannual":
+              occurences = Math.ceil(duration / 15770000)
+              for (let i = 0; i<occurences; i++){
+                newEvents.push({
+                  title: newEventState.title,
+                  groupId: newEventState.title + "group",
+                  amount: newEventState.amount,
+                  isPayment: newEventState.isPayment,
+                  frequency: newEventState.frequency,
+                  website: newEventState.url,
+                  category: newEventState.category,
+                  notes: newEventState.notes,
+                  eventDate: moment(editEventState.eventDate).add(6*i, "month").format(),
+                  groupStartDate: moment(editEventState.eventDate).format(),
+                  groupEndDate: editEndState.endDate ? moment(editEndState.endDate).add(1, 'day').format() : moment(editEventState.eventDate).add(5, 'years').format(),
+                  eventNumber: i+1,
+                  groupTotal: occurences,
+                })
+              }
+              break;
+            case "annual":
+              occurences = Math.ceil(duration / 31536000)
+              for (let i = 0; i<occurences; i++){
+                newEvents.push({
+                  title: newEventState.title,
+                  groupId: newEventState.title + "group",
+                  amount: newEventState.amount,
+                  isPayment: newEventState.isPayment,
+                  frequency: newEventState.frequency,
+                  website: newEventState.url,
+                  category: newEventState.category,
+                  notes: newEventState.notes,
+                  eventDate: moment(editEventState.eventDate).add(i, "year").format(),
+                  groupStartDate: moment(editEventState.eventDate).format(),
+                  groupEndDate: editEndState.endDate ? moment(editEndState.endDate).add(1, 'day').format() : moment(editEventState.eventDate).add(5, 'years').format(),
+                  eventNumber: i+1,
+                  groupTotal: occurences,
+                })
+              }
+              break;
+            case "biennial":
+              occurences = Math.ceil(duration / 63080000)
+              for (let i = 0; i<occurences; i++){
+                newEvents.push({
+                  title: newEventState.title,
+                  groupId: newEventState.title + "group",
+                  amount: newEventState.amount,
+                  isPayment: newEventState.isPayment,
+                  frequency: newEventState.frequency,
+                  website: newEventState.url,
+                  category: newEventState.category,
+                  notes: newEventState.notes,
+                  eventDate: moment(editEventState.eventDate).add(2*i, "year").format(),
+                  groupStartDate: moment(editEventState.eventDate).format(),
+                  groupEndDate: editEndState.endDate ? moment(editEndState.endDate).add(1, 'day').format() : moment(editEventState.eventDate).add(5, 'years').format(),
+                  eventNumber: i+1,
+                  groupTotal: occurences,
+                })
+              }
+              break;
+          }
+        let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
+        addEvents(token, newEvents)
+        .then(()=>{
+            cancelEvent() //reset newEventState, newStartState, newEndState
+            window.location.reload()
+        })
+        .catch(e=>console.error(e))
       })
       .catch(e=>console.error(e))
+  
     } else{
       //editing SINGLE EVENT (works for everything but groupStartDate, groupEndDate)
       let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
-      console.log(dateState)
       editEvent(token, newEventState.eventId, {
         amount: newEventState.amount,
         isPayment: newEventState.isPayment,        
         website: newEventState.url,
         category: newEventState.category,
         notes: newEventState.notes,
-        eventDate: dateState.eventDate,
-        groupStartDate: dateState.startDate,
-        groupEndDate: dateState.endDate,
+        eventDate: editEventState.eventDate,
+        groupStartDate: editStartState.startDate,
+        groupEndDate: editEndState.endDate,
       })
       .then(()=>{
         console.log("You edited one event.")
@@ -560,7 +722,13 @@ const MyCalendar = () => {
   //testing button for DATE STATE: who knows why it's changing when I click on edit modal DatePicker... >:[
   const getDateState = (e) =>{
     e.preventDefault()
-    console.log(dateState)
+    console.log("datestate")
+    console.log(newStartState)
+    console.log(newEndState)
+    console.log("EDITING DATE STATES")
+    console.log(editEventState)
+    console.log(editStartState)
+    console.log(editEndState)
   }
 
 //PAGE RENDERING STUFF
@@ -652,7 +820,7 @@ const MyCalendar = () => {
                         parse: null,setDefaultDate: false,showClearBtn: false,showDaysInNextAndPreviousMonths: false,showMonthAfterYear: false,
                         yearRange: 10
                       }}
-                      onChange={dateState.handleEventDate}
+                      onChange={newStartState.handleStartDate}
                     />
                   </div>
                   {/* Frequency */}
@@ -754,7 +922,6 @@ const MyCalendar = () => {
                 Close
               </Button>,
             ]}
-            // header={newEventState.title + " " + moment(dateState.startDate).format('MM-DD-YY')}
             >
               <div> {/* CARD BODY */}
                   {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
@@ -766,13 +933,13 @@ const MyCalendar = () => {
                     }</h5>
                 <div>
                   <p>{newEventState.isPayment ? "Payment amount: $" + newEventState.amount : "Income amount: $" + newEventState.amount}</p>
-                  <p>Date: {moment(dateState.eventDate).format("MM-DD-YYYY")}</p>
+                  <p>Date: {moment(editEventState.eventDate).format("MM-DD-YYYY")}</p>
                   <p>Frequency: {newEventState.frequency}</p>
                   <p>URL: {newEventState.url}</p>
                   <p>Notes: {newEventState.notes}</p>
                   <p>Category: {newEventState.category}</p>
-                  <p>Group Start Date: {moment(dateState.startDate).format("MM-DD-YYYY")}</p>
-                  <p>Group End Date: {moment(dateState.endDate).format("MM-DD-YYYY")}</p>
+                  <p>Group Start Date: {moment(editStartState.startDate).format("MM-DD-YYYY")}</p>
+                  <p>Group End Date: {moment(editEndState.endDate).format("MM-DD-YYYY")}</p>
                 </div>
               </div> {/* END OF CARD BODY */}
           </Modal>
@@ -791,9 +958,6 @@ const MyCalendar = () => {
                   Save Changes <i className="material-icons right">send</i>
                 </Button>,
                 <span> </span>,
-                // <Button onClick={handleDeleteClick} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
-                //   {newEventState.editingGroup ? "Delete Group":"Delete Event"} <i className="material-icons right">send</i>
-                // </Button>
               ]}
               header={"Editing: " + newEventState.title}>
               <br></br>
@@ -822,7 +986,11 @@ const MyCalendar = () => {
                         <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
                       </div>
                       <div className="col s3 m2 l2">
-                        <input id="editPaymentSwitch" onChange={editPaymentSwitch} type="checkbox"/>
+                        { newEventState.isPayment ?
+                        <input id="editPaymentSwitch" onClick={editPaymentSwitch} type="checkbox"/>
+                        :
+                        <input id="editPaymentSwitch" onClick={editPaymentSwitch} type="checkbox" defaultChecked/>
+                        }
                         <span className="lever"></span>
                       </div>
                       <div className="col s5 m5 l5 left-align">
@@ -844,17 +1012,7 @@ const MyCalendar = () => {
                 <div className="row">
                     {/* edit event title: should only available if editing GROUP OF EVENTS. */}
                     <div className="input-field col s12 m6 l6">
-                      {newEventState.editingGroup ?
-                        <>
-                          <span className="left">New Event Group Title</span>
-                          <label style={newEventState.title.length ? {visibility: "hidden"} : {visibility: "visible"}} htmlFor="newTitle">Event Title</label>
-                          <input id="newTitle" name="title" value={newEventState.title} onChange={newEventState.handleInputChange} />
-                        </>
-                        :
-                        <>
-                          <span className="left">Event Group Title:<h6>{newEventState.title}</h6></span>
-                        </>
-                      }
+                      <span className="left">Event Group Title:<h6>{newEventState.title}</h6></span>
                     </div>
                     {/* edit dollar amount */}
                     <div className="input-field col s12 m6 l6">
@@ -880,8 +1038,7 @@ const MyCalendar = () => {
                   <p className="center">{newEventState.editingGroup ? "New group start date?" : "New event date?"}</p>
                   </div>
                   <div className="col s7 m4 l4">
-                    {/* <DatePicker
-                      // {newEventState.editingGroup ? moment(dateState.startDate).format("MMM Do, YYYY"): moment(dateState.eventDate).format("MMM Do, YYYY")}
+                    <DatePicker
                       placeholder="New Start Date"
                       className="datePicker"
                       options={{
@@ -901,10 +1058,9 @@ const MyCalendar = () => {
                         yearRange: 10
                       }}
                       onChange={
-                        // dateState.handleStartDate
-                        (date)=>setDateState({...dateState, startDate: date})
+                        (date)=>setEditEventState({eventDate: moment(date).format()})
                       }
-                    /> */}
+                    />
                   </div>
                   {/* Frequency -- can't be changed for single date*/}
                   {!newEventState.editingGroup ? null : 
@@ -1023,8 +1179,8 @@ const MyCalendar = () => {
                 <div className="row">
                   <h5>Are you sure you want to delete event group? ({newEventState.groupTotal} total)</h5> 
                   <h5>"{newEventState.title}"</h5>
-                  <h6>starting {moment(dateState.startDate).format("MMMM Do, YYYY")}</h6>
-                  <h6>ending {moment(dateState.endDate).format("MMMM, Do, YYYY")}</h6>
+                  <h6>starting {moment(editStartState.startDate).format("MMMM Do, YYYY")}</h6>
+                  <h6>ending {moment(editEndState.endDate).format("MMMM, Do, YYYY")}</h6>
                 </div>
               </>
               :
@@ -1032,7 +1188,7 @@ const MyCalendar = () => {
                 <div className="row">
                   <h5>Are you sure you want to delete this event?</h5> 
                   <h5>"{newEventState.title}" </h5>
-                  <h6>occuring on {moment(dateState.eventDate).format("MMMM Do, YYYY")}</h6>
+                  <h6>occuring on {moment(editStartState.startDate).format("MMMM Do, YYYY")}</h6>
                 </div>
               </>}
             </form>
