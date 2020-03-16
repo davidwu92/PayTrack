@@ -208,8 +208,6 @@ const MyCalendar = () => {
   //add modal: hitting "Save" adds event(s).
   const addNewEvents = () => {
     console.log("adding new events")
-    console.log(newStartState)
-    console.log(newEndState)
     setNewEventState({...newEventState, isLoading: true})
     if(newEventState.frequency =="once"){
       //create single event object.
@@ -240,7 +238,6 @@ const MyCalendar = () => {
       let startingDay = moment(newStartState.startDate).format('X')
       let endingDay = newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format('X') : moment(newStartState.startDate).add(5, 'years').format('X')
       let duration = endingDay - startingDay
-      console.log(duration)
       let newEvents = []
       let occurences = 0
         switch (newEventState.frequency) {
@@ -418,7 +415,7 @@ const MyCalendar = () => {
   //handle CLICKING calendar event (SHOW EVENT CARD with options: Edit, Close, Delete)
   const eventCard = useRef()
   const handleEventClick = (e) => {
-    // console.log(e.event)
+    console.log(e.event)
     console.log("You clicked on an event.")
     let selectedEvent = {
       title: e.event.title,
@@ -438,7 +435,6 @@ const MyCalendar = () => {
       eventNumber: e.event.extendedProps.eventNumber,
       groupTotal: e.event.extendedProps.groupTotal,
     }
-    console.log(selectedEvent)
     //using newEventState and editStartState for editing modal.
     setEditEventState({eventDate: selectedEvent.eventDate})
     setEditStartState({startDate: selectedEvent.groupStartDate})
@@ -711,24 +707,13 @@ const MyCalendar = () => {
         .then(()=>console.log(`You deleted the ${newEventState.title} group`))
         .catch(e=>console.error(e))
     }else {
-      //Deleting single event FUNCTIONING.
+      //Deleting single event FUNCTIONING; still need to update event group.
       let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
       let id = newEventState.eventId
       deleteEvent(token, id)
         .then(()=>console.log(`You deleted ${newEventState.title}`))
         .catch(e=>console.error(e))
     }
-  }
-  //testing button for DATE STATE: who knows why it's changing when I click on edit modal DatePicker... >:[
-  const getDateState = (e) =>{
-    e.preventDefault()
-    console.log("datestate")
-    console.log(newStartState)
-    console.log(newEndState)
-    console.log("EDITING DATE STATES")
-    console.log(editEventState)
-    console.log(editStartState)
-    console.log(editEndState)
   }
 
 //PAGE RENDERING STUFF
@@ -755,7 +740,6 @@ const MyCalendar = () => {
               header="Add New Event" trigger={createEvent}>
               <br></br>
               <form action="#">
-              <button onClick={getDateState}>GET DATE STATE</button>
                 {/* ADD EVENT MODAL 1st ROW: Title/Amount */}
                 <div className="row">
                     <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
@@ -962,7 +946,6 @@ const MyCalendar = () => {
               header={"Editing: " + newEventState.title}>
               <br></br>
               <form action="#">
-                <button onClick={getDateState}>GET DATE STATE</button>
                 {/* EDITING MODAL 1st ROW: EditingGroup, isPayment switches */}
                 <div className="row">
                   <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
