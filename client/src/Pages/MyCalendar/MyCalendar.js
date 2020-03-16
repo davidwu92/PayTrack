@@ -943,7 +943,7 @@ const MyCalendar = () => {
                 </Button>,
                 <span> </span>,
               ]}
-              header={"Editing: " + newEventState.title}>
+              header={newEventState.editingGroup ? "Edit Group: " + newEventState.title : "Edit Event: " + newEventState.title + " (" + newEventState.eventNumber + " of " + newEventState.groupTotal + ")"}>
               <br></br>
               <form action="#">
                 {/* EDITING MODAL 1st ROW: EditingGroup, isPayment switches */}
@@ -1022,7 +1022,7 @@ const MyCalendar = () => {
                   </div>
                   <div className="col s7 m4 l4">
                     <DatePicker
-                      placeholder="New Start Date"
+                      placeholder={newEventState.editingGroup ? moment(editStartState.startDate).format('ddd MMM Do, YYYY') : moment(editEventState.eventDate).format('ddd MMM Do, YYYY')}
                       className="datePicker"
                       options={{
                         autoClose: false,    container: null,    defaultDate: null,    disableDayFn: null,
@@ -1104,7 +1104,7 @@ const MyCalendar = () => {
                     </select>
                   </div>
                   <div className="input-field col s12 m12 l12">
-                    <textarea id="eventNotes" className="materialize-textarea" data-length="300" name="notes" placeholder={newEventState.notes ? newEventState.notes : "Write new notes."} onChange={newEventState.handleInputChange} ></textarea>
+                    <textarea id="eventNotes" className="materialize-textarea" data-length="300" name="notes" value={newEventState.notes ? newEventState.notes : null} onChange={newEventState.handleInputChange} ></textarea>
                     <label for="eventNotes">Notes</label>
                   </div>
                 </div>
