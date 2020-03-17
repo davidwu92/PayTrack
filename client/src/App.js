@@ -11,7 +11,7 @@ import Home from './Pages/Home'
 import Login from './Pages/Login'
 import Register from './Pages/Register'
 import MyCalendar from './Pages/MyCalendar'
-import MyTotals from './Pages/MyTotals'
+import MyCharts from './Pages/MyCharts'
 import MyStatement from './Pages/MyStatement'
 
 // import UserContext from './utils/UserContext'
@@ -51,9 +51,9 @@ function App() {
         </Switch>
 
         <Switch>
-          <Route exact path="/mytotals">
+          <Route exact path="/mycharts">
             <LoggedInNav/>
-            <MyTotals />
+            <MyCharts />
           </Route>
         </Switch>
 

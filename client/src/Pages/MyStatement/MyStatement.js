@@ -185,7 +185,7 @@ const MyStatement = () => {
       : moment(`0${monthNum}`, `MM`).format("MMMM")
 
     if (timeState.yearDisplayed == "all years") {
-      return("All Calendar Events")
+      return("All-Time Statement")
     } else if (monthNum == 13){
       //Year selected, all months
       return(timeState.yearDisplayed + " Statement")
@@ -231,7 +231,7 @@ const MyStatement = () => {
   return (
     <>
       <div className="container">
-        <button onClick={seeTableState}>TABLE STATE</button>
+        <button onClick={seeTableState}>TABLE STATE </button>
         <h1 className="center">Income Expense Statement</h1>
         {/* 1st ROW: FILTERS for Category, Month, Year */}
         <div className="row">
@@ -281,10 +281,10 @@ const MyStatement = () => {
           </div>
 
           {/* YEAR SELECTOR */}
-          <div className="center input-field col s4 m2 l2">
+          <div className="center input-field col s5 m2 l2">
             <h5>Select Year</h5>
               <select id="yearSelect" className="browser-default" onChange={yearSelect}>
-                <option value={"all years"} selected>All Time</option>
+                <option value={"all years"} selected>All time</option>
                 <option value={moment(Date.now()).subtract(2, "year").year()}>{moment(Date.now()).subtract(2, "year").year()}</option>
                 <option value={moment(Date.now()).subtract(1, "year").year()}>{moment(Date.now()).subtract(1, "year").year()}</option>
                 <option value={moment(Date.now()).year()}>{moment(Date.now()).add(0, "year").year()}</option>
@@ -300,13 +300,13 @@ const MyStatement = () => {
                 <option value={moment(Date.now()).add(10, "year").year()}>{moment(Date.now()).add(10, "year").year()}</option>
               </select>
           </div>
-                    {/* MONTH SELECTOR */}
-                    <div className="center input-field col s8 m4 l4">
+          {/* MONTH SELECTOR */}
+          <div className="center input-field col s7 m4 l4">
             <h5>Select Month</h5>
               <select id="monthSelect" className="browser-default" onChange={monthSelect}>
                 {
                   timeState.yearDisplayed === "all years" ? 
-                  <><option value="12" selected>See all months in {timeState.yearDisplayed}</option>
+                  <><option value="12" selected>All months in {timeState.yearDisplayed}</option>
                   <option value="0" disabled>January</option>
                   <option value="1" disabled>February</option>
                   <option value="2" disabled>March</option>
