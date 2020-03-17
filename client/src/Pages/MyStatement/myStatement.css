@@ -1,0 +1,35 @@
+#tableRow {
+  border-style: outset;
+  border-color: lavender;
+}
+
+#tableTitle {
+  font-weight: 500;
+  margin-top: 5px;
+  padding-top: 3px;
+}
+
+#myStatementFirstRow{
+  margin-bottom: 0px;
+}
+
+#timeFilterTitle {
+  padding-top:8px;
+  margin-top:4px;
+  margin-bottom: 4px;
+}
+
+#timeFilterTitleDiv {
+  margin-bottom: 0px;
+}
+
+#yearSelect, #monthSelect {
+  padding: 3px;
+  padding-left: 5px;
+}
+
+#timeFilterSelectDiv {
+  margin-bottom:0px;
+  padding-right: 0px;
+  padding-left: 0px;
+}
