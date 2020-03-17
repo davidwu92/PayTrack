@@ -348,7 +348,7 @@ const MyStatement = () => {
 
         {/* 2nd ROW: INCOME/EXPENSE TABLE */}
         <div className="row white" id="tableRow">
-          <h4 className="center blue-grey-text text-darken-3" id="tableTitle">{tableTitle()}</h4>
+          <h5 className="center blue-grey-text text-darken-3" id="tableTitle">{tableTitle()}</h5>
           <table className="centered responsive-table">
             <thead>
               <tr className="blue lighten-4 blue-grey-text text-darken-4">
@@ -385,16 +385,16 @@ const MyStatement = () => {
               )}
               {/* Totals row */}
               <tr className="deep-orange lighten-5">
-                <td style={{fontWeight: "600"}}>Range: {tableState.events.length? <>{moment(tableState.events[0].date).format('MM/DD/YY') +" - " +moment(tableState.events[tableState.events.length-1].date).format('MM/DD/YY')}</>:null}
+                <td style={{fontWeight: "600"}}>{tableState.events.length? <>{moment(tableState.events[0].date).format('MM/DD/YY') +" - " +moment(tableState.events[tableState.events.length-1].date).format('MM/DD/YY')}</>:null}
                 </td>
-                <td style={{fontWeight: "600"}}>Displayed Events: {tableState.events.length}</td>
-                <td style={{fontWeight: "600"}}></td>
+                <td style={{fontWeight: "600"}}>Events: {tableState.events.length}</td>
+                <td style={{fontWeight: "600"}}><div style={{backgroundColor: "tomato", color:"white"}}>TOTAL</div></td>
                 <td style={{fontWeight: "600", color: "darkgreen"}}>
-                    Total Income: {totalIncome()}</td>
+                    Income: {totalIncome()}</td>
                 <td style={{fontWeight: "600", color: "maroon"}}>
-                    Total Expense: {totalExpense()}</td>
+                    Expense: {totalExpense()}</td>
                 <td style={tableState.cumSum[tableState.cumSum.length-1]>0 ? {fontWeight: "600", color: "darkgreen"}:{fontWeight: "600", color: "maroon"}}>
-                  Final Total: 
+                  Balance: 
                   {tableState.cumSum[tableState.cumSum.length-1]>0 ? 
                   " $"+formatNumber(tableState.cumSum[tableState.cumSum.length-1])
                   :" -$"+ formatNumber(-tableState.cumSum[tableState.cumSum.length-1])}</td>
