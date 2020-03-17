@@ -2,19 +2,21 @@ import React, { useState, useEffect } from 'react'
 import UserAPI from '../../utils/UserAPI'
 import EventAPI from '../../utils/EventAPI'
 import moment from 'moment'
-import { greatestDurationDenominator } from '@fullcalendar/core'
+
+// import { greatestDurationDenominator } from '@fullcalendar/core'
 
 const {getColors} = UserAPI
 const {getEvents} = EventAPI
 
 const MyStatement = () => {
+//TABLE VARIABLES
   const [tableState, setTableState] = useState({
     events: [],
     cumSum: [],
     colorPreferences: [],
   })
 
-  //FILTERING CATEGORIES
+//FILTERING CATEGORIES
   const [categoryState, setCategoryState] = useState({
     array: [true, true, true, true, true, true, true, true]
   })
@@ -26,37 +28,34 @@ const MyStatement = () => {
     setCategoryState({array: categoryArray})
     getTableData({categoryFilter: categoryState.array, monthFilter: timeState.monthDisplayed, yearFilter: timeState.yearDisplayed})
   }
-  //Show ALL Categories
-  const allCategories = () => {
+  const allCategories = () => {   //Show ALL Categories
     let allTrue = [true, true, true, true, true, true, true, true]
     setCategoryState({array: allTrue})
     getTableData({categoryFilter: allTrue, monthFilter: timeState.monthDisplayed, yearFilter: timeState.yearDisplayed})
   }
-  //Show NO Categories
-  const noCategories = () => {
+  const noCategories = () => {  //Show NO Categories
     let allFalse = [false, false, false, false, false, false, false, false]
     setCategoryState({array: [false, false, false, false, false, false, false, false]})
     getTableData({categoryFilter: allFalse, monthFilter: timeState.monthDisplayed, yearFilter: timeState.yearDisplayed})
   }
 
-  //FILTERING BY TIME
+//FILTERING BY TIME
   const [timeState, setTimeState] = useState({
     monthDisplayed: 12, //defaults to showing whole year.
     yearDisplayed: "all years", //defaults to showing all years.
   })
-  const monthSelect = () => {
+  const monthSelect = () => { //Show Specific Month (must choose year first)
     let month = document.getElementById("monthSelect").value
-    console.log(month)
     setTimeState({...timeState, monthDisplayed: month})
     getTableData({categoryFilter: categoryState.array, monthFilter: month, yearFilter: timeState.yearDisplayed})
   }
-  const yearSelect = () =>{
+  const yearSelect = () =>{ //Show Specific Year (default "all years")
     let year = document.getElementById("yearSelect").value
     setTimeState({...timeState, yearDisplayed: year})
     getTableData({categoryFilter: categoryState.array, monthFilter: timeState.monthDisplayed, yearFilter: year})
   }
 
-  //SETS UP events and cumSum in tableState, depending on filters object.
+//SETS UP events and cumSum in tableState, depending on filters object.
   const getTableData = (filters) =>{
     let colorPreferences = []
     getColors(token)
@@ -177,10 +176,56 @@ const MyStatement = () => {
     getTableData({categoryFilter: categoryState.array, monthFilter: timeState.monthDisplayed, yearFilter: timeState.yearDisplayed})
   }, [])
 
+//TABLE STUFF
+  //Creating table header.
+  const tableTitle = () => {
+    let monthNum = parseInt(timeState.monthDisplayed)+1
+    let formattedMonth = monthNum >= 10 ?  
+      moment(`${monthNum}`, `MM`).format("MMMM")
+      : moment(`0${monthNum}`, `MM`).format("MMMM")
+
+    if (timeState.yearDisplayed == "all years") {
+      return("All Calendar Events")
+    } else if (monthNum == 13){
+      //Year selected, all months
+      return(timeState.yearDisplayed + " Statement")
+    } else { //Year and Month selected
+      return(formattedMonth +" "+ timeState.yearDisplayed + " Statement")
+    }
+  }
+
+  //TABLE ROW: click
+  const rowClick = (event) => {
+    console.log(event)
+  }
+  //TABLE ROW: onMouseOver, onMouseLeave
+  const highlightRow = e => e.currentTarget.className = "yellow lighten-5"
+  const unhighlightRow = e => e.currentTarget.className=""
+
+  //FORMAT NUMBERS:
+  const formatNumber = num => num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+
+  const totalIncome = () => { //Calculate total income
+    let total = 0
+    tableState.events.forEach(event=>{
+      if(!event.extendedProps.isPayment){total = total + event.extendedProps.amount}
+    })
+    return("$"+formatNumber(total))
+  }
+  const totalExpense = () =>{ //Calculate total expenses
+    let total = 0
+    tableState.events.forEach(event=>{
+      if(event.extendedProps.isPayment){total = total + event.extendedProps.amount}
+    })
+    return("$"+formatNumber(total))
+  }
+
   //testing button
   const seeTableState = () =>{
     console.log(tableState)
-    console.log(timeState)
+    // console.log(timeState)
+    //FORMATTING FOR "Monday November 4th, 2019"
+    console.log(moment(tableState.events[0]).format('dddd MMMM Do, YYYY'))
   }
 
   return (
@@ -188,6 +233,7 @@ const MyStatement = () => {
       <div className="container">
         <button onClick={seeTableState}>TABLE STATE</button>
         <h1 className="center">Income Expense Statement</h1>
+        {/* 1st ROW: FILTERS for Category, Month, Year */}
         <div className="row">
           {/* CATEGORY SELECTOR */}
           <div className="center input-field col s12 m6 l6">
@@ -293,41 +339,63 @@ const MyStatement = () => {
 
         </div>
 
-        {/* INCOME/EXPENSE TABLE */}
-        <div className="row grey lighten-3">
-          <h5 className="center">My Statement</h5>
-          <table className="centered highlight responsive-table">
+        {/* 2nd ROW: INCOME/EXPENSE TABLE */}
+        <div className="row white">
+          <h4 className="center">{tableTitle()}</h4>
+          <table className="centered responsive-table">
             <thead>
               <tr>
-                  <th>Date</th>
-                  <th>Event</th>
+                  <th>Event Date</th>
+                  <th>Event Title</th>
                   <th>Category</th>
-                  <th>Expense</th>
-                  <th>Income</th>
-                  <th>Cumulative Total</th>
+                  <th 
+                    // style={{color: "darkgreen"}}
+                    >Income</th>
+                  <th 
+                    // style={{color: "maroon"}}
+                    >Expense</th>
+                  <th>Cumulative Sum</th>
               </tr>
             </thead>
             <tbody>
               {tableState.events.map((event, i)=>
-                  event.extendedProps.isPayment? 
-                  (
-                  <tr>
-                    <td>{moment(event.date).format('dddd MMMM Do, YYYY')}</td>
-                    <td>{event.title}</td>
-                    <td><div style={{textTransform: "uppercase", backgroundColor: event.backgroundColor, color: "white"}}>{event.extendedProps.category}</div></td>
-                    <td>{"$" + event.extendedProps.amount}</td>
+                <tr 
+                  onMouseOver={highlightRow} onMouseLeave={unhighlightRow}
+                  onClick={()=>rowClick(event)} style={i%2 ? {}:{backgroundColor: "aliceblue"}}>
+                  <td>{moment(event.date).format('MMMM D, YYYY')}</td>
+                  <td>{event.extendedProps.groupTotal == 1 ? event.title 
+                      :event.title + " (" + event.extendedProps.eventNumber + "/" + event.extendedProps.groupTotal + ")"}
+                    </td>
+                  <td><div style={{textTransform: "uppercase", backgroundColor: event.backgroundColor, color: "white"}}>{event.extendedProps.category}</div></td>
+                  {event.extendedProps.isPayment? 
+                  <>
                     <td></td>
-                    <td>{tableState.cumSum[i]}</td>
-                  </tr>):
-                  (<tr>
-                    <td>{moment(event.date).format('dddd MMMM Do, YYYY')}</td>
-                    <td>{event.title}</td>
-                    <td><div style={{textTransform: "uppercase", backgroundColor: event.backgroundColor, color: "white"}}>{event.extendedProps.category}</div></td>
+                    <td style={{fontWeight: "500", color: "maroon"}}>{"$" + formatNumber(event.extendedProps.amount)}</td>
+                  </>
+                  : <>
+                    <td style={{fontWeight: "500", color: "darkgreen"}}>{"$" + formatNumber(event.extendedProps.amount)}</td>
                     <td></td>
-                    <td>{"$" + event.extendedProps.amount}</td>
-                    <td>{tableState.cumSum[i]}</td>
-                  </tr>)
-                )}
+                  </>}
+                  <td style={tableState.cumSum[i]>0 ? {fontWeight: "500", color: "darkgreen"}:{fontWeight: "600", color: "maroon"}}>
+                    {tableState.cumSum[i]>0 ? "$"+formatNumber(tableState.cumSum[i]):"-$"+ formatNumber(-tableState.cumSum[i])}</td>
+                </tr>
+              )}
+              {/* Totals row */}
+              <tr className="deep-orange lighten-5">
+                <td style={{fontWeight: "600"}}>Range: {tableState.events.length? <>{moment(tableState.events[0].date).format('MM/DD/YY') +" - " +moment(tableState.events[tableState.events.length-1].date).format('MM/DD/YY')}</>:null}
+                </td>
+                <td style={{fontWeight: "600"}}>Displayed Events: {tableState.events.length}</td>
+                <td style={{fontWeight: "600"}}></td>
+                <td style={{fontWeight: "600", color: "darkgreen"}}>
+                    Total Income: {totalIncome()}</td>
+                <td style={{fontWeight: "600", color: "maroon"}}>
+                    Total Expense: {totalExpense()}</td>
+                <td style={tableState.cumSum[tableState.cumSum.length-1]>0 ? {fontWeight: "600", color: "darkgreen"}:{fontWeight: "600", color: "maroon"}}>
+                  Final Total: 
+                  {tableState.cumSum[tableState.cumSum.length-1]>0 ? 
+                  " $"+formatNumber(tableState.cumSum[tableState.cumSum.length-1])
+                  :" -$"+ formatNumber(-tableState.cumSum[tableState.cumSum.length-1])}</td>
+              </tr>
             </tbody>
           </table>
         </div>
