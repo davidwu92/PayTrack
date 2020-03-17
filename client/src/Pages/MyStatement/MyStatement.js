@@ -209,7 +209,12 @@ const MyStatement = () => {
   const unhighlightRow = e => e.currentTarget.className=""
 
   //FORMAT NUMBERS:
-  const formatNumber = num => num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+  const formatNumber = num => {
+    if (typeof num =="number"){
+      num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+      return num
+    }
+  }
 
   const totalIncome = () => { //Calculate total income
     let total = 0
@@ -421,25 +426,38 @@ const MyStatement = () => {
             >
               <div> {/* CARD BODY */}
                   {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
-                <h5>{eventState.event.title} {moment(eventState.event.date).format("MMMM Do, YYYY")}</h5>
+                <h5>{eventState.event.title} ({moment(eventState.event.date).format("MM-DD-YY")})</h5>
                 <div className="row">
-                  <div className="col s6 m6 l6">
-                    <h6>{eventState.event.extendedProps.frequency ==="once" ?
-                      "(Single Event)"
+                  <div className="left col s12 m6 l6">
+                    <h6 style={{fontWeight:"600"}}>~Event Details~</h6>
+                    <div style={{width: "30%", position:"relative", left:"35%", padding:"3px", paddingRight:"6px",paddingLeft:"6px",
+                          textTransform: "uppercase", backgroundColor: eventState.event.backgroundColor, color: "white"}}>
+                      {eventState.event.extendedProps.category}
+                    </div>
+                    {eventState.event.extendedProps.isPayment ? 
+                      <h6>Payment amount: <span style={{color: "maroon"}}>{"$"+formatNumber(eventState.event.extendedProps.amount)}</span></h6>
+                      :
+                      <h6>Payment amount: <span style={{color: "darkgreen"}}>{"$"+formatNumber(eventState.event.extendedProps.amount)}</span></h6>
+                    }
+                    {/* category tag */}
+
+                    <h6>URL: {eventState.event.extendedProps.url}</h6>
+                    <h6>Notes: {eventState.event.extendedProps.notes}</h6>
+                    <h6>Group Start Date: {moment(eventState.event.extendedProps.groupStartDate).format("MM-DD-YYYY")}</h6>
+                    <h6>Group End Date: {moment(eventState.event.extendedProps.groupEndDate).format("MM-DD-YYYY")}</h6>
+                  </div>
+                  <div className="col s12 m6 l6">
+                    {
+                      eventState.event.extendedProps.frequency ==="once" ?
+                      <h6>Single Event</h6>
                         :
-                      "#" + eventState.event.extendedProps.eventNumber + " of " + eventState.event.extendedProps.groupTotal + " events occuring " + eventState.event.extendedProps.frequency
-                      }</h6>
-
+                      <div>
+                        <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
+                        <h6>{"#" + eventState.event.extendedProps.eventNumber + " of " + eventState.event.extendedProps.groupTotal + " occurrences"}</h6>
+                        <h6>Group frequency: {eventState.event.extendedProps.frequency}</h6>
+                      </div>
+                    }
                   </div>
-                  <div className="col s6 m6 l6">
-
-                  </div>
-                  <p>{eventState.event.extendedProps.isPayment ? "Payment amount: $" + eventState.event.extendedProps.amount : "Income amount: $" + eventState.event.extendedProps.amount}</p>
-                  <p>URL: {eventState.event.extendedProps.url}</p>
-                  <p>Notes: {eventState.event.extendedProps.notes}</p>
-                  <p>Category: {eventState.event.extendedProps.category}</p>
-                  <p>Group Start Date: {moment(eventState.event.extendedProps.groupStartDate).format("MM-DD-YYYY")}</p>
-                  <p>Group End Date: {moment(eventState.event.extendedProps.groupEndDate).format("MM-DD-YYYY")}</p>
                 </div>
               </div> {/* END OF CARD BODY */}
           </Modal>
