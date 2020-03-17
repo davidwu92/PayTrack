@@ -295,7 +295,7 @@ const MyStatement = () => {
 
         {/* INCOME/EXPENSE TABLE */}
         <div className="row grey lighten-3">
-          <h5 className="center">Monthly Budget (March)</h5>
+          <h5 className="center">My Statement</h5>
           <table className="centered highlight responsive-table">
             <thead>
               <tr>
