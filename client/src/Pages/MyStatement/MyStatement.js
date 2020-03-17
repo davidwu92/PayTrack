@@ -237,7 +237,7 @@ const MyStatement = () => {
         {/* 1st ROW: FILTERS for Category, Month, Year */}
         <div className="row">
           {/* CATEGORY SELECTOR */}
-          <div className="center input-field col s12 m6 l6">
+          <div className="center input-field col s12 m7 l7">
             <h5 className="white-text">Toggle Categories</h5>
             <button className="btn-small" onClick={toggleCategory} name="0"
               style={categoryState.array[0] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[0]} 
@@ -302,7 +302,7 @@ const MyStatement = () => {
               </select>
           </div>
           {/* MONTH SELECTOR */}
-          <div className="center input-field col s7 m4 l4">
+          <div className="center input-field col s7 m3 l3">
             <h5 className="white-text">Select Month</h5>
               <select id="monthSelect" className="browser-default" onChange={monthSelect}>
                 {
@@ -342,19 +342,15 @@ const MyStatement = () => {
 
         {/* 2nd ROW: INCOME/EXPENSE TABLE */}
         <div className="row white" id="tableRow">
-          <h4 className="center">{tableTitle()}</h4>
+          <h4 className="center purple-text text-darken-4">{tableTitle()}</h4>
           <table className="centered responsive-table">
             <thead>
-              <tr>
+              <tr className="blue lighten-4 purple-text text-darken-3">
                   <th>Event Date</th>
                   <th>Event Title</th>
                   <th>Category</th>
-                  <th 
-                    // style={{color: "darkgreen"}}
-                    >Income</th>
-                  <th 
-                    // style={{color: "maroon"}}
-                    >Expense</th>
+                  <th>Income</th>
+                  <th>Expense</th>
                   <th>Cumulative Sum</th>
               </tr>
             </thead>
