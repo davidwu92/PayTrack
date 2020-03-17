@@ -232,126 +232,132 @@ const MyStatement = () => {
   return (
     <>
       <div className="container">
-        <button onClick={seeTableState}>TABLE STATE </button>
-        <h1 className="center white-text">Income Expense Statement</h1>
+        {/* <button onClick={seeTableState}>TABLE STATE </button> */}
+        <h2 className="center white-text">My Statements</h2>
         {/* 1st ROW: FILTERS for Category, Month, Year */}
-        <div className="row">
-          {/* CATEGORY SELECTOR */}
-          <div className="center input-field col s12 m7 l7">
-            <h5 className="white-text">Toggle Categories</h5>
-            <button className="btn-small" onClick={toggleCategory} name="0"
-              style={categoryState.array[0] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[0]} 
-              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[0]}}>
-                HOUSING</button>
-            <button className="btn-small"
-              onClick={toggleCategory} name="1" style={categoryState.array[1] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[1]} 
-              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[1]}}>
-                INSURANCE</button>
-            <button className="btn-small" onClick={toggleCategory} name="2"
-              style={categoryState.array[2] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[2]} 
-              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[2]}}>
-                LOAN</button>
-            <button className="btn-small" onClick={toggleCategory} name="3"
-              style={categoryState.array[3] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[3]} 
-              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[3]}}>
-                TAXES</button>
-            <button className="btn-small" onClick={toggleCategory} name="4"
-              style={categoryState.array[4] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[4]} 
-              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[4]}}>
-                FAMILY</button>
-            <button className="btn-small" onClick={toggleCategory} name="5"
-              style={categoryState.array[5] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[5]} 
-              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[5]}}>
-                RECREATION</button>
-            <button className="btn-small" onClick={toggleCategory} name="6"
-              style={categoryState.array[6] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[6]} 
-              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[6]}}>
-                INCOME</button>
-            <button className="btn-small" onClick={toggleCategory} name="7"
-              style={categoryState.array[7] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[7]} 
-              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[7]}}>
-                OTHER</button>
-            <div className="row">
-              <div className="center col s6 m6 l6">
-                <button onClick={allCategories} className="btn purple" style={{margin:"3px", fontWeight:"600"}}>ALL</button>
-              </div>
-              <div className="center col s6 m6 l6">
-                <button onClick={noCategories} className="btn white purple-text" style={{margin:"3px", fontWeight:"700"}}>NONE</button>
-              </div>
+        <div className="row" id="myStatementFirstRow">
+          {/* YEAR SELECTOR */}
+          <div className="col s5 m6 l6">
+            <div className="center input-field col s12 m3 l3" id="timeFilterTitleDiv">
+              <h6 className="white-text" id="timeFilterTitle">Year Select</h6>
+            </div>
+            <div className="center input-field col s12 m7 l7" id="timeFilterSelectDiv">
+                <select id="timeFilterSelect" className="browser-default" onChange={yearSelect}>
+                  <option value={"all years"} selected>All time</option>
+                  <option value={moment(Date.now()).subtract(2, "year").year()}>{moment(Date.now()).subtract(2, "year").year()}</option>
+                  <option value={moment(Date.now()).subtract(1, "year").year()}>{moment(Date.now()).subtract(1, "year").year()}</option>
+                  <option value={moment(Date.now()).year()}>{moment(Date.now()).add(0, "year").year()}</option>
+                  <option value={moment(Date.now()).add(1, "year").year()}>{moment(Date.now()).add(1, "year").year()}</option>
+                  <option value={moment(Date.now()).add(2, "year").year()}>{moment(Date.now()).add(2, "year").year()}</option>
+                  <option value={moment(Date.now()).add(3, "year").year()}>{moment(Date.now()).add(3, "year").year()}</option>
+                  <option value={moment(Date.now()).add(4, "year").year()}>{moment(Date.now()).add(4, "year").year()}</option>
+                  <option value={moment(Date.now()).add(5, "year").year()}>{moment(Date.now()).add(5, "year").year()}</option>
+                  <option value={moment(Date.now()).add(6, "year").year()}>{moment(Date.now()).add(6, "year").year()}</option>
+                  <option value={moment(Date.now()).add(7, "year").year()}>{moment(Date.now()).add(7, "year").year()}</option>
+                  <option value={moment(Date.now()).add(8, "year").year()}>{moment(Date.now()).add(8, "year").year()}</option>
+                  <option value={moment(Date.now()).add(9, "year").year()}>{moment(Date.now()).add(9, "year").year()}</option>
+                  <option value={moment(Date.now()).add(10, "year").year()}>{moment(Date.now()).add(10, "year").year()}</option>
+                </select>
+            </div>
+          </div>
+          {/* MONTH SELECTOR */}
+          <div className="col s7 m6 l6">
+            <div className="center input-field col s12 m3 l3" id="timeFilterTitleDiv">
+              <h6 className="white-text" id="timeFilterTitle">Month Select</h6>
+            </div>
+            <div className="center input-field col s12 m7 l7" id="timeFilterSelectDiv">
+                <select id="timeFilterSelect" className="browser-default" onChange={monthSelect}>
+                  {
+                    timeState.yearDisplayed === "all years" ? 
+                    <><option value="12" selected>All months in {timeState.yearDisplayed}</option>
+                    <option value="0" disabled>January</option>
+                    <option value="1" disabled>February</option>
+                    <option value="2" disabled>March</option>
+                    <option value="3" disabled>April</option>
+                    <option value="4" disabled>May</option>
+                    <option value="5" disabled>June</option>
+                    <option value="6" disabled>July</option>
+                    <option value="7" disabled>August</option>
+                    <option value="8" disabled>September</option>
+                    <option value="9" disabled>October</option>
+                    <option value="10" disabled>November</option>
+                    <option value="11" disabled>December</option></>
+                    :
+                    <><option value="12" selected>See all months in {timeState.yearDisplayed}</option>
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10">November</option>
+                    <option value="11">December</option></>
+                  }
+                </select>
             </div>
           </div>
 
-          {/* YEAR SELECTOR */}
-          <div className="center input-field col s5 m2 l2">
-            <h5 className="white-text">Select Year</h5>
-              <select id="yearSelect" className="browser-default" onChange={yearSelect}>
-                <option value={"all years"} selected>All time</option>
-                <option value={moment(Date.now()).subtract(2, "year").year()}>{moment(Date.now()).subtract(2, "year").year()}</option>
-                <option value={moment(Date.now()).subtract(1, "year").year()}>{moment(Date.now()).subtract(1, "year").year()}</option>
-                <option value={moment(Date.now()).year()}>{moment(Date.now()).add(0, "year").year()}</option>
-                <option value={moment(Date.now()).add(1, "year").year()}>{moment(Date.now()).add(1, "year").year()}</option>
-                <option value={moment(Date.now()).add(2, "year").year()}>{moment(Date.now()).add(2, "year").year()}</option>
-                <option value={moment(Date.now()).add(3, "year").year()}>{moment(Date.now()).add(3, "year").year()}</option>
-                <option value={moment(Date.now()).add(4, "year").year()}>{moment(Date.now()).add(4, "year").year()}</option>
-                <option value={moment(Date.now()).add(5, "year").year()}>{moment(Date.now()).add(5, "year").year()}</option>
-                <option value={moment(Date.now()).add(6, "year").year()}>{moment(Date.now()).add(6, "year").year()}</option>
-                <option value={moment(Date.now()).add(7, "year").year()}>{moment(Date.now()).add(7, "year").year()}</option>
-                <option value={moment(Date.now()).add(8, "year").year()}>{moment(Date.now()).add(8, "year").year()}</option>
-                <option value={moment(Date.now()).add(9, "year").year()}>{moment(Date.now()).add(9, "year").year()}</option>
-                <option value={moment(Date.now()).add(10, "year").year()}>{moment(Date.now()).add(10, "year").year()}</option>
-              </select>
+          {/* CATEGORY SELECTOR */}
+          <div className="center input-field col s12 m12 l12">
+            <button className="btn-small" onClick={toggleCategory} name="0"
+              style={categoryState.array[0] ? {margin: "2px", fontWeight:"600", backgroundColor: tableState.colorPreferences[0]} 
+              : {margin: "2px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[0]}}>
+                HOUSING</button>
+            <button className="btn-small"
+              onClick={toggleCategory} name="1" style={categoryState.array[1] ? {margin: "2px", fontWeight:"600", backgroundColor: tableState.colorPreferences[1]} 
+              : {margin: "2px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[1]}}>
+                INSURANCE</button>
+            <button className="btn-small" onClick={toggleCategory} name="2"
+              style={categoryState.array[2] ? {margin: "2px", fontWeight:"600", backgroundColor: tableState.colorPreferences[2]} 
+              : {margin: "2px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[2]}}>
+                LOAN</button>
+            <button className="btn-small" onClick={toggleCategory} name="3"
+              style={categoryState.array[3] ? {margin: "2px", fontWeight:"600", backgroundColor: tableState.colorPreferences[3]} 
+              : {margin: "2px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[3]}}>
+                TAXES</button>
+            <button className="btn-small" onClick={toggleCategory} name="4"
+              style={categoryState.array[4] ? {margin: "2px", fontWeight:"600", backgroundColor: tableState.colorPreferences[4]} 
+              : {margin: "2px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[4]}}>
+                FAMILY</button>
+            <button className="btn-small" onClick={toggleCategory} name="5"
+              style={categoryState.array[5] ? {margin: "2px", fontWeight:"600", backgroundColor: tableState.colorPreferences[5]} 
+              : {margin: "2px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[5]}}>
+                RECREATION</button>
+            <button className="btn-small" onClick={toggleCategory} name="6"
+              style={categoryState.array[6] ? {margin: "2px", fontWeight:"600", backgroundColor: tableState.colorPreferences[6]} 
+              : {margin: "2px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[6]}}>
+                INCOME</button>
+            <button className="btn-small" onClick={toggleCategory} name="7"
+              style={categoryState.array[7] ? {margin: "2px", fontWeight:"600", backgroundColor: tableState.colorPreferences[7]} 
+              : {margin: "2px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[7]}}>
+                OTHER</button>
+            {/* <div className="row"> */}
+              {/* <div className="center col s6 m6 l6"> */}
+                <button onClick={allCategories} className="btn purple" style={{margin:"2px", fontWeight:"600"}}>ALL</button>
+              {/* </div> */}
+              {/* <div className="center col s6 m6 l6"> */}
+                <button onClick={noCategories} className="btn white purple-text" style={{margin:"2px", fontWeight:"700"}}>NONE</button>
+              {/* </div> */}
+            {/* </div> */}
           </div>
-          {/* MONTH SELECTOR */}
-          <div className="center input-field col s7 m3 l3">
-            <h5 className="white-text">Select Month</h5>
-              <select id="monthSelect" className="browser-default" onChange={monthSelect}>
-                {
-                  timeState.yearDisplayed === "all years" ? 
-                  <><option value="12" selected>All months in {timeState.yearDisplayed}</option>
-                  <option value="0" disabled>January</option>
-                  <option value="1" disabled>February</option>
-                  <option value="2" disabled>March</option>
-                  <option value="3" disabled>April</option>
-                  <option value="4" disabled>May</option>
-                  <option value="5" disabled>June</option>
-                  <option value="6" disabled>July</option>
-                  <option value="7" disabled>August</option>
-                  <option value="8" disabled>September</option>
-                  <option value="9" disabled>October</option>
-                  <option value="10" disabled>November</option>
-                  <option value="11" disabled>December</option></>
-                  :
-                  <><option value="12" selected>See all months in {timeState.yearDisplayed}</option>
-                  <option value="0">January</option>
-                  <option value="1">February</option>
-                  <option value="2">March</option>
-                  <option value="3">April</option>
-                  <option value="4">May</option>
-                  <option value="5">June</option>
-                  <option value="6">July</option>
-                  <option value="7">August</option>
-                  <option value="8">September</option>
-                  <option value="9">October</option>
-                  <option value="10">November</option>
-                  <option value="11">December</option></>
-                }
-              </select>
-          </div>
-
         </div>
 
         {/* 2nd ROW: INCOME/EXPENSE TABLE */}
         <div className="row white" id="tableRow">
-          <h4 className="center purple-text text-darken-4">{tableTitle()}</h4>
+          <h4 className="center blue-grey-text text-darken-3" id="tableTitle">{tableTitle()}</h4>
           <table className="centered responsive-table">
             <thead>
-              <tr className="blue lighten-4 purple-text text-darken-3">
-                  <th>Event Date</th>
-                  <th>Event Title</th>
+              <tr className="blue lighten-4 blue-grey-text text-darken-4">
+                  <th>Date</th>
+                  <th>Title</th>
                   <th>Category</th>
                   <th>Income</th>
                   <th>Expense</th>
-                  <th>Cumulative Sum</th>
+                  <th>Balance</th>
               </tr>
             </thead>
             <tbody>
