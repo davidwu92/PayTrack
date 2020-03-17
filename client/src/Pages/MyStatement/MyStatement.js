@@ -242,7 +242,7 @@ const MyStatement = () => {
               <h6 className="white-text" id="timeFilterTitle">Year Select</h6>
             </div>
             <div className="center input-field col s12 m7 l7" id="timeFilterSelectDiv">
-                <select id="timeFilterSelect" className="browser-default" onChange={yearSelect}>
+                <select id="yearSelect" className="browser-default" onChange={yearSelect}>
                   <option value={"all years"} selected>All time</option>
                   <option value={moment(Date.now()).subtract(2, "year").year()}>{moment(Date.now()).subtract(2, "year").year()}</option>
                   <option value={moment(Date.now()).subtract(1, "year").year()}>{moment(Date.now()).subtract(1, "year").year()}</option>
@@ -266,7 +266,7 @@ const MyStatement = () => {
               <h6 className="white-text" id="timeFilterTitle">Month Select</h6>
             </div>
             <div className="center input-field col s12 m7 l7" id="timeFilterSelectDiv">
-                <select id="timeFilterSelect" className="browser-default" onChange={monthSelect}>
+                <select id="monthSelect" className="browser-default" onChange={monthSelect}>
                   {
                     timeState.yearDisplayed === "all years" ? 
                     <><option value="12" selected>All months in {timeState.yearDisplayed}</option>

@@ -23,7 +23,7 @@
   margin-bottom: 0px;
 }
 
-#timeFilterSelect {
+#yearSelect, #monthSelect {
   padding: 3px;
   padding-left: 5px;
 }
