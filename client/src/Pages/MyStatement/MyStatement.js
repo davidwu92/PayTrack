@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import UserAPI from '../../utils/UserAPI'
 import EventAPI from '../../utils/EventAPI'
 import moment from 'moment'
+import './myStatement.css'
 
 // import { greatestDurationDenominator } from '@fullcalendar/core'
 
@@ -232,57 +233,57 @@ const MyStatement = () => {
     <>
       <div className="container">
         <button onClick={seeTableState}>TABLE STATE </button>
-        <h1 className="center">Income Expense Statement</h1>
+        <h1 className="center white-text">Income Expense Statement</h1>
         {/* 1st ROW: FILTERS for Category, Month, Year */}
         <div className="row">
           {/* CATEGORY SELECTOR */}
           <div className="center input-field col s12 m6 l6">
-            <h5>Toggle Categories</h5>
+            <h5 className="white-text">Toggle Categories</h5>
             <button className="btn-small" onClick={toggleCategory} name="0"
-              style={categoryState.array[0] ? {margin: "3px", backgroundColor: tableState.colorPreferences[0]} 
-              : {margin: "3px", backgroundColor: "ghostwhite", color: tableState.colorPreferences[0]}}>
+              style={categoryState.array[0] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[0]} 
+              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[0]}}>
                 HOUSING</button>
             <button className="btn-small"
-              onClick={toggleCategory} name="1" style={categoryState.array[1] ? {margin: "3px", backgroundColor: tableState.colorPreferences[1]} 
-              : {margin: "3px", backgroundColor: "ghostwhite", color: tableState.colorPreferences[1]}}>
+              onClick={toggleCategory} name="1" style={categoryState.array[1] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[1]} 
+              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[1]}}>
                 INSURANCE</button>
             <button className="btn-small" onClick={toggleCategory} name="2"
-              style={categoryState.array[2] ? {margin: "3px", backgroundColor: tableState.colorPreferences[2]} 
-              : {margin: "3px", backgroundColor: "ghostwhite", color: tableState.colorPreferences[2]}}>
+              style={categoryState.array[2] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[2]} 
+              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[2]}}>
                 LOAN</button>
             <button className="btn-small" onClick={toggleCategory} name="3"
-              style={categoryState.array[3] ? {margin: "3px", backgroundColor: tableState.colorPreferences[3]} 
-              : {margin: "3px", backgroundColor: "ghostwhite", color: tableState.colorPreferences[3]}}>
+              style={categoryState.array[3] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[3]} 
+              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[3]}}>
                 TAXES</button>
             <button className="btn-small" onClick={toggleCategory} name="4"
-              style={categoryState.array[4] ? {margin: "3px", backgroundColor: tableState.colorPreferences[4]} 
-              : {margin: "3px", backgroundColor: "ghostwhite", color: tableState.colorPreferences[4]}}>
+              style={categoryState.array[4] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[4]} 
+              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[4]}}>
                 FAMILY</button>
             <button className="btn-small" onClick={toggleCategory} name="5"
-              style={categoryState.array[5] ? {margin: "3px", backgroundColor: tableState.colorPreferences[5]} 
-              : {margin: "3px", backgroundColor: "ghostwhite", color: tableState.colorPreferences[5]}}>
+              style={categoryState.array[5] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[5]} 
+              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[5]}}>
                 RECREATION</button>
             <button className="btn-small" onClick={toggleCategory} name="6"
-              style={categoryState.array[6] ? {margin: "3px", backgroundColor: tableState.colorPreferences[6]} 
-              : {margin: "3px", backgroundColor: "ghostwhite", color: tableState.colorPreferences[6]}}>
+              style={categoryState.array[6] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[6]} 
+              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[6]}}>
                 INCOME</button>
             <button className="btn-small" onClick={toggleCategory} name="7"
-              style={categoryState.array[7] ? {margin: "3px", backgroundColor: tableState.colorPreferences[7]} 
-              : {margin: "3px", backgroundColor: "ghostwhite", color: tableState.colorPreferences[7]}}>
+              style={categoryState.array[7] ? {margin: "3px", fontWeight:"600", backgroundColor: tableState.colorPreferences[7]} 
+              : {margin: "3px", fontWeight:"600", backgroundColor: "ghostwhite", color: tableState.colorPreferences[7]}}>
                 OTHER</button>
             <div className="row">
               <div className="center col s6 m6 l6">
-                <button onClick={allCategories} className="btn purple" style={{margin:"3px"}}>ALL</button>
+                <button onClick={allCategories} className="btn purple" style={{margin:"3px", fontWeight:"600"}}>ALL</button>
               </div>
               <div className="center col s6 m6 l6">
-                <button onClick={noCategories} className="btn white purple-text" style={{margin:"3px"}}>NONE</button>
+                <button onClick={noCategories} className="btn white purple-text" style={{margin:"3px", fontWeight:"700"}}>NONE</button>
               </div>
             </div>
           </div>
 
           {/* YEAR SELECTOR */}
           <div className="center input-field col s5 m2 l2">
-            <h5>Select Year</h5>
+            <h5 className="white-text">Select Year</h5>
               <select id="yearSelect" className="browser-default" onChange={yearSelect}>
                 <option value={"all years"} selected>All time</option>
                 <option value={moment(Date.now()).subtract(2, "year").year()}>{moment(Date.now()).subtract(2, "year").year()}</option>
@@ -302,7 +303,7 @@ const MyStatement = () => {
           </div>
           {/* MONTH SELECTOR */}
           <div className="center input-field col s7 m4 l4">
-            <h5>Select Month</h5>
+            <h5 className="white-text">Select Month</h5>
               <select id="monthSelect" className="browser-default" onChange={monthSelect}>
                 {
                   timeState.yearDisplayed === "all years" ? 
@@ -340,7 +341,7 @@ const MyStatement = () => {
         </div>
 
         {/* 2nd ROW: INCOME/EXPENSE TABLE */}
-        <div className="row white">
+        <div className="row white" id="tableRow">
           <h4 className="center">{tableTitle()}</h4>
           <table className="centered responsive-table">
             <thead>
