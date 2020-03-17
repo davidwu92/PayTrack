@@ -21,7 +21,7 @@ const LoggedinNav = () => {
         <ul className="tabs tabs-transparent">
           <li id="hovEffect" className="tab left"><Link to="/mycalendar">Calendar <i className="fas fa-calendar-alt tiny"></i></Link></li>
           <li id="hovEffect" className="tab"><Link to="/mytotals">Totals <i className="fas fa-wallet tiny"></i></Link></li>
-          <li id="hovEffect" className="tab"><Link to="/mystatement">Statement <i className="fas fa-balance-scale tiny"></i></Link></li>
+          <li id="hovEffect" className="tab"><Link to="/mystatement">Statement <i className="far fa-file-alt tiny"></i></Link></li>
           <li id="hovEffect" className="tab right" onClick={logout}><Link to="/"><i className="fas fa-sign-out-alt"></i></Link></li>
         </ul>
       </div>
