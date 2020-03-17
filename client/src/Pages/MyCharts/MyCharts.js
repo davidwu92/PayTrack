@@ -18,13 +18,13 @@ import {
 // import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import './myTotals.css'
+import './myCharts.css'
 import AddEventModal from '../../Components/AddEventModal'
 
 
-const MyTotals = () => {
+const MyCharts = () => {
 
-  const [totalState, setTotalState] = useState({
+  const [chartState, setChartState] = useState({
     variable: ''
   })
 
@@ -81,7 +81,7 @@ const MyTotals = () => {
   return(
     <>
       <div className="container">
-        <h1 className="center">My Totals VIEW</h1>
+        <h1 className="center">My Charts</h1>
         <AddEventModal />
         <LineChart width={600} height={400} data={data} style={{ backgroundColor: '#FFFFFF' }}>
           <CartesianGrid stroke="#ccc" />
@@ -134,4 +134,4 @@ const MyTotals = () => {
   )
 }
 
-export default MyTotals
+export default MyCharts
