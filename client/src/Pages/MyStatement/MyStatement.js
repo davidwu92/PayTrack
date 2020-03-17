@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import {Modal, Button} from 'react-materialize'
 import UserAPI from '../../utils/UserAPI'
 import EventAPI from '../../utils/EventAPI'
 import moment from 'moment'
@@ -184,7 +185,6 @@ const MyStatement = () => {
     let formattedMonth = monthNum >= 10 ?  
       moment(`${monthNum}`, `MM`).format("MMMM")
       : moment(`0${monthNum}`, `MM`).format("MMMM")
-
     if (timeState.yearDisplayed == "all years") {
       return("All-Time Statement")
     } else if (monthNum == 13){
@@ -194,10 +194,15 @@ const MyStatement = () => {
       return(formattedMonth +" "+ timeState.yearDisplayed + " Statement")
     }
   }
-
+  const [eventState, setEventState] = useState({
+    event: {extendedProps:""}
+  })
   //TABLE ROW: click
+  const eventCard = useRef()
   const rowClick = (event) => {
+    setEventState({event: event})
     console.log(event)
+    setTimeout(()=>eventCard.current.click(), 0)
   }
   //TABLE ROW: onMouseOver, onMouseLeave
   const highlightRow = e => e.currentTarget.className = "yellow lighten-5"
@@ -223,16 +228,17 @@ const MyStatement = () => {
 
   //testing button
   const seeTableState = () =>{
-    console.log(tableState)
+    // console.log(tableState)
+    console.log(eventState.event)
     // console.log(timeState)
     //FORMATTING FOR "Monday November 4th, 2019"
-    console.log(moment(tableState.events[0]).format('dddd MMMM Do, YYYY'))
+    // console.log(moment(tableState.events[0]).format('dddd MMMM Do, YYYY'))
   }
 
   return (
     <>
       <div className="container">
-        {/* <button onClick={seeTableState}>TABLE STATE </button> */}
+        <button onClick={seeTableState}>TABLE STATE </button>
         <h2 className="center white-text">My Statements</h2>
         {/* 1st ROW: FILTERS for Category, Month, Year */}
         <div className="row" id="myStatementFirstRow">
@@ -401,6 +407,42 @@ const MyStatement = () => {
               </tr>
             </tbody>
           </table>
+        </div>
+        
+        {/* Clicked Event Modal */}
+        <div className="row">
+          <a ref={eventCard} className="modal-trigger" href='#eventCard'></a>
+          <Modal id="eventCard" className="center-align"
+            actions={[
+              <Button flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                Close
+              </Button>,
+            ]}
+            >
+              <div> {/* CARD BODY */}
+                  {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
+                <h5>{eventState.event.title} {moment(eventState.event.date).format("MMMM Do, YYYY")}</h5>
+                <div className="row">
+                  <div className="col s6 m6 l6">
+                    <h6>{eventState.event.extendedProps.frequency ==="once" ?
+                      "(Single Event)"
+                        :
+                      "#" + eventState.event.extendedProps.eventNumber + " of " + eventState.event.extendedProps.groupTotal + " events occuring " + eventState.event.extendedProps.frequency
+                      }</h6>
+
+                  </div>
+                  <div className="col s6 m6 l6">
+
+                  </div>
+                  <p>{eventState.event.extendedProps.isPayment ? "Payment amount: $" + eventState.event.extendedProps.amount : "Income amount: $" + eventState.event.extendedProps.amount}</p>
+                  <p>URL: {eventState.event.extendedProps.url}</p>
+                  <p>Notes: {eventState.event.extendedProps.notes}</p>
+                  <p>Category: {eventState.event.extendedProps.category}</p>
+                  <p>Group Start Date: {moment(eventState.event.extendedProps.groupStartDate).format("MM-DD-YYYY")}</p>
+                  <p>Group End Date: {moment(eventState.event.extendedProps.groupEndDate).format("MM-DD-YYYY")}</p>
+                </div>
+              </div> {/* END OF CARD BODY */}
+          </Modal>
         </div>
 
       </div> {/* END CONTAINER */}
