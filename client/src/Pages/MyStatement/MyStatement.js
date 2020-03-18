@@ -76,7 +76,7 @@ const MyStatement = () => {
           ||(event.category=="family" && filters.categoryFilter[4])
           ||(event.category=="recreation" && filters.categoryFilter[5])
           ||(event.category=="income" && filters.categoryFilter[6])
-          ||(event.category=="other" && filters.categoryFilter[7])
+          ||((event.category=="other" || event.category == "") && filters.categoryFilter[7])
           ) {
             if (filters.yearFilter === "all years"){
               //check if "all years" is on
