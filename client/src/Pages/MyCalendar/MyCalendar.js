@@ -1290,7 +1290,7 @@ const MyCalendar = () => {
                   <h5>Are you sure you want to delete event group? ({newEventState.groupTotal} total)</h5> 
                   <h5>"{newEventState.title}"</h5>
                   <h6>starting {moment(editStartState.startDate).format("MMMM Do, YYYY")}</h6>
-                  <h6>ending {moment(editEndState.endDate).format("MMMM, Do, YYYY")}</h6>
+                  <h6>ending {moment(editEndState.endDate).format("MMMM Do, YYYY")}</h6>
                 </div>
               </>
               :

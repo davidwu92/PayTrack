@@ -221,14 +221,14 @@ const MyStatement = () => {
     tableState.events.forEach(event=>{
       if(!event.extendedProps.isPayment){total = total + event.extendedProps.amount}
     })
-    return("$"+formatNumber(total))
+    return("$"+formatNumber(Math.floor(total*100)/100))
   }
   const totalExpense = () =>{ //Calculate total expenses
     let total = 0
     tableState.events.forEach(event=>{
       if(event.extendedProps.isPayment){total = total + event.extendedProps.amount}
     })
-    return("$"+formatNumber(total))
+    return("$"+formatNumber(Math.floor(total*100)/100))
   }
 
   //testing button
@@ -391,7 +391,7 @@ const MyStatement = () => {
                     <td></td>
                   </>}
                   <td style={tableState.cumSum[i]>0 ? {fontWeight: "500", color: "darkgreen"}:{fontWeight: "600", color: "maroon"}}>
-                    {tableState.cumSum[i]>0 ? "$"+formatNumber(tableState.cumSum[i]):"-$"+ formatNumber(-tableState.cumSum[i])}</td>
+                    {tableState.cumSum[i]>0 ? "$"+formatNumber(Math.floor(tableState.cumSum[i]*100)/100):"-$"+ formatNumber(-Math.floor(tableState.cumSum[i]*100)/100)}</td>
                 </tr>
               )}
               {/* Totals row */}
@@ -407,8 +407,8 @@ const MyStatement = () => {
                 <td style={tableState.cumSum[tableState.cumSum.length-1]>0 ? {fontWeight: "600", color: "darkgreen"}:{fontWeight: "600", color: "maroon"}}>
                   Balance: 
                   {tableState.cumSum[tableState.cumSum.length-1]>0 ? 
-                  " $"+formatNumber(tableState.cumSum[tableState.cumSum.length-1])
-                  :" -$"+ formatNumber(-tableState.cumSum[tableState.cumSum.length-1])}</td>
+                  " $"+formatNumber(Math.floor(tableState.cumSum[tableState.cumSum.length-1]*100)/100)
+                  :" -$"+ formatNumber(-Math.floor(tableState.cumSum[tableState.cumSum.length-1]*100)/100)}</td>
               </tr>
             </tbody>
           </table>
