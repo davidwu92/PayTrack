@@ -792,7 +792,7 @@ const MyCalendar = () => {
       {loadingBar}
       <div className="container">
         {/* PAGE HEADER */}
-        <h1 className = 'center white-text'>My Calendar</h1>
+        <h2 className = 'center white-text'>My Calendar</h2>
         <button onClick={testingButton}>TESTING</button>
         {/* ADD EVENT MODAL (New Event Form) */}
         {/* https://react-materialize.github.io/react-materialize/?path=/story/javascript-modal--default */}
