@@ -38,7 +38,7 @@ const MyCalendar = () => {
     events: [],
   })
   
-  //CLICK A DATE: QUICKADD EVENT
+  //QUICK-ADD EVENT (Click Date)
   const quickAddModal = useRef()
   const handleDateClick = (e) =>{ //DONE
     console.log(e)
@@ -48,11 +48,36 @@ const MyCalendar = () => {
     setTimeout(()=>quickAddModal.current.click(), 0)
   }
 
-  //DRAG-DROP: QUICK-MOVE GROUP
+  //QUICK-MOVE GROUP (Drag Drop)
+  const quickMoveModal = useRef()
   const handleEventDrop = (e) =>{ //INCOMPLETE
-    console.log(e.oldEvent) //info of pre-drop
+    // console.log(e.oldEvent)
     console.log(e.event) //info of after-drop
+    let dayShift = (moment(e.event.start) - moment(e.oldEvent.start))/86400000
+    let groupStartDate = e.event.extendedProps.groupStartDate
+    let groupEndDate = e.event.extendedProps.groupEndDate
+    setNewEventState({
+      ...newEventState,
+      title: e.oldEvent.title,
+      amount: e.oldEvent.extendedProps.amount,
+      isPayment: e.oldEvent.extendedProps.isPayment,
+      frequency: e.oldEvent.extendedProps.frequency,
+      url: e.oldEvent.extendedProps.url,
+      category: e.oldEvent.extendedProps.category,
+      notes: e.oldEvent.extendedProps.notes,
+      editingGroup: true,
+      eventNumber: e.oldEvent.extendedProps.eventNumber,
+      groupTotal: e.oldEvent.extendedProps.groupTotal,
+      eventId: e.oldEvent.id,
+      groupId: e.oldEvent.groupId,
+    })
+    setNewStartState({startDate: moment(groupStartDate).format()})
+    setNewEndState({endDate: moment(groupEndDate).format()})
+    setEditEventState({eventDate: moment(groupStartDate).add(dayShift, "day").format()})
+    setEditEndState({endDate: moment(groupEndDate).add(dayShift, "day").format()})
+    setTimeout(()=>quickMoveModal.current.click(), 0)
   }
+  const cancelMove = () => {window.location.reload()}
 
   const [colorState, setColorState] = useState({
     colorPreferences: []
@@ -758,7 +783,9 @@ const MyCalendar = () => {
         .catch(e=>console.error(e))
     }
   }
-
+  const testingButton = () =>{
+    console.log(newEventState)
+  }
 //PAGE RENDERING STUFF
   return(
     <>
@@ -766,7 +793,7 @@ const MyCalendar = () => {
       <div className="container">
         {/* PAGE HEADER */}
         <h1 className = 'center white-text'>My Calendar</h1>
-
+        <button onClick={testingButton}>TESTING</button>
         {/* ADD EVENT MODAL (New Event Form) */}
         {/* https://react-materialize.github.io/react-materialize/?path=/story/javascript-modal--default */}
         <div className = "row"> 
@@ -1212,9 +1239,8 @@ const MyCalendar = () => {
                 </div>
               </form>
           </Modal>
-        </div>
-        {/* end editing modal */}
-      
+        </div>{/* end editing modal */}
+        
         {/* DELETE MODAL */}
         <div className="row">
           <a ref={deleteModal} className="modal-trigger" href='#deleteModal'></a>
@@ -1371,7 +1397,45 @@ const MyCalendar = () => {
           </Modal>
         </div>{/* END QUICK ADD MODAL */}
         
-        
+        {/* QUICK MOVE MODAL */}
+        <div className="row">
+          <a ref={quickMoveModal} className="modal-trigger" href='#quickMoveModal'></a>
+          <Modal id="quickMoveModal" className="center-align"
+              actions={[
+                <Button onClick={cancelMove} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                  Cancel Move
+                </Button>,
+                <span> </span>,
+                <Button onClick={confirmEdit} modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                  Move Events <i className="material-icons right">send</i>
+                </Button>
+              ]}
+              // header={"Quick Add One Event"}
+          >
+            <br></br>
+            <form action="#">
+              <h5>Are you sure you want to move this group?</h5>
+              <h4>{newEventState.title}</h4>
+              <div className="row">
+                <div className="col s12 m6 l6 purple lighten-3">
+                  <h6 style={{fontWeight: "600"}}>~Original Group Dates~</h6>
+                  <h6>{moment(newStartState.startDate).format("MMMM Do, YYYY")}</h6>
+                  <h6>through</h6>
+                  <h6>{moment(newEndState.endDate).format("MMMM Do, YYYY")}</h6>
+                </div>
+                <div className="col s12 m6 l6 green lighten-3">
+                  <h6 style={{fontWeight: "600"}}>~New Group Dates~</h6>
+                  <h6>{moment(editEventState.eventDate).format("MMMM Do, YYYY")}</h6>
+                  <h6>through</h6>
+                  <h6>{moment(editEndState.endDate).format("MMMM Do, YYYY")}</h6>
+                </div>
+              </div>
+              <p>This will effect the amount, notes, category, and URL settings of all events in group. </p>
+              <p>Settings attached the dragged event will be applied to all events in this group.</p>
+            </form>
+          </Modal>
+        </div>{/* END QUICK ADD MODAL */}
+
       </div> {/* END CONTAINER */}
     </>
   )
