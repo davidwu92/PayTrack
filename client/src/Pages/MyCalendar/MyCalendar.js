@@ -1175,7 +1175,7 @@ const MyCalendar = () => {
                     />
                   </div>
                   {/* Frequency -- can't be changed for single date*/}
-                  {!newEventState.editingGroup ? null : 
+                  {!newEventState.editingGroup ? <div className="col s12 m6 l6"><p>Changing this event date will not affect the start and end dates of the entire group.</p></div> : 
                     <>
                       <div className="col s5 m2 l2">
                         <p className="center">New frequency?</p>
