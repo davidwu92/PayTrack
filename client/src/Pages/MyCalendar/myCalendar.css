@@ -39,3 +39,8 @@
 .groupSwitch label input[type=checkbox]:checked+.lever:before {
   background-color: #770081;
 }
+
+.modal .modal-content {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}

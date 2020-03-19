@@ -37,23 +37,84 @@ const MyCalendar = () => {
     //https://fullcalendar.io/docs/event-object
     events: [],
   })
-  const handleDateClick = (e) =>{ //INCOMPLETE
-    //IDEALLY can add event to clicked date.
-    console.log(e) //Gives me a fat object
+  
+  //QUICK-ADD EVENT (Click Date)
+  const quickAddModal = useRef()
+  const handleDateClick = (e) =>{ //DONE
+    console.log(e)
     console.log(e.date)
-  }
-  const handleEventDrop = (e) =>{ //INCOMPLETE
-    console.log(e.oldEvent) //info of pre-drop
-    console.log(e.event) //info of after-drop
+    setNewEventState({...newEventState, frequency: "once"})
+    setNewStartState({startDate: e.date})
+    setTimeout(()=>quickAddModal.current.click(), 0)
   }
 
-//~~~~~~~~~~~~~~~~~POPULATE EVENTS on pageload~~~~~~~~~~~~~~~~~~
+  //QUICK-MOVE GROUP (Drag Drop)
+  const quickMoveModal = useRef()
+  const handleEventDrop = (e) =>{ //INCOMPLETE
+    // console.log(e.oldEvent)
+    console.log(e.event) //info of after-drop
+    let dayShift = (moment(e.event.start) - moment(e.oldEvent.start))/86400000
+    let groupStartDate = e.event.extendedProps.groupStartDate
+    let groupEndDate = e.event.extendedProps.groupEndDate
+    setNewEventState({
+      ...newEventState,
+      title: e.oldEvent.title,
+      amount: e.oldEvent.extendedProps.amount,
+      isPayment: e.oldEvent.extendedProps.isPayment,
+      frequency: e.oldEvent.extendedProps.frequency,
+      url: e.oldEvent.extendedProps.url,
+      category: e.oldEvent.extendedProps.category,
+      notes: e.oldEvent.extendedProps.notes,
+      editingGroup: true,
+      eventNumber: e.oldEvent.extendedProps.eventNumber,
+      groupTotal: e.oldEvent.extendedProps.groupTotal,
+      eventId: e.oldEvent.id,
+      groupId: e.oldEvent.groupId,
+    })
+    setNewStartState({startDate: moment(groupStartDate).format()})
+    setNewEndState({endDate: moment(groupEndDate).format()})
+    setEditEventState({eventDate: moment(groupStartDate).add(dayShift, "day").format()})
+    setEditEndState({endDate: moment(groupEndDate).add(dayShift, "day").format()})
+    setTimeout(()=>quickMoveModal.current.click(), 0)
+  }
+  const cancelMove = () => {window.location.reload()}
+
+  const [colorState, setColorState] = useState({
+    colorPreferences: []
+  })
+  //GLOBAL COLOR FUNCTION.
+  const colorFunction = (category) =>{
+    let color
+    switch (category) {
+      case "housing": color=colorState.colorPreferences[0]
+      break;
+      case "insurance": color=colorState.colorPreferences[1]
+      break;
+      case "loan": color=colorState.colorPreferences[2]
+      break;
+      case "taxes": color=colorState.colorPreferences[3]
+      break;
+      case "family": color=colorState.colorPreferences[4]
+      break;
+      case "recreation": color=colorState.colorPreferences[5]
+      break;
+      case "income": color=colorState.colorPreferences[6]
+      break;
+      case "other": color=colorState.colorPreferences[7]
+      break;
+      default: color=colorState.colorPreferences[7]
+    }
+    return color
+  }
+
+  //~~~~~~~~~~~~~~~~~POPULATE EVENTS on pageload~~~~~~~~~~~~~~~~~~
   let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
   useEffect(()=>{
     //FIRST grab user preferences (for colorPreferences) here.
     let colorPreferences = []
     getColors(token)
       .then(({data})=>{
+        setColorState({colorPreferences: data.colorPreferences})
         colorPreferences = data.colorPreferences
         //THEN grab events.
           getEvents(token)
@@ -118,7 +179,13 @@ const MyCalendar = () => {
       .catch(e=>console.error(e))
   }, [])
 
-
+  //FORMAT NUMBERS:
+  const formatNumber = num => {
+    // if (typeof num =="number"){
+      let formattedNum = num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+      return (formattedNum)
+    // }
+  }
 //~~~~~~~~~~~~~~~~~~~~~~~~~NEW PAYMENT VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [newEventState, setNewEventState] = useState( {
     title: '',    amount: 0,    isPayment: true,    frequency: 'once',    url: '',
@@ -456,6 +523,7 @@ const MyCalendar = () => {
     })
     setTimeout(()=>eventCard.current.click(), 0)
   }
+
   //clicking EDIT in event card.
   const editModal = useRef()
   const handleEditClick = ()=>{
@@ -704,18 +772,20 @@ const MyCalendar = () => {
       let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
       let groupId = newEventState.groupId
       deleteEvents(token, groupId)
-        .then(()=>console.log(`You deleted the ${newEventState.title} group`))
+        .then(()=>window.location.reload())
         .catch(e=>console.error(e))
     }else {
       //Deleting single event FUNCTIONING; still need to update event group.
       let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
       let id = newEventState.eventId
       deleteEvent(token, id)
-        .then(()=>console.log(`You deleted ${newEventState.title}`))
+        .then(()=>window.location.reload())
         .catch(e=>console.error(e))
     }
   }
-
+  const testingButton = () =>{
+    console.log(newEventState)
+  }
 //PAGE RENDERING STUFF
   return(
     <>
@@ -723,7 +793,7 @@ const MyCalendar = () => {
       <div className="container">
         {/* PAGE HEADER */}
         <h1 className = 'center white-text'>My Calendar</h1>
-
+        <button onClick={testingButton}>TESTING</button>
         {/* ADD EVENT MODAL (New Event Form) */}
         {/* https://react-materialize.github.io/react-materialize/?path=/story/javascript-modal--default */}
         <div className = "row"> 
@@ -737,9 +807,12 @@ const MyCalendar = () => {
                   Save <i className="material-icons right">send</i>
                 </Button>
               ]}
-              header="Add New Event" trigger={createEvent}>
+              trigger={createEvent}>
               <br></br>
               <form action="#">
+                <div className="row"> {/* HEADER */}
+                  <h5>Add New Event(s) </h5>
+                </div>
                 {/* ADD EVENT MODAL 1st ROW: Title/Amount */}
                 <div className="row">
                     <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
@@ -908,22 +981,75 @@ const MyCalendar = () => {
             ]}
             >
               <div> {/* CARD BODY */}
-                  {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
-                  <h4>{newEventState.title}</h4>
-                  <h5>{newEventState.frequency ==="once" ?
-                    "Single Event"
+                {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
+                <h5>{newEventState.title} ({moment(editEventState.eventDate).format("MM-DD-YY")})</h5>
+                <div id="modalDivider" className="col s12 m12 l12"
+                    style={{
+                      width: "100%", height: "4px", 
+                      borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                      borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid",
+                      marginTop: "10px", marginBottom:"10px"
+                      }}>
+                  </div>
+                <div className="row">
+                  <div className="left col s12 m6 l6 purple lighten-4">
+                    <h6 style={{fontWeight:"600"}}>~Event Details~</h6>
+                    <div style={{width: "50%", position:"relative", left:"25%", padding:"3px", paddingRight:"5px", paddingLeft:"5px",
+                          textTransform: "uppercase", backgroundColor: colorFunction(newEventState.category), color: "white"}}>
+                      {newEventState.category}
+                    </div>
+                    {/* category tag */}
+                    <h6 className="left-align">
+                    {newEventState.isPayment ? 
+                      <>Payment amount: <span style={{color: "maroon", fontWeight:"600"}}>{newEventState.amount ? "$"+formatNumber(newEventState.amount) : null}</span></>
                       :
-                    "Event Number " + newEventState.eventNumber + " of " + newEventState.groupTotal
-                    }</h5>
-                <div>
-                  <p>{newEventState.isPayment ? "Payment amount: $" + newEventState.amount : "Income amount: $" + newEventState.amount}</p>
-                  <p>Date: {moment(editEventState.eventDate).format("MM-DD-YYYY")}</p>
-                  <p>Frequency: {newEventState.frequency}</p>
-                  <p>URL: {newEventState.url}</p>
-                  <p>Notes: {newEventState.notes}</p>
-                  <p>Category: {newEventState.category}</p>
-                  <p>Group Start Date: {moment(editStartState.startDate).format("MM-DD-YYYY")}</p>
-                  <p>Group End Date: {moment(editEndState.endDate).format("MM-DD-YYYY")}</p>
+                      <>Income amount: <span style={{color: "darkgreen", fontWeight:"600"}}>{newEventState.amount ? "$"+formatNumber(newEventState.amount) : null}</span></>
+                    }
+                    </h6>
+                    <h6 className="left-align">URL: {
+                      newEventState.url ? 
+                      <a href={newEventState.url} target="_blank">
+                      {newEventState.url}</a> : 
+                      <span className="grey-text text-darken-2">No website provided.</span>
+                      }
+                    </h6>
+                  </div>
+                  <div className="left col s12 m6 l6 green lighten-4">
+                    {
+                      newEventState.frequency ==="once" ?
+                        <div>
+                          <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
+                          <h6>Single Event</h6>
+                        </div>
+                        :
+                      <div>
+                        <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
+                        <h6>{"#" + newEventState.eventNumber + " of " + newEventState.groupTotal + " occurrences"}</h6>
+                        <h6 className="left-align">Group Frequency: <span style={{textTransform: "capitalize"}}>{newEventState.frequency}</span></h6>
+                        <h6 className="left-align">Group Start Date: {moment(editStartState.startDate).format("MM-DD-YYYY")}</h6>
+                        <h6 className="left-align">Group End Date: {moment(editEndState.endDate).format("MM-DD-YYYY")}</h6>
+                      </div>
+                    }
+                  </div>
+                  
+                  <div id="modalDivider" className="col s12 m12 l12"
+                    style={{
+                      width: "100%", height: "4px", 
+                      borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                      borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid",
+                      marginTop: "10px", marginBottom:"10px"
+                      }}>
+                  </div>
+
+                  <div className="left col s12 m12 l12 blue darken-1 white-text" style={{marginTop:"5px", marginBottom:"0px", borderStyle:"double"}}>
+                    {/* <div className="row left"> */}
+                      <h6>{"Notes: "}</h6>
+                      <div>{newEventState.notes ? newEventState.notes 
+                        : <span className="grey-text text-darken-4">No notes were added to this event. Use the Calendar to add notes to this event or group.</span>
+                        }
+                      </div>
+                    {/* </div> */}
+                  </div>
                 </div>
               </div> {/* END OF CARD BODY */}
           </Modal>
@@ -943,9 +1069,12 @@ const MyCalendar = () => {
                 </Button>,
                 <span> </span>,
               ]}
-              header={newEventState.editingGroup ? "Edit Group: " + newEventState.title : "Edit Event: " + newEventState.title + " (" + newEventState.eventNumber + " of " + newEventState.groupTotal + ")"}>
+              >
               <br></br>
               <form action="#">
+                <div className="row">{/* HEADER */}
+                  {newEventState.editingGroup ? "Edit Group: " + newEventState.title : "Edit Event: " + newEventState.title + " (" + newEventState.eventNumber + " of " + newEventState.groupTotal + ")"}
+                </div>
                 {/* EDITING MODAL 1st ROW: EditingGroup, isPayment switches */}
                 <div className="row">
                   <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
@@ -1046,7 +1175,7 @@ const MyCalendar = () => {
                     />
                   </div>
                   {/* Frequency -- can't be changed for single date*/}
-                  {!newEventState.editingGroup ? null : 
+                  {!newEventState.editingGroup ? <div className="col s12 m6 l6"><p>Changing this event date will not affect the start and end dates of the entire group.</p></div> : 
                     <>
                       <div className="col s5 m2 l2">
                         <p className="center">New frequency?</p>
@@ -1110,9 +1239,8 @@ const MyCalendar = () => {
                 </div>
               </form>
           </Modal>
-        </div>
-        {/* end editing modal */}
-      
+        </div>{/* end editing modal */}
+        
         {/* DELETE MODAL */}
         <div className="row">
           <a ref={deleteModal} className="modal-trigger" href='#deleteModal'></a>
@@ -1126,7 +1254,6 @@ const MyCalendar = () => {
                   Cancel
                 </Button>,
               ]}
-              // header={"Deleting: " + newEventState.title}
           >
             <br></br>
             <form action="#">
@@ -1163,7 +1290,7 @@ const MyCalendar = () => {
                   <h5>Are you sure you want to delete event group? ({newEventState.groupTotal} total)</h5> 
                   <h5>"{newEventState.title}"</h5>
                   <h6>starting {moment(editStartState.startDate).format("MMMM Do, YYYY")}</h6>
-                  <h6>ending {moment(editEndState.endDate).format("MMMM, Do, YYYY")}</h6>
+                  <h6>ending {moment(editEndState.endDate).format("MMMM Do, YYYY")}</h6>
                 </div>
               </>
               :
@@ -1177,6 +1304,137 @@ const MyCalendar = () => {
             </form>
           </Modal>
         </div> {/* end delete modal */}
+
+        {/* QUICK ADD MODAL */}
+        <div className="row">
+          <a ref={quickAddModal} className="modal-trigger" href='#quickAddModal'></a>
+          <Modal id="quickAddModal" className="center-align"
+              actions={[
+                <Button onClick={cancelEvent} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                  Close
+                </Button>,
+                <span> </span>,
+                <Button onClick={addNewEvents} modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                  Save <i className="material-icons right">send</i>
+                </Button>
+              ]}
+              // header={"Quick Add One Event"}
+          >
+            <br></br>
+            <form action="#">
+              {/* QUICKADD MODAL 1st ROW: Title, IsPayment Switch*/}
+              <div className="row">
+                <h5>Quick-Add One Event</h5>
+                <h6>{moment(newStartState.startDate).format('dddd MMMM Do, YYYY')}</h6>
+              </div>
+              <div className="row"> 
+                <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
+                  <label>
+                    <div className="col s4 m5 l5 right-align">
+                      <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
+                    </div>
+                    <div className="col s3 m2 l2">
+                      <input id="paymentSwitch" onChange={paymentSwitch} type="checkbox"/>
+                      <span className="lever"></span>
+                    </div>
+                    <div className="col s5 m5 l5 left-align">
+                      <h6 style={newEventState.isPayment ? {display:"inline"}:{color: "green", display:"inline"}}>I am receiving income.</h6>
+                    </div>
+                  </label>
+                </div>
+                {/* event title */}
+                <div className="input-field col s12 m6 l6">
+                  <label style={newEventState.title.length ? {visibility: "hidden"} : {visibility: "visible"}} htmlFor="newTitle">Event Title</label>
+                  <input id="newTitle" name="title" value={newEventState.title} onChange={newEventState.handleInputChange} />                
+                </div>
+                {/* dollar amount */}
+                <div className="input-field col s12 m6 l6">
+                  <i className="material-icons prefix">attach_money</i>
+                  <input placeholder="123.45" type="number" min="0.00" 
+                          max="10000.00" step="0.01" name="amount"
+                          value={newEventState.amount} onChange={newEventState.handleInputChange}/>
+                </div>
+              </div>
+
+              <div className="row"><div id="modalDivider"
+                style={{
+                  width: "100%", height: "4px", 
+                  borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                  borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid"
+                  }}>
+              </div></div>
+
+              {/* QUICKADD MODAL 2nd ROW: Additional Info */}
+              <div className="row">
+                <h6>Additional info (optional)</h6>
+                <div className="input-field col s6 m6 l6">
+                  <label style={newEventState.url.length ? {visibility: "hidden"} : {visibility: "visible"}} htmlFor="newURL">URL</label>
+                  <input id="newURL" name="url" value={newEventState.url} onChange={newEventState.handleInputChange} />                
+                </div>
+                <div className="col s6 m6 l6">
+                  <span 
+                    // style={{visibility:'hidden'}}
+                  >
+                    Category</span>
+                  <select id="categorySelect" className="browser-default" onChange={categorySelect}>
+                    <option value="" selected disabled>Choose a category.</option>
+                    <option value="income">Income</option>
+                    <option value="housing">Housing Expense</option>
+                    <option value="insurance">Insurance Payment</option>
+                    <option value="loan">Loan Payment</option>
+                    <option value="taxes">Taxes</option>
+                    <option value="family">Family</option>
+                    <option value="recreation">Recreation</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div className="input-field col s12 m12 l12">
+                  <textarea id="eventNotes" className="materialize-textarea" data-length="300" name="notes" value={newEventState.notes} onChange={newEventState.handleInputChange} ></textarea>
+                  <label for="eventNotes">Notes</label>
+                </div>
+              </div>
+            </form>
+          </Modal>
+        </div>{/* END QUICK ADD MODAL */}
+        
+        {/* QUICK MOVE MODAL */}
+        <div className="row">
+          <a ref={quickMoveModal} className="modal-trigger" href='#quickMoveModal'></a>
+          <Modal id="quickMoveModal" className="center-align"
+              actions={[
+                <Button onClick={cancelMove} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                  Cancel Move
+                </Button>,
+                <span> </span>,
+                <Button onClick={confirmEdit} modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+                  Move Events <i className="material-icons right">send</i>
+                </Button>
+              ]}
+              // header={"Quick Add One Event"}
+          >
+            <br></br>
+            <form action="#">
+              <h5>Are you sure you want to move this group?</h5>
+              <h4>{newEventState.title}</h4>
+              <div className="row">
+                <div className="col s12 m6 l6 purple lighten-3">
+                  <h6 style={{fontWeight: "600"}}>~Original Group Dates~</h6>
+                  <h6>{moment(newStartState.startDate).format("MMMM Do, YYYY")}</h6>
+                  <h6>through</h6>
+                  <h6>{moment(newEndState.endDate).format("MMMM Do, YYYY")}</h6>
+                </div>
+                <div className="col s12 m6 l6 green lighten-3">
+                  <h6 style={{fontWeight: "600"}}>~New Group Dates~</h6>
+                  <h6>{moment(editEventState.eventDate).format("MMMM Do, YYYY")}</h6>
+                  <h6>through</h6>
+                  <h6>{moment(editEndState.endDate).format("MMMM Do, YYYY")}</h6>
+                </div>
+              </div>
+              <p>This will effect the amount, notes, category, and URL settings of all events in group. </p>
+              <p>Settings attached the dragged event will be applied to all events in this group.</p>
+            </form>
+          </Modal>
+        </div>{/* END QUICK ADD MODAL */}
 
       </div> {/* END CONTAINER */}
     </>

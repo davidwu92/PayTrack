@@ -209,21 +209,26 @@ const MyStatement = () => {
   const unhighlightRow = e => e.currentTarget.className=""
 
   //FORMAT NUMBERS:
-  const formatNumber = num => num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+  const formatNumber = num => {
+    // if (typeof num =="number"){
+      let formattedNum = num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+      return (formattedNum)
+    // }
+  }
 
   const totalIncome = () => { //Calculate total income
     let total = 0
     tableState.events.forEach(event=>{
       if(!event.extendedProps.isPayment){total = total + event.extendedProps.amount}
     })
-    return("$"+formatNumber(total))
+    return("$"+formatNumber(Math.floor(total*100)/100))
   }
   const totalExpense = () =>{ //Calculate total expenses
     let total = 0
     tableState.events.forEach(event=>{
       if(event.extendedProps.isPayment){total = total + event.extendedProps.amount}
     })
-    return("$"+formatNumber(total))
+    return("$"+formatNumber(Math.floor(total*100)/100))
   }
 
   //testing button
@@ -386,7 +391,7 @@ const MyStatement = () => {
                     <td></td>
                   </>}
                   <td style={tableState.cumSum[i]>0 ? {fontWeight: "500", color: "darkgreen"}:{fontWeight: "600", color: "maroon"}}>
-                    {tableState.cumSum[i]>0 ? "$"+formatNumber(tableState.cumSum[i]):"-$"+ formatNumber(-tableState.cumSum[i])}</td>
+                    {tableState.cumSum[i]>0 ? "$"+formatNumber(Math.floor(tableState.cumSum[i]*100)/100):"-$"+ formatNumber(-Math.floor(tableState.cumSum[i]*100)/100)}</td>
                 </tr>
               )}
               {/* Totals row */}
@@ -402,14 +407,14 @@ const MyStatement = () => {
                 <td style={tableState.cumSum[tableState.cumSum.length-1]>0 ? {fontWeight: "600", color: "darkgreen"}:{fontWeight: "600", color: "maroon"}}>
                   Balance: 
                   {tableState.cumSum[tableState.cumSum.length-1]>0 ? 
-                  " $"+formatNumber(tableState.cumSum[tableState.cumSum.length-1])
-                  :" -$"+ formatNumber(-tableState.cumSum[tableState.cumSum.length-1])}</td>
+                  " $"+formatNumber(Math.floor(tableState.cumSum[tableState.cumSum.length-1]*100)/100)
+                  :" -$"+ formatNumber(-Math.floor(tableState.cumSum[tableState.cumSum.length-1]*100)/100)}</td>
               </tr>
             </tbody>
           </table>
         </div>
         
-        {/* Clicked Event Modal */}
+        {/* CLICKED EVENT MODAL */}
         <div className="row">
           <a ref={eventCard} className="modal-trigger" href='#eventCard'></a>
           <Modal id="eventCard" className="center-align"
@@ -421,25 +426,72 @@ const MyStatement = () => {
             >
               <div> {/* CARD BODY */}
                   {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
-                <h5>{eventState.event.title} {moment(eventState.event.date).format("MMMM Do, YYYY")}</h5>
+                <h5>{eventState.event.title} ({moment(eventState.event.date).format("MM-DD-YY")})</h5>
+                <div id="modalDivider" className="col s12 m12 l12"
+                    style={{
+                      width: "100%", height: "4px", 
+                      borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                      borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid",
+                      marginTop: "10px", marginBottom:"10px"
+                      }}>
+                  </div>
                 <div className="row">
-                  <div className="col s6 m6 l6">
-                    <h6>{eventState.event.extendedProps.frequency ==="once" ?
-                      "(Single Event)"
+                  <div className="left col s12 m6 l6 purple lighten-4">
+                    <h6 style={{fontWeight:"600"}}>~Event Details~</h6>
+                    <div style={{width: "50%", position:"relative", left:"25%", padding:"3px", paddingRight:"5px",paddingLeft:"5px",
+                          textTransform: "uppercase", backgroundColor: eventState.event.backgroundColor, color: "white"}}>
+                      {eventState.event.extendedProps.category}
+                    </div>
+                    {/* category tag */}
+                    {eventState.event.extendedProps.isPayment ? 
+                      <h6 className="left-align">Payment amount: <span style={{color: "maroon", fontWeight:"600"}}>{eventState.event.extendedProps.amount ? "$"+formatNumber(eventState.event.extendedProps.amount) : null}</span></h6>
+                      :
+                      <h6 className="left-align">Income amount: <span style={{color: "darkgreen", fontWeight:"600"}}>{eventState.event.extendedProps.amount ? "$"+formatNumber(eventState.event.extendedProps.amount) : null}</span></h6>
+                    }
+                    <h6 className="left-align">URL: {
+                      eventState.event.extendedProps.url ? 
+                      <a href={eventState.event.extendedProps.url} target="_blank">
+                      {eventState.event.extendedProps.url}</a> : 
+                      <span className="grey-text text-darken-2">No website provided.</span>
+                      }
+                    </h6>
+                  </div>
+                  <div className="left col s12 m6 l6 green lighten-4">
+                    {
+                      eventState.event.extendedProps.frequency ==="once" ?
+                        <div>
+                          <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
+                          <h6>Single Event</h6>
+                        </div>
                         :
-                      "#" + eventState.event.extendedProps.eventNumber + " of " + eventState.event.extendedProps.groupTotal + " events occuring " + eventState.event.extendedProps.frequency
-                      }</h6>
-
+                      <div>
+                        <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
+                        <h6>{"#" + eventState.event.extendedProps.eventNumber + " of " + eventState.event.extendedProps.groupTotal + " occurrences"}</h6>
+                        <h6 className="left-align">Group Frequency: <span style={{textTransform: "capitalize"}}>{eventState.event.extendedProps.frequency}</span></h6>
+                        <h6 className="left-align">Group Start Date: {moment(eventState.event.extendedProps.groupStartDate).format("MM-DD-YYYY")}</h6>
+                        <h6 className="left-align">Group End Date: {moment(eventState.event.extendedProps.groupEndDate).format("MM-DD-YYYY")}</h6>
+                      </div>
+                    }
                   </div>
-                  <div className="col s6 m6 l6">
-
+                  
+                  <div id="modalDivider" className="col s12 m12 l12"
+                    style={{
+                      width: "100%", height: "4px", 
+                      borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                      borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid",
+                      marginTop: "10px", marginBottom:"10px"
+                      }}>
                   </div>
-                  <p>{eventState.event.extendedProps.isPayment ? "Payment amount: $" + eventState.event.extendedProps.amount : "Income amount: $" + eventState.event.extendedProps.amount}</p>
-                  <p>URL: {eventState.event.extendedProps.url}</p>
-                  <p>Notes: {eventState.event.extendedProps.notes}</p>
-                  <p>Category: {eventState.event.extendedProps.category}</p>
-                  <p>Group Start Date: {moment(eventState.event.extendedProps.groupStartDate).format("MM-DD-YYYY")}</p>
-                  <p>Group End Date: {moment(eventState.event.extendedProps.groupEndDate).format("MM-DD-YYYY")}</p>
+
+                  <div className="left col s12 m12 l12 blue darken-1 white-text" style={{marginTop:"5px", marginBottom:"0px", borderStyle:"double"}}>
+                    {/* <div className="row left"> */}
+                      <h6>{"Notes: "}</h6>
+                      <div>{eventState.event.extendedProps.notes ? eventState.event.extendedProps.notes 
+                        : <span className="grey-text text-darken-4">No notes were added to this event. Use the Calendar to add notes to this event or group.</span>
+                        }
+                      </div>
+                    {/* </div> */}
+                  </div>
                 </div>
               </div> {/* END OF CARD BODY */}
           </Modal>
