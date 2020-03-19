@@ -47,13 +47,42 @@ const MyCalendar = () => {
     console.log(e.event) //info of after-drop
   }
 
-//~~~~~~~~~~~~~~~~~POPULATE EVENTS on pageload~~~~~~~~~~~~~~~~~~
+  const [colorState, setColorState] = useState({
+    colorPreferences: []
+  })
+  //GLOBAL COLOR FUNCTION.
+  const colorFunction = (category) =>{
+    let color
+    switch (category) {
+      case "housing": color=colorState.colorPreferences[0]
+      break;
+      case "insurance": color=colorState.colorPreferences[1]
+      break;
+      case "loan": color=colorState.colorPreferences[2]
+      break;
+      case "taxes": color=colorState.colorPreferences[3]
+      break;
+      case "family": color=colorState.colorPreferences[4]
+      break;
+      case "recreation": color=colorState.colorPreferences[5]
+      break;
+      case "income": color=colorState.colorPreferences[6]
+      break;
+      case "other": color=colorState.colorPreferences[7]
+      break;
+      default: color=colorState.colorPreferences[7]
+    }
+    return color
+  }
+
+  //~~~~~~~~~~~~~~~~~POPULATE EVENTS on pageload~~~~~~~~~~~~~~~~~~
   let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
   useEffect(()=>{
     //FIRST grab user preferences (for colorPreferences) here.
     let colorPreferences = []
     getColors(token)
       .then(({data})=>{
+        setColorState({colorPreferences: data.colorPreferences})
         colorPreferences = data.colorPreferences
         //THEN grab events.
           getEvents(token)
@@ -118,7 +147,13 @@ const MyCalendar = () => {
       .catch(e=>console.error(e))
   }, [])
 
-
+  //FORMAT NUMBERS:
+  const formatNumber = num => {
+    // if (typeof num =="number"){
+      let formattedNum = num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+      return (formattedNum)
+    // }
+  }
 //~~~~~~~~~~~~~~~~~~~~~~~~~NEW PAYMENT VARIABLES/FUNCTIONS ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   const [newEventState, setNewEventState] = useState( {
     title: '',    amount: 0,    isPayment: true,    frequency: 'once',    url: '',
@@ -456,6 +491,7 @@ const MyCalendar = () => {
     })
     setTimeout(()=>eventCard.current.click(), 0)
   }
+
   //clicking EDIT in event card.
   const editModal = useRef()
   const handleEditClick = ()=>{
@@ -908,22 +944,75 @@ const MyCalendar = () => {
             ]}
             >
               <div> {/* CARD BODY */}
-                  {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
-                  <h4>{newEventState.title}</h4>
-                  <h5>{newEventState.frequency ==="once" ?
-                    "Single Event"
+                {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
+                <h5>{newEventState.title} ({moment(editEventState.eventDate).format("MM-DD-YY")})</h5>
+                <div id="modalDivider" className="col s12 m12 l12"
+                    style={{
+                      width: "100%", height: "4px", 
+                      borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                      borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid",
+                      marginTop: "10px", marginBottom:"10px"
+                      }}>
+                  </div>
+                <div className="row">
+                  <div className="left col s12 m6 l6 purple lighten-4">
+                    <h6 style={{fontWeight:"600"}}>~Event Details~</h6>
+                    <div style={{width: "50%", position:"relative", left:"25%", padding:"3px", paddingRight:"5px", paddingLeft:"5px",
+                          textTransform: "uppercase", backgroundColor: colorFunction(newEventState.category), color: "white"}}>
+                      {newEventState.category}
+                    </div>
+                    {/* category tag */}
+                    <h6 className="left-align">
+                    {newEventState.isPayment ? 
+                      <>Payment amount: <span style={{color: "maroon", fontWeight:"600"}}>{newEventState.amount ? "$"+formatNumber(newEventState.amount) : null}</span></>
                       :
-                    "Event Number " + newEventState.eventNumber + " of " + newEventState.groupTotal
-                    }</h5>
-                <div>
-                  <p>{newEventState.isPayment ? "Payment amount: $" + newEventState.amount : "Income amount: $" + newEventState.amount}</p>
-                  <p>Date: {moment(editEventState.eventDate).format("MM-DD-YYYY")}</p>
-                  <p>Frequency: {newEventState.frequency}</p>
-                  <p>URL: {newEventState.url}</p>
-                  <p>Notes: {newEventState.notes}</p>
-                  <p>Category: {newEventState.category}</p>
-                  <p>Group Start Date: {moment(editStartState.startDate).format("MM-DD-YYYY")}</p>
-                  <p>Group End Date: {moment(editEndState.endDate).format("MM-DD-YYYY")}</p>
+                      <>Income amount: <span style={{color: "darkgreen", fontWeight:"600"}}>{newEventState.amount ? "$"+formatNumber(newEventState.amount) : null}</span></>
+                    }
+                    </h6>
+                    <h6 className="left-align">URL: {
+                      newEventState.url ? 
+                      <a href={newEventState.url} target="_blank">
+                      {newEventState.url}</a> : 
+                      <span className="grey-text text-darken-2">No website provided.</span>
+                      }
+                    </h6>
+                  </div>
+                  <div className="left col s12 m6 l6 green lighten-4">
+                    {
+                      newEventState.frequency ==="once" ?
+                        <div>
+                          <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
+                          <h6>Single Event</h6>
+                        </div>
+                        :
+                      <div>
+                        <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
+                        <h6>{"#" + newEventState.eventNumber + " of " + newEventState.groupTotal + " occurrences"}</h6>
+                        <h6 className="left-align">Group Frequency: <span style={{textTransform: "capitalize"}}>{newEventState.frequency}</span></h6>
+                        <h6 className="left-align">Group Start Date: {moment(editStartState.startDate).format("MM-DD-YYYY")}</h6>
+                        <h6 className="left-align">Group End Date: {moment(editEndState.endDate).format("MM-DD-YYYY")}</h6>
+                      </div>
+                    }
+                  </div>
+                  
+                  <div id="modalDivider" className="col s12 m12 l12"
+                    style={{
+                      width: "100%", height: "4px", 
+                      borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                      borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid",
+                      marginTop: "10px", marginBottom:"10px"
+                      }}>
+                  </div>
+
+                  <div className="left col s12 m12 l12 blue darken-1 white-text" style={{marginTop:"5px", marginBottom:"0px", borderStyle:"double"}}>
+                    {/* <div className="row left"> */}
+                      <h6>{"Notes: "}</h6>
+                      <div>{newEventState.notes ? newEventState.notes 
+                        : <span className="grey-text text-darken-4">No notes were added to this event. Use the Calendar to add notes to this event or group.</span>
+                        }
+                      </div>
+                    {/* </div> */}
+                  </div>
                 </div>
               </div> {/* END OF CARD BODY */}
           </Modal>

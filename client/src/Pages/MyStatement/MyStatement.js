@@ -210,10 +210,10 @@ const MyStatement = () => {
 
   //FORMAT NUMBERS:
   const formatNumber = num => {
-    if (typeof num =="number"){
-      num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
-      return num
-    }
+    // if (typeof num =="number"){
+      let formattedNum = num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+      return (formattedNum)
+    // }
   }
 
   const totalIncome = () => { //Calculate total income
@@ -414,7 +414,7 @@ const MyStatement = () => {
           </table>
         </div>
         
-        {/* Clicked Event Modal */}
+        {/* CLICKED EVENT MODAL */}
         <div className="row">
           <a ref={eventCard} className="modal-trigger" href='#eventCard'></a>
           <Modal id="eventCard" className="center-align"
@@ -427,36 +427,70 @@ const MyStatement = () => {
               <div> {/* CARD BODY */}
                   {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
                 <h5>{eventState.event.title} ({moment(eventState.event.date).format("MM-DD-YY")})</h5>
+                <div id="modalDivider" className="col s12 m12 l12"
+                    style={{
+                      width: "100%", height: "4px", 
+                      borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                      borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid",
+                      marginTop: "10px", marginBottom:"10px"
+                      }}>
+                  </div>
                 <div className="row">
-                  <div className="left col s12 m6 l6">
+                  <div className="left col s12 m6 l6 purple lighten-4">
                     <h6 style={{fontWeight:"600"}}>~Event Details~</h6>
-                    <div style={{width: "30%", position:"relative", left:"35%", padding:"3px", paddingRight:"6px",paddingLeft:"6px",
+                    <div style={{width: "50%", position:"relative", left:"25%", padding:"3px", paddingRight:"5px",paddingLeft:"5px",
                           textTransform: "uppercase", backgroundColor: eventState.event.backgroundColor, color: "white"}}>
                       {eventState.event.extendedProps.category}
                     </div>
-                    {eventState.event.extendedProps.isPayment ? 
-                      <h6>Payment amount: <span style={{color: "maroon"}}>{"$"+formatNumber(eventState.event.extendedProps.amount)}</span></h6>
-                      :
-                      <h6>Payment amount: <span style={{color: "darkgreen"}}>{"$"+formatNumber(eventState.event.extendedProps.amount)}</span></h6>
-                    }
                     {/* category tag */}
-
-                    <h6>URL: {eventState.event.extendedProps.url}</h6>
-                    <h6>Notes: {eventState.event.extendedProps.notes}</h6>
-                    <h6>Group Start Date: {moment(eventState.event.extendedProps.groupStartDate).format("MM-DD-YYYY")}</h6>
-                    <h6>Group End Date: {moment(eventState.event.extendedProps.groupEndDate).format("MM-DD-YYYY")}</h6>
+                    {eventState.event.extendedProps.isPayment ? 
+                      <h6 className="left-align">Payment amount: <span style={{color: "maroon", fontWeight:"600"}}>{eventState.event.extendedProps.amount ? "$"+formatNumber(eventState.event.extendedProps.amount) : null}</span></h6>
+                      :
+                      <h6 className="left-align">Income amount: <span style={{color: "darkgreen", fontWeight:"600"}}>{eventState.event.extendedProps.amount ? "$"+formatNumber(eventState.event.extendedProps.amount) : null}</span></h6>
+                    }
+                    <h6 className="left-align">URL: {
+                      eventState.event.extendedProps.url ? 
+                      <a href={eventState.event.extendedProps.url} target="_blank">
+                      {eventState.event.extendedProps.url}</a> : 
+                      <span className="grey-text text-darken-2">No website provided.</span>
+                      }
+                    </h6>
                   </div>
-                  <div className="col s12 m6 l6">
+                  <div className="left col s12 m6 l6 green lighten-4">
                     {
                       eventState.event.extendedProps.frequency ==="once" ?
-                      <h6>Single Event</h6>
+                        <div>
+                          <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
+                          <h6>Single Event</h6>
+                        </div>
                         :
                       <div>
                         <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
                         <h6>{"#" + eventState.event.extendedProps.eventNumber + " of " + eventState.event.extendedProps.groupTotal + " occurrences"}</h6>
-                        <h6>Group frequency: {eventState.event.extendedProps.frequency}</h6>
+                        <h6 className="left-align">Group Frequency: <span style={{textTransform: "capitalize"}}>{eventState.event.extendedProps.frequency}</span></h6>
+                        <h6 className="left-align">Group Start Date: {moment(eventState.event.extendedProps.groupStartDate).format("MM-DD-YYYY")}</h6>
+                        <h6 className="left-align">Group End Date: {moment(eventState.event.extendedProps.groupEndDate).format("MM-DD-YYYY")}</h6>
                       </div>
                     }
+                  </div>
+                  
+                  <div id="modalDivider" className="col s12 m12 l12"
+                    style={{
+                      width: "100%", height: "4px", 
+                      borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                      borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid",
+                      marginTop: "10px", marginBottom:"10px"
+                      }}>
+                  </div>
+
+                  <div className="left col s12 m12 l12 blue darken-1 white-text" style={{marginTop:"5px", marginBottom:"0px", borderStyle:"double"}}>
+                    {/* <div className="row left"> */}
+                      <h6>{"Notes: "}</h6>
+                      <div>{eventState.event.extendedProps.notes ? eventState.event.extendedProps.notes 
+                        : <span className="grey-text text-darken-4">No notes were added to this event. Use the Calendar to add notes to this event or group.</span>
+                        }
+                      </div>
+                    {/* </div> */}
                   </div>
                 </div>
               </div> {/* END OF CARD BODY */}
