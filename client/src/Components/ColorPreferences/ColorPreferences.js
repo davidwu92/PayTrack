@@ -76,14 +76,17 @@ const ColorPreferences = () => {
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"red", marginRight: "3px", marginBottom: "3px"}} value="red"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"magenta", marginRight: "3px", marginBottom: "3px"}} value="magenta"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"deeppink", marginRight: "3px", marginBottom: "3px"}} value="deeppink"></Button>
-          <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"orange", marginRight: "3px", marginBottom: "3px"}} value="orange"></Button>
+          <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"darkorange", marginRight: "3px", marginBottom: "3px"}} value="darkorange"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor: "chocolate", marginRight: "3px", marginBottom: "3px"}} value="chocolate"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"sienna", marginRight: "3px", marginBottom: "3px"}} value="sienna"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"brown", marginRight: "3px", marginBottom: "3px"}} value="brown"></Button>
+          <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"darkorchid", marginRight: "3px", marginBottom: "3px"}} value="darkorchid"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"purple", marginRight: "3px", marginBottom: "3px"}} value="purple"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"indigo", marginRight: "3px", marginBottom: "3px"}} value="indigo"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"blue", marginRight: "3px", marginBottom: "3px"}} value="blue"></Button>
+          <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"dodgerblue", marginRight: "3px", marginBottom: "3px"}} value="dodgerblue"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"teal", marginRight: "3px", marginBottom: "3px"}} value="teal"></Button>
+          <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"darkgreen", marginRight: "3px", marginBottom: "3px"}} value="darkgreen"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"green", marginRight: "3px", marginBottom: "3px"}} value="green"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"grey", marginRight: "3px", marginBottom: "3px"}} value="grey"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"black", marginRight: "3px", marginBottom: "3px"}} value="black"></Button>
