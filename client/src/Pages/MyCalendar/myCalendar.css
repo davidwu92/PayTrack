@@ -44,3 +44,7 @@
   padding-top: 0px;
   padding-bottom: 0px;
 }
+
+.modal-footer {
+  background-color: #b0bec5 !important
+}

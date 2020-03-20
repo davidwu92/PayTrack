@@ -794,10 +794,10 @@ const MyCalendar = () => {
         {/* PAGE HEADER */}
         <h2 className = 'center white-text'>My Calendar</h2>
         <button onClick={testingButton}>TESTING</button>
-        {/* ADD EVENT MODAL (New Event Form) */}
         {/* https://react-materialize.github.io/react-materialize/?path=/story/javascript-modal--default */}
+        {/* ADD EVENT MODAL (New Event Form) */}
         <div className = "row"> 
-          <Modal id="newPaymentModal" className="center-align"
+          <Modal id="newPaymentModal" className="center-align purple lighten-5"
               actions={[
                 <Button onClick={cancelEvent} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
                   Close
@@ -807,6 +807,7 @@ const MyCalendar = () => {
                   Save <i className="material-icons right">send</i>
                 </Button>
               ]}
+              // bottomSheet={true}
               trigger={createEvent}>
               <br></br>
               <form action="#">
@@ -818,14 +819,14 @@ const MyCalendar = () => {
                     <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
                       <label>
                         <div className="col s4 m5 l5 right-align">
-                          <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
+                          <h6 style={newEventState.isPayment ? {fontWeight: "600", color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
                         </div>
                         <div className="col s3 m2 l2">
                           <input id="paymentSwitch" onChange={paymentSwitch} type="checkbox"/>
                           <span className="lever"></span>
                         </div>
                         <div className="col s5 m5 l5 left-align">
-                          <h6 style={newEventState.isPayment ? {display:"inline"}:{color: "green", display:"inline"}}>I am receiving income.</h6>
+                          <h6 style={newEventState.isPayment ? {display:"inline"}:{fontWeight: "600", color: "green", display:"inline"}}>I am receiving income.</h6>
                         </div>
                       </label>
                     </div>
@@ -941,8 +942,9 @@ const MyCalendar = () => {
                 </div>
               </form>
             </Modal>
-          <ColorPreferences/>
         </div>
+        
+        <ColorPreferences/>
         
         {/* CALENDAR (contained in div.row) */}
         <div className = "row" style={{backgroundColor: "ghostwhite", padding: "1vw"}}>
@@ -965,9 +967,9 @@ const MyCalendar = () => {
         {/* EVENT INFO CARD (when calendar event clicked) */}{/* needs styling */}
         <div className="row">
           <a ref={eventCard} className="modal-trigger" href='#eventCard'></a>
-          <Modal id="eventCard" className="center-align"
+          <Modal id="eventCard" className="center-align teal lighten-5"
             actions={[
-              <Button onClick={handleEditClick} modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
+              <Button onClick={handleEditClick} modal="close" node="button" className="light-blue darken-1 white-text waves-effect waves-light hoverable" id="editBtn">
                 Edit <i className="material-icons right">send</i>
               </Button>,
               <span> </span>,
@@ -982,7 +984,8 @@ const MyCalendar = () => {
             >
               <div> {/* CARD BODY */}
                 {/* Event Card Header: shows as Single Event or "${eventNumber} of ${groupTotal} */}
-                <h5>{newEventState.title} ({moment(editEventState.eventDate).format("MM-DD-YY")})</h5>
+                <h5>{newEventState.title}</h5>
+                <h6>{moment(editEventState.eventDate).format("MMMM Do, YYYY")}</h6>
                 <div id="modalDivider" className="col s12 m12 l12"
                     style={{
                       width: "100%", height: "4px", 
@@ -991,14 +994,13 @@ const MyCalendar = () => {
                       marginTop: "10px", marginBottom:"10px"
                       }}>
                   </div>
-                <div className="row">
+                <div className="row" style={{display: "flex", flexWrap: "wrap"}}>
                   <div className="left col s12 m6 l6 purple lighten-4">
                     <h6 style={{fontWeight:"600"}}>~Event Details~</h6>
                     <div style={{width: "50%", position:"relative", left:"25%", padding:"3px", paddingRight:"5px", paddingLeft:"5px",
                           textTransform: "uppercase", backgroundColor: colorFunction(newEventState.category), color: "white"}}>
                       {newEventState.category}
                     </div>
-                    {/* category tag */}
                     <h6 className="left-align">
                     {newEventState.isPayment ? 
                       <>Payment amount: <span style={{color: "maroon", fontWeight:"600"}}>{newEventState.amount ? "$"+formatNumber(newEventState.amount) : null}</span></>
@@ -1015,19 +1017,19 @@ const MyCalendar = () => {
                     </h6>
                   </div>
                   <div className="left col s12 m6 l6 green lighten-4">
+                    <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
                     {
                       newEventState.frequency ==="once" ?
                         <div>
-                          <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
                           <h6>Single Event</h6>
                         </div>
                         :
                       <div>
-                        <h6 style={{fontWeight:"600"}}>~Group Info~</h6>
+                        {/* <h6 style={{fontWeight:"600"}}>~Group Info~</h6> */}
                         <h6>{"#" + newEventState.eventNumber + " of " + newEventState.groupTotal + " occurrences"}</h6>
                         <h6 className="left-align">Group Frequency: <span style={{textTransform: "capitalize"}}>{newEventState.frequency}</span></h6>
-                        <h6 className="left-align">Group Start Date: {moment(editStartState.startDate).format("MM-DD-YYYY")}</h6>
-                        <h6 className="left-align">Group End Date: {moment(editEndState.endDate).format("MM-DD-YYYY")}</h6>
+                        <h6 className="left-align">Group Start Date: {moment(editStartState.startDate).format("MMMM Do, YYYY")}</h6>
+                        <h6 className="left-align">Group End Date: {moment(editEndState.endDate).format("MMMM Do, YYYY")}</h6>
                       </div>
                     }
                   </div>
@@ -1041,7 +1043,7 @@ const MyCalendar = () => {
                       }}>
                   </div>
 
-                  <div className="left col s12 m12 l12 blue darken-1 white-text" style={{marginTop:"5px", marginBottom:"0px", borderStyle:"double"}}>
+                  <div className="left col s12 m12 l12 blue white-text" style={{marginTop:"0px", marginBottom:"0px", borderStyle:"double"}}>
                     {/* <div className="row left"> */}
                       <h6>{"Notes: "}</h6>
                       <div>{newEventState.notes ? newEventState.notes 
@@ -1058,7 +1060,7 @@ const MyCalendar = () => {
         {/* EDITING MODAL */}
         <div className="row">
           <a ref={editModal} className="modal-trigger" href='#editModal'></a>
-          <Modal id="editModal" className="center-align"
+          <Modal id="editModal" className="center-align blue lighten-5"
               actions={[
                 <Button onClick={cancelEvent} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
                   Cancel
@@ -1073,21 +1075,21 @@ const MyCalendar = () => {
               <br></br>
               <form action="#">
                 <div className="row">{/* HEADER */}
-                  {newEventState.editingGroup ? "Edit Group: " + newEventState.title : "Edit Event: " + newEventState.title + " (" + newEventState.eventNumber + " of " + newEventState.groupTotal + ")"}
+                  <h5>{newEventState.editingGroup ? "Edit Group: " + newEventState.title : "Edit Event: " + newEventState.title + " (" + newEventState.eventNumber + " of " + newEventState.groupTotal + ")"}</h5>
                 </div>
                 {/* EDITING MODAL 1st ROW: EditingGroup, isPayment switches */}
                 <div className="row">
                   <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
                     <label>
                       <div className="col s4 m5 l5 right-align">
-                        <h6 style={newEventState.editingGroup ? {display:"inline"}:{color: "blue", display:"inline"}}>Edit Single Event</h6>
+                        <h6 style={newEventState.editingGroup ? {display:"inline"}:{fontWeight: 600, color: "blue", display:"inline"}}>Edit Single Event</h6>
                       </div>
                       <div className="col s3 m2 l2">
                         <input id="groupSwitch" onChange={groupSwitch} type="checkbox"/>
                         <span className="lever"></span>
                       </div>
                       <div className="col s5 m5 l5 left-align">
-                        <h6 style={newEventState.editingGroup ? {color: "deeppink", display:"inline"}:{display:"inline"}}>Edit Group of Events</h6>
+                        <h6 style={newEventState.editingGroup ? {fontWeight: 600, color: "deeppink", display:"inline"}:{display:"inline"}}>Edit Group of Events</h6>
                       </div>
                     </label>
                   </div>
@@ -1095,7 +1097,7 @@ const MyCalendar = () => {
                   <div className="switch moneySwitch"> {/* Is this Payment or Income?*/}
                     <label>
                       <div className="col s4 m5 l5 right-align">
-                        <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
+                        <h6 style={newEventState.isPayment ? {fontWeight: 600, color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
                       </div>
                       <div className="col s3 m2 l2">
                         { newEventState.isPayment ?
@@ -1106,7 +1108,7 @@ const MyCalendar = () => {
                         <span className="lever"></span>
                       </div>
                       <div className="col s5 m5 l5 left-align">
-                        <h6 style={newEventState.isPayment ? {display:"inline"}:{color: "green", display:"inline"}}>I am receiving income.</h6>
+                        <h6 style={newEventState.isPayment ? {display:"inline"}:{fontWeight: 600, color: "green", display:"inline"}}>I am receiving income.</h6>
                       </div>
                     </label>
                   </div>
@@ -1244,7 +1246,7 @@ const MyCalendar = () => {
         {/* DELETE MODAL */}
         <div className="row">
           <a ref={deleteModal} className="modal-trigger" href='#deleteModal'></a>
-          <Modal id="deleteModal" className="center-align"
+          <Modal id="deleteModal" className="center-align red lighten-4"
               actions={[
                 <Button onClick={confirmDelete} modal="close" node="button" className="red white-text waves-effect waves-light hoverable" id="editBtn">
                   {newEventState.editingGroup ? "Delete Group":"Delete Event"} <i className="material-icons right">delete</i>
@@ -1262,14 +1264,14 @@ const MyCalendar = () => {
                 <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
                   <label>
                     <div className="col s4 m5 l5 right-align">
-                      <h6 style={newEventState.editingGroup ? {display:"inline"}:{color: "blue", display:"inline"}}>Delete Single Event</h6>
+                      <h6 style={newEventState.editingGroup ? {display:"inline"}:{fontWeight: 600, color: "blue", display:"inline"}}>Delete Single Event</h6>
                     </div>
                     <div className="col s3 m2 l2">
                       <input id="deleteGroupSwitch" onChange={deleteGroupSwitch} type="checkbox"/>
                       <span className="lever"></span>
                     </div>
                     <div className="col s5 m5 l5 left-align">
-                      <h6 style={newEventState.editingGroup ? {color: "deeppink", display:"inline"}:{display:"inline"}}>Delete Group of Events</h6>
+                      <h6 style={newEventState.editingGroup ? {fontWeight: 600, color: "deeppink", display:"inline"}:{display:"inline"}}>Delete Group of Events</h6>
                     </div>
                   </label>
                 </div>
@@ -1286,18 +1288,18 @@ const MyCalendar = () => {
               {/* DELETE MODAL 2nd ROW: Selected Event(s) to delete */}
               {newEventState.editingGroup ? 
               <>
-                <div className="row">
-                  <h5>Are you sure you want to delete event group? ({newEventState.groupTotal} total)</h5> 
-                  <h5>"{newEventState.title}"</h5>
+                <div className="row red darken-1 white-text" style={{padding: "4px 6px 6px 6px"}}>
+                  <h5><i class="fas fa-exclamation-triangle"></i> Are you sure you want to delete this group?</h5> 
+                  <h6>"{newEventState.title}" ({newEventState.groupTotal} occurences)</h6>
                   <h6>starting {moment(editStartState.startDate).format("MMMM Do, YYYY")}</h6>
                   <h6>ending {moment(editEndState.endDate).format("MMMM Do, YYYY")}</h6>
                 </div>
               </>
               :
               <>
-                <div className="row">
-                  <h5>Are you sure you want to delete this event?</h5> 
-                  <h5>"{newEventState.title}" </h5>
+                <div className="row red darken-1 white-text" style={{padding: "4px 6px 6px 6px"}}>
+                  <h5><i class="fas fa-exclamation-triangle"></i> Are you sure you want to delete this event?</h5> 
+                  <h6>"{newEventState.title}" </h6>
                   <h6>occuring on {moment(editStartState.startDate).format("MMMM Do, YYYY")}</h6>
                 </div>
               </>}

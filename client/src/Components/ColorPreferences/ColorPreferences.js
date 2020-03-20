@@ -32,7 +32,7 @@ const ColorPreferences = () => {
   },[])
 
   //toggles visibility of palette.
-  const paletteVisibility = colorState.paletteOn ? {visibility:"visible"} : {visibility:"hidden"}
+  const paletteVisibility = colorState.paletteOn ? {visibility:"visible"} : {visibility:"hidden", height: "50px"}
   //close color palette.
   const closePalette = () => setColorState({...colorState, paletteOn: false, selectedCategory: -1})  
   //upon selecting a category
@@ -51,6 +51,24 @@ const ColorPreferences = () => {
   return(
     <>
       <div className="row">
+        <div className="center">
+          <Button onClick={categorySelect} className={colorState.selectedCategory == 0 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
+            value="0" style={{backgroundColor: colorState.colorArray[0]}}>Housing</Button>
+          <Button onClick={categorySelect} className={colorState.selectedCategory == 1 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
+            value="1" style={{backgroundColor: colorState.colorArray[1]}}>Insurance</Button>
+          <Button onClick={categorySelect} className={colorState.selectedCategory == 2 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
+            value="2" style={{backgroundColor: colorState.colorArray[2]}}>Loan</Button>
+          <Button onClick={categorySelect} className={colorState.selectedCategory == 3 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
+            value="3" style={{backgroundColor: colorState.colorArray[3]}}>Taxes</Button>
+          <Button onClick={categorySelect} className={colorState.selectedCategory == 4 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
+            value="4" style={{backgroundColor: colorState.colorArray[4]}}>Family</Button>
+          <Button onClick={categorySelect} className={colorState.selectedCategory == 5 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
+            value="5" style={{backgroundColor: colorState.colorArray[5]}}>Recreation</Button>
+          <Button onClick={categorySelect} className={colorState.selectedCategory == 6 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
+            value="6" style={{backgroundColor: colorState.colorArray[6]}}>Income</Button>
+          <Button onClick={categorySelect} className={colorState.selectedCategory == 7 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
+            value="7" style={{backgroundColor: colorState.colorArray[7]}}>Other</Button>
+        </div>
         <div className="center" style={paletteVisibility}>
           <Button style={{marginRight: "3px"}} className="white btn-floating" onClick={closePalette}>
             <i className="material-icons black-text">close</i>
@@ -69,24 +87,6 @@ const ColorPreferences = () => {
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"green", marginRight: "3px", marginBottom: "3px"}} value="green"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"grey", marginRight: "3px", marginBottom: "3px"}} value="grey"></Button>
           <Button onClick={colorSelect} className="btn-small btn-floating" style={{backgroundColor:"black", marginRight: "3px", marginBottom: "3px"}} value="black"></Button>
-        </div>
-        <div className="center">
-          <Button onClick={categorySelect} className={colorState.selectedCategory == 0 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
-            value="0" style={{backgroundColor: colorState.colorArray[0]}}>Housing</Button>
-          <Button onClick={categorySelect} className={colorState.selectedCategory == 1 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
-            value="1" style={{backgroundColor: colorState.colorArray[1]}}>Insurance</Button>
-          <Button onClick={categorySelect} className={colorState.selectedCategory == 2 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
-            value="2" style={{backgroundColor: colorState.colorArray[2]}}>Loan</Button>
-          <Button onClick={categorySelect} className={colorState.selectedCategory == 3 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
-            value="3" style={{backgroundColor: colorState.colorArray[3]}}>Taxes</Button>
-          <Button onClick={categorySelect} className={colorState.selectedCategory == 4 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
-            value="4" style={{backgroundColor: colorState.colorArray[4]}}>Family</Button>
-          <Button onClick={categorySelect} className={colorState.selectedCategory == 5 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
-            value="5" style={{backgroundColor: colorState.colorArray[5]}}>Recreation</Button>
-          <Button onClick={categorySelect} className={colorState.selectedCategory == 6 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
-            value="6" style={{backgroundColor: colorState.colorArray[6]}}>Income</Button>
-          <Button onClick={categorySelect} className={colorState.selectedCategory == 7 ? "categoryButton btn-large waves-effect":"categoryButton btn-flat white-text"} 
-            value="7" style={{backgroundColor: colorState.colorArray[7]}}>Other</Button>
         </div>
       </div>
     </>
