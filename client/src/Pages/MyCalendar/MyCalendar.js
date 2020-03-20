@@ -42,6 +42,7 @@ const MyCalendar = () => {
   toast.configure();
   //QUICK-ADD EVENT (Click Date)
   const quickPaymentSwitch = () => setNewEventState({...newEventState, isPayment: !document.getElementById('quickPaymentSwitch').checked})
+  const quickCategorySelect = () => setNewEventState({...newEventState, category: document.getElementById('quickCategorySelect').value})
   const quickAddModal = useRef()
   const handleDateClick = (e) =>{ //DONE
     console.log(e)
@@ -1396,7 +1397,7 @@ const MyCalendar = () => {
                     // style={{visibility:'hidden'}}
                   >
                     Category</span>
-                  <select id="categorySelect" className="browser-default" onChange={categorySelect}>
+                  <select id="quickCategorySelect" className="browser-default" onChange={quickCategorySelect}>
                     <option value="" selected disabled>Choose a category.</option>
                     <option value="income">Income</option>
                     <option value="housing">Housing Expense</option>
