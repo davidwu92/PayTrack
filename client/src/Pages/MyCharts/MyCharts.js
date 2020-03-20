@@ -225,15 +225,15 @@ const barData = [
 
   let resetRadii = () => {
     let returnVal = {}
-    pieData.forEach(monthlyMean => {
-      returnVal = { ...returnVal, [monthlyMean[0].name]: 120 }
+    pieData.forEach(pieValue => {
+      returnVal = { ...returnVal, [pieValue[0].name]: 120 }
     })
     return returnVal
   }
 
-  const addAngles = (startAngle, monthlyMean) => {
-    const endAngle = startAngle + (monthlyMean[0].value / pieChartSum * 360)
-    return [{ ...monthlyMean[0], startAngle, endAngle }]
+  const addAngles = (startAngle, pieValue) => {
+    const endAngle = startAngle + (pieValue[0].value / pieChartSum * 360)
+    return [{ ...pieValue[0], startAngle, endAngle }]
   }
   const pieEnter = pie => setRadiiState({ ...resetRadii(), [pie.name]: 140 })
   const pieLeave = pie => setRadiiState({ ...radiiState, [pie.name]: 120 })
@@ -328,25 +328,25 @@ const barData = [
               {
                 (() => {
                   let startAngle = 0
-                  let withAngles = pieData.map(monthlyMean => {
-                    let monthlyMeanWithAngles = addAngles(startAngle, monthlyMean)
-                    startAngle = monthlyMeanWithAngles[0].endAngle
-                    return monthlyMeanWithAngles
+                  let withAngles = pieData.map(pieValue => {
+                    let pieValueWithAngles = addAngles(startAngle, pieValue)
+                    startAngle = pieValueWithAngles[0].endAngle
+                    return pieValueWithAngles
                   })
 
-                  let pies = withAngles.map((monthlyMean, index) => (
+                  let pies = withAngles.map((pieValue, index) => (
                     <Pie 
                       key={index}  
-                      data={monthlyMean} 
+                      data={pieValue} 
                       dataKey='value' 
                       nameKey='category' 
                       cx='50%' 
                       cy='50%' 
-                      outerRadius= {radiiState[monthlyMean[0].name]} 
+                      outerRadius= {radiiState[pieValue[0].name]} 
                       label 
-                      fill={monthlyMean[0].fill} 
-                      startAngle={monthlyMean[0].startAngle} 
-                      endAngle={monthlyMean[0].endAngle} 
+                      fill={pieValue[0].fill} 
+                      startAngle={pieValue[0].startAngle} 
+                      endAngle={pieValue[0].endAngle} 
                       onMouseEnter={pieEnter}
                       onMouseLeave={pieLeave}
                       on />
