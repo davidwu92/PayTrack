@@ -8,9 +8,11 @@ import {
   XAxis,  YAxis,  Tooltip,  Legend
 } from 'recharts'
 
+
 import moment from 'moment'
 import UserAPI from '../../utils/UserAPI'
 import EventAPI from '../../utils/EventAPI'
+import ColorPreferences from '../../Components/ColorPreferences'
 
 import './myCharts.css'
 // import AddEventModal from '../../Components/AddEventModal'
@@ -146,8 +148,21 @@ const MyCharts = () => {
     getEventData()
   }, [])
 
-  const monthlyAvgCategories = () =>{
-    const categoryMonthAverage = {
+//YEAR/MONTH GRAPH DATA
+  const [timeState, setTimeState] = useState({
+    yearConstraint: 2020,
+    monthConstraint: 0
+  })
+
+  const lastMonth = () => setTimeState({...timeState, monthConstraint: timeState.monthConstraint ? (timeState.monthConstraint + 11)%12 : moment(Date.now()).month()})
+  const thisMonth = () => setTimeState({...timeState, monthConstraint: moment(Date.now()).month()+1})
+  const nextMonth = () => setTimeState({...timeState, monthConstraint: timeState.monthConstraint ? (timeState.monthConstraint +1)%12 : moment(Date.now()).month()+2})
+  const lastYear = () => setTimeState({yearConstraint: timeState.yearConstraint -1, monthConstraint: 0})
+  const thisYear = () => setTimeState({yearConstraint: moment(Date.now()).year(), monthConstraint: 0})
+  const nextYear = () => setTimeState({yearConstraint: timeState.yearConstraint +1, monthConstraint: 0})
+
+  const timeIntervalTotals = (yearConstraint, monthConstraint) =>{
+    let categoryArrays = {
       housing: 0,
       insurance: 0,
       loan: 0,
@@ -157,24 +172,75 @@ const MyCharts = () => {
       income: 0,
       other: 0,
     }
-    console.log(eventState.events)
+    let categoryKeys = Object.keys(categoryArrays)
+    let categoryValues = [0,0,0,0,0,0,0,0]
+    eventState.events.forEach((event)=>{
+      if(
+        monthConstraint ? moment(event.date).year() == yearConstraint && moment(event.date).month() == monthConstraint-1
+        :
+        moment(event.date).year() == yearConstraint
+      ){
+        let indexOfCategory = categoryKeys.findIndex((category)=>category==event.extendedProps.category)
+        event.extendedProps.isPayment ?
+        categoryValues[indexOfCategory] = categoryValues[indexOfCategory] - event.extendedProps.amount
+        :
+        categoryValues[indexOfCategory] = categoryValues[indexOfCategory] + event.extendedProps.amount
+      }
+    })
+    return(categoryValues.map((value)=>(Math.floor(value*100)/100)))
   }
-  monthlyAvgCategories()
-
+  //Sum of EACH category in the given year, month, thrown into an array of numbers.
+  const categorySumArr = timeIntervalTotals(timeState.yearConstraint, timeState.monthConstraint) 
+  const positiveCatSumArr = categorySumArr.map((value)=>(Math.abs(value)))
 
 //BAR CHART STUFF
 const barData = [
-  {category: 'Housing', monthTotal: -4000, yearTotal:100},
-  {category: 'Insurance', monthTotal: -3000,yearTotal:100},
-  {category: 'Loan', monthTotal: -2000,yearTotal:100},
-  {category: 'Taxes', monthTotal: -1000,yearTotal:100},
-  {category: 'Family', monthTotal: -200,yearTotal:100},
-  {category: 'Recreation', monthTotal: -500,yearTotal:100},
-  {category: 'Income', monthTotal: 3000,yearTotal:100},
-  {category: 'Other', monthTotal: -200,yearTotal:100},
-  {category: 'All', monthTotal: -200,yearTotal:100},
+  {category: 'Housing', monthTotal: categorySumArr[0], yearTotal:100},
+  {category: 'Insurance', monthTotal: categorySumArr[1],yearTotal:100},
+  {category: 'Loan', monthTotal: categorySumArr[2],yearTotal:100},
+  {category: 'Taxes', monthTotal: categorySumArr[3],yearTotal:100},
+  {category: 'Family', monthTotal: categorySumArr[4],yearTotal:100},
+  {category: 'Recreation', monthTotal: categorySumArr[5],yearTotal:100},
+  {category: 'Income', monthTotal: categorySumArr[6],yearTotal:100},
+  {category: 'Other', monthTotal: categorySumArr[7],yearTotal:100},
+  {category: 'All', monthTotal: categorySumArr.reduce((total, num)=>total+num),yearTotal:100},
 ]
 
+//~~~~~~PIE CHART STUFF~~~~~~
+  const [radiiState, setRadiiState] = useState({})
+    
+  let pieData = [
+    [{category: 'Housing',value: Math.abs(categorySumArr[0]),fill: eventState.colorPreferences[0]}],
+    [{category: 'Insurance',value: Math.abs(categorySumArr[1]),fill: eventState.colorPreferences[1]}],
+    [{category: 'Loan',value: Math.abs(categorySumArr[2]),fill: eventState.colorPreferences[2]}],
+    [{category: 'Taxes',value: Math.abs(categorySumArr[3]),fill: eventState.colorPreferences[3]}],
+    [{category: 'Family',value: Math.abs(categorySumArr[4]),fill: eventState.colorPreferences[4]}],
+    [{category: 'Recreation',value: Math.abs(categorySumArr[5]),fill: eventState.colorPreferences[5]}],
+    [{category: 'Income',value: Math.abs(categorySumArr[6]),fill: eventState.colorPreferences[6]}],
+    [{category: 'Other',value: Math.abs(categorySumArr[7]),fill: eventState.colorPreferences[7]}],        
+  ]
+  //pieChart Total.
+  let total = arr => arr.reduce((a, b)=>a+b)
+  const pieChartSum = total(positiveCatSumArr)
+
+  let resetRadii = () => {
+    let returnVal = {}
+    pieData.forEach(monthlyMean => {
+      returnVal = { ...returnVal, [monthlyMean[0].name]: 120 }
+    })
+    return returnVal
+  }
+
+  const addAngles = (startAngle, monthlyMean) => {
+    const endAngle = startAngle + (monthlyMean[0].value / pieChartSum * 360)
+    return [{ ...monthlyMean[0], startAngle, endAngle }]
+  }
+  const pieEnter = pie => setRadiiState({ ...resetRadii(), [pie.name]: 140 })
+  const pieLeave = pie => setRadiiState({ ...radiiState, [pie.name]: 120 })
+
+  useEffect(() => {
+    setRadiiState(resetRadii())
+  }, [])
 
 //~~~~~~LINE GRAPH STUFF~~~~~~
   const [chartState, setChartState] = useState({
@@ -194,83 +260,102 @@ const barData = [
   {month: 'November', monthExpense: 300, monthIncome: 750, monthBalance: 800},
   {month: 'December', monthExpense: 198, monthIncome: 975, monthBalance: 900},]
 
-//~~~~~~PIE CHART STUFF~~~~~~
-  const [radiiState, setRadiiState] = useState({})
-  
-  let meanMonthlyAmount = [
-    [{name: 'Housing',value: 350,fill: eventState.colorPreferences[0]}],
-    [{name: 'Insurance',value: 400,fill: eventState.colorPreferences[1]}],
-    [{name: 'Loan',value: 95,fill: eventState.colorPreferences[2]}],
-    [{name: 'Taxes',value: 150,fill: eventState.colorPreferences[3]}],
-    [{name: 'Family',value: 112,fill: eventState.colorPreferences[4]}],
-    [{name: 'Recreation',value: 112,fill: eventState.colorPreferences[5]}],
-    [{name: 'Income',value: 112,fill: eventState.colorPreferences[6]}],
-    [{name: 'Other',value: 112,fill: eventState.colorPreferences[7]}],        
-  ]
-
-  let resetRadii = () => {
-    let returnVal = {}
-    meanMonthlyAmount.forEach(monthlyMean => {
-      returnVal = { ...returnVal, [monthlyMean[0].name]: 120 }
-    })
-    return returnVal
-  }
-
-  const income = 2700
-  const addAngles = (startAngle, monthlyMean) => {
-    const endAngle = startAngle + (monthlyMean[0].value / income * 360)
-    return [{ ...monthlyMean[0], startAngle, endAngle }]
-  }
-  const pieEnter = pie => setRadiiState({ ...resetRadii(), [pie.name]: 140 })
-  const pieLeave = pie => setRadiiState({ ...radiiState, [pie.name]: 120 })
-
-  useEffect(() => {
-    setRadiiState(resetRadii())
-  }, [])
-
   const testButton = () => {
     console.log(eventState)
+    // console.log(moment(Date.now()()).year())
   }
   return(
     <>
-      <div className="container">
+      <div id="chartContainer">
         <button onClick={testButton}>Testing Button</button>
         <h2 className="center white-text">My Charts</h2>
         {/* <AddEventModal /> */}
         
-        {/* BAR CHART */}
-        <div className="row white">
-          <h5 className="center">Expenditures by Category: March</h5>
-          <div className="row">
-            <button>Last Month</button>
-            <button>This Month</button>
-            <button>Next Month</button>
+        <ColorPreferences/>
+        {/* BAR CHART, PIE CHART */}
+        <div className="row white" style={{width:"95%"}}>
+          <div className="row center">
+            <h4>{"Expenditures by Category: "}
+              {timeState.monthConstraint ? moment().month(timeState.monthConstraint-1).format("MMM,") : null}
+              {timeState.yearConstraint}
+            </h4>
+            <button className="btn purple btn-small" onClick={lastMonth}>{"< Last Month"}</button>
             <span> </span>
-            <button>Last Year</button>
-            <button>This Year</button>
-            <button>Next Year</button>
+            <button className="btn purple btn-small" onClick={thisMonth}>This Month</button>
+            <span> </span>
+            <button className="btn purple btn-small" onClick={nextMonth}>{"Next Month >"}</button>
+            <span> </span>
+            <button className="btn purple btn-small" onClick={lastYear}>{"<< Last Year"}</button>
+            <span> </span>
+            <button className="btn purple btn-small" onClick={thisYear}>This Year</button>
+            <span> </span>
+            <button className="btn purple btn-small" onClick={nextYear}>{"Next Year >>"}</button>
           </div>
+
+          {/* BAR CHART */}
+          <div className="col s12 m7 l7">
             <BarChart
-            width={700}
-            height={400}
-            data={barData}
-            margin={{
-              top: 20, right: 30, left: 20, bottom: 5,
-            }}
-          >
-            <ReferenceLine y={0} stroke="#000" />
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="category" />
-            <YAxis />
-            <Bar dataKey="monthTotal" fill="#8884d8" label={{ position: 'top' }}>
+              width={700}
+              height={350}
+              data={barData}
+              margin={{
+                top: 20, right: 30, left: 0, bottom: 0,
+              }}
+            >
+              <ReferenceLine y={0} stroke="#000" />
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="category" />
+              <YAxis />
+              <Bar dataKey="monthTotal" fill="#8884d8" label={{ position: 'top' }}>
+                {
+                  barData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={eventState.colorPreferences[index]} />
+                  ))
+                }
+              </Bar>
+            </BarChart>
+          </div>{/* END BAR CHART */}
+          
+          {/* PIE CHART */}
+          <div className="col s12 m5 l5">
+            <PieChart width={400} height={370} style={{ backgroundColor: '#FFFFFF' }}>
+              <Tooltip />
               {
-                barData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={eventState.colorPreferences[index]} />
-                ))
+                (() => {
+                  let startAngle = 0
+                  let withAngles = pieData.map(monthlyMean => {
+                    let monthlyMeanWithAngles = addAngles(startAngle, monthlyMean)
+                    startAngle = monthlyMeanWithAngles[0].endAngle
+                    return monthlyMeanWithAngles
+                  })
+
+                  let pies = withAngles.map((monthlyMean, index) => (
+                    <Pie 
+                      key={index}  
+                      data={monthlyMean} 
+                      dataKey='value' 
+                      nameKey='category' 
+                      cx='50%' 
+                      cy='50%' 
+                      outerRadius= {radiiState[monthlyMean[0].name]} 
+                      label 
+                      fill={monthlyMean[0].fill} 
+                      startAngle={monthlyMean[0].startAngle} 
+                      endAngle={monthlyMean[0].endAngle} 
+                      onMouseEnter={pieEnter}
+                      onMouseLeave={pieLeave}
+                      on />
+                  ))
+                  // console.log(pies) 
+                  return pies
+                })()
               }
-            </Bar>
-          </BarChart>
-        </div>
+            </PieChart>
+          </div> {/* END PIECHART */}
+
+        </div> 
+        
+        {/* PIE CHART */}
 
         {/* LINE CHART */}
         <div className="row white">
@@ -286,52 +371,6 @@ const barData = [
           </LineChart>
         </div>
 
-        {/* PIE CHART */}
-        <div className="row white">
-          <h5 className="center">Expenditures by Category: March</h5>
-          <div className="row">
-            <button>Last Month</button>
-            <button>This Month</button>
-            <button>Next Month</button>
-            <span> </span>
-            <button>Last Year</button>
-            <button>This Year</button>
-            <button>Next Year</button>
-          </div>
-          <PieChart width={600} height={400} style={{ backgroundColor: '#FFFFFF' }}>
-            <Tooltip />
-            {
-              (() => {
-                let startAngle = 0
-                let withAngles = meanMonthlyAmount.map(monthlyMean => {
-                  let monthlyMeanWithAngles = addAngles(startAngle, monthlyMean)
-                  startAngle = monthlyMeanWithAngles[0].endAngle
-                  return monthlyMeanWithAngles
-                })
-
-                let pies = withAngles.map((monthlyMean, index) => (
-                  <Pie 
-                    key={index}  
-                    data={monthlyMean} 
-                    dataKey='value' 
-                    nameKey='name' 
-                    cx='50%' 
-                    cy='50%' 
-                    outerRadius= {radiiState[monthlyMean[0].name]} 
-                    label 
-                    fill={monthlyMean[0].fill} 
-                    startAngle={monthlyMean[0].startAngle} 
-                    endAngle={monthlyMean[0].endAngle} 
-                    onMouseEnter={pieEnter}
-                    onMouseLeave={pieLeave}
-                    on />
-                ))
-                // console.log(pies) 
-                return pies
-              })()
-            }
-          </PieChart>
-        </div>
     </div>
     </>
   )
