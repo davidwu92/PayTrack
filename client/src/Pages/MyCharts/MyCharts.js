@@ -271,32 +271,36 @@ const barData = [
         <h2 className="center white-text">My Charts</h2>
         {/* <AddEventModal /> */}
         
-        <ColorPreferences/>
+        
         {/* BAR CHART, PIE CHART */}
-        <div className="row white" style={{width:"95%"}}>
+        <div className="row white" style={{width:"96%"}}>
           <div className="row center">
             <h4>{"Expenditures by Category: "}
-              {timeState.monthConstraint ? moment().month(timeState.monthConstraint-1).format("MMM,") : null}
+              {timeState.monthConstraint ? moment().month(timeState.monthConstraint-1).format("MMMM, ") : null}
               {timeState.yearConstraint}
             </h4>
-            <button className="btn purple btn-small" onClick={lastMonth}>{"< Last Month"}</button>
-            <span> </span>
-            <button className="btn purple btn-small" onClick={thisMonth}>This Month</button>
-            <span> </span>
-            <button className="btn purple btn-small" onClick={nextMonth}>{"Next Month >"}</button>
-            <span> </span>
-            <button className="btn purple btn-small" onClick={lastYear}>{"<< Last Year"}</button>
-            <span> </span>
-            <button className="btn purple btn-small" onClick={thisYear}>This Year</button>
-            <span> </span>
-            <button className="btn purple btn-small" onClick={nextYear}>{"Next Year >>"}</button>
+            
+            <div className="col s12 m6 l6">
+              <button className="btn purple btn-small" onClick={lastMonth}>{"<"}</button>
+              <span> </span>
+              <button className="btn purple btn-small" onClick={thisMonth}>This Month</button>
+              <span> </span>
+              <button className="btn purple btn-small" onClick={nextMonth}>{">"}</button>
+            </div>
+            <div className="col s12 m6 l6">
+              <button className="btn green btn-small" onClick={lastYear}>{"<<"}</button>
+              <span> </span>
+              <button className="btn green btn-small" onClick={thisYear}>This Year</button>
+              <span> </span>
+              <button className="btn green btn-small" onClick={nextYear}>{">>"}</button>
+            </div>
           </div>
-
+          <ColorPreferences/>
           {/* BAR CHART */}
           <div className="col s12 m7 l7">
             <BarChart
-              width={700}
-              height={350}
+              width={window.screen.width < 900 ? window.screen.width*0.89 : window.screen.width*0.5}
+              height={ window.screen.width <900 ? window.screen.height*0.3 : 350}
               data={barData}
               margin={{
                 top: 20, right: 30, left: 0, bottom: 0,
@@ -318,7 +322,8 @@ const barData = [
           
           {/* PIE CHART */}
           <div className="col s12 m5 l5">
-            <PieChart width={400} height={370} style={{ backgroundColor: '#FFFFFF' }}>
+            <PieChart width={window.screen.width < 900 ? window.screen.width*0.89 : window.screen.width*0.25}
+               height={370} style={{ backgroundColor: '#FFFFFF' }}>
               <Tooltip />
               {
                 (() => {
@@ -352,14 +357,16 @@ const barData = [
               }
             </PieChart>
           </div> {/* END PIECHART */}
-
         </div> 
         
-        {/* PIE CHART */}
 
         {/* LINE CHART */}
         <div className="row white">
-          <LineChart width={600} height={400} data={lineData} style={{ backgroundColor: '#FFFFFF' }}>
+          <LineChart 
+            width={window.screen.width < 900 ? window.screen.width*0.89 : window.screen.width*0.5}
+            height={ window.screen.width <900 ? window.screen.height*0.3 : 350}
+            data={lineData} 
+            style={{ backgroundColor: '#FFFFFF' }}>
             <CartesianGrid stroke="#ccc" />
             <XAxis datakey="month" />
             <YAxis />
