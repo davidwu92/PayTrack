@@ -32,7 +32,7 @@ const ColorPreferences = () => {
   },[])
 
   //toggles visibility of palette.
-  const paletteVisibility = colorState.paletteOn ? {visibility:"visible"} : {visibility:"hidden", height: "50px"}
+  const paletteVisibility = colorState.paletteOn ? {visibility:"visible"} : {visibility:"hidden", height: "0px"}
   //close color palette.
   const closePalette = () => setColorState({...colorState, paletteOn: false, selectedCategory: -1})  
   //upon selecting a category
