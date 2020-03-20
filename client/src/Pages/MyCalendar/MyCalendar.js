@@ -278,191 +278,191 @@ const MyCalendar = () => {
   //add modal: hitting "Save" adds event(s).
   const addNewEvents = () => {
     console.log("adding new events")
-  if(newEventState.title && newEventState.amount>=0 && newStartState.startDate){    
-    setNewEventState({...newEventState, isLoading: true})
-      if(newEventState.frequency =="once"){
-        //create single event object.
-        let newEvent = {
-          title: newEventState.title,
-          groupId: newEventState.title + "group",
-          amount: newEventState.amount,
-          isPayment: newEventState.isPayment,
-          frequency: newEventState.frequency,
-          website: newEventState.url,
-          category: newEventState.category,
-          notes: newEventState.notes,
-          eventDate: newStartState.startDate,
-          groupStartDate: newStartState.startDate,
-          groupEndDate: moment(newStartState.startDate).add(1, "day"),
-          eventNumber: 1,
-          groupTotal: 1,
-        }
-        //add single event.
-        addEvent(token, newEvent)
-        .then(()=>{
-            cancelEvent()
-            window.location.reload()
-        })
-        .catch(e=>console.error(e))
-      } else {
-        //adding MULTIPLE EVENTS. Calculate # of events to create, populate newEvents array.
-        let startingDay = moment(newStartState.startDate).format('X')
-        let endingDay = newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format('X') : moment(newStartState.startDate).add(5, 'years').format('X')
-        let duration = endingDay - startingDay
-        let newEvents = []
-        let occurences = 0
-          switch (newEventState.frequency) {
-            case "weekly":
-              occurences = Math.ceil(duration / 604800)
-              for (let i = 0; i<occurences; i++){
-                newEvents.push({
-                  title: newEventState.title,
-                  groupId: newEventState.title + "group",
-                  amount: newEventState.amount,
-                  isPayment: newEventState.isPayment,
-                  frequency: newEventState.frequency,
-                  website: newEventState.url,
-                  category: newEventState.category,
-                  notes: newEventState.notes,
-                  eventDate: moment(newStartState.startDate).add(i, "week").format(),
-                  groupStartDate: moment(newStartState.startDate).format(),
-                  groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
-                  eventNumber: i+1,
-                  groupTotal: occurences,
-                })
-              }
-              break;
-            case "biweekly":
-              occurences = Math.ceil(duration / 1209600)
-              for (let i = 0; i<occurences; i++){
-                newEvents.push({
-                  title: newEventState.title,
-                  groupId: newEventState.title + "group",
-                  amount: newEventState.amount,
-                  isPayment: newEventState.isPayment,
-                  frequency: newEventState.frequency,
-                  website: newEventState.url,
-                  category: newEventState.category,
-                  notes: newEventState.notes,
-                  eventDate: moment(newStartState.startDate).add(2*i, "week").format(),
-                  groupStartDate: moment(newStartState.startDate).format(),
-                  groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
-                  eventNumber: i+1,
-                  groupTotal: occurences,
-                })
-              }
-              break;
-            case "monthly":
-              occurences = Math.ceil(duration / 2628333)
-              for (let i = 0; i<occurences; i++){
-                newEvents.push({
-                  title: newEventState.title,
-                  groupId: newEventState.title + "group",
-                  amount: newEventState.amount,
-                  isPayment: newEventState.isPayment,
-                  frequency: newEventState.frequency,
-                  website: newEventState.url,
-                  category: newEventState.category,
-                  notes: newEventState.notes,
-                  eventDate: moment(newStartState.startDate).add(i, "month").format(),
-                  groupStartDate: moment(newStartState.startDate).format(),
-                  groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
-                  eventNumber: i+1,
-                  groupTotal: occurences,
-                })
-              }
-              break;
-            case "quarterly":
-              occurences = Math.ceil(duration / 7885000)
-              for (let i = 0; i<occurences; i++){
-                newEvents.push({
-                  title: newEventState.title,
-                  groupId: newEventState.title + "group",
-                  amount: newEventState.amount,
-                  isPayment: newEventState.isPayment,
-                  frequency: newEventState.frequency,
-                  website: newEventState.url,
-                  category: newEventState.category,
-                  notes: newEventState.notes,
-                  eventDate: moment(newStartState.startDate).add(3*i, "month").format(),
-                  groupStartDate: moment(newStartState.startDate).format(),
-                  groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
-                  eventNumber: i+1,
-                  groupTotal: occurences,
-                })
-              }
-              break;
-            case "biannual":
-              occurences = Math.ceil(duration / 15770000)
-              for (let i = 0; i<occurences; i++){
-                newEvents.push({
-                  title: newEventState.title,
-                  groupId: newEventState.title + "group",
-                  amount: newEventState.amount,
-                  isPayment: newEventState.isPayment,
-                  frequency: newEventState.frequency,
-                  website: newEventState.url,
-                  category: newEventState.category,
-                  notes: newEventState.notes,
-                  eventDate: moment(newStartState.startDate).add(6*i, "month").format(),
-                  groupStartDate: moment(newStartState.startDate).format(),
-                  groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
-                  eventNumber: i+1,
-                  groupTotal: occurences,
-                })
-              }
-              break;
-            case "annual":
-              occurences = Math.ceil(duration / 31536000)
-              for (let i = 0; i<occurences; i++){
-                newEvents.push({
-                  title: newEventState.title,
-                  groupId: newEventState.title + "group",
-                  amount: newEventState.amount,
-                  isPayment: newEventState.isPayment,
-                  frequency: newEventState.frequency,
-                  website: newEventState.url,
-                  category: newEventState.category,
-                  notes: newEventState.notes,
-                  eventDate: moment(newStartState.startDate).add(i, "year").format(),
-                  groupStartDate: moment(newStartState.startDate).format(),
-                  groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
-                  eventNumber: i+1,
-                  groupTotal: occurences,
-                })
-              }
-              break;
-            case "biennial":
-              occurences = Math.ceil(duration / 63080000)
-              for (let i = 0; i<occurences; i++){
-                newEvents.push({
-                  title: newEventState.title,
-                  groupId: newEventState.title + "group",
-                  amount: newEventState.amount,
-                  isPayment: newEventState.isPayment,
-                  frequency: newEventState.frequency,
-                  website: newEventState.url,
-                  category: newEventState.category,
-                  notes: newEventState.notes,
-                  eventDate: moment(newStartState.startDate).add(2*i, "year").format(),
-                  groupStartDate: moment(newStartState.startDate).format(),
-                  groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
-                  eventNumber: i+1,
-                  groupTotal: occurences,
-                })
-              }
-              break;
+    if(newEventState.title && newEventState.amount>=0 && newStartState.startDate){    
+      setNewEventState({...newEventState, isLoading: true})
+        if(newEventState.frequency =="once"){
+          //create single event object.
+          let newEvent = {
+            title: newEventState.title,
+            groupId: newEventState.title + "group",
+            amount: newEventState.amount,
+            isPayment: newEventState.isPayment,
+            frequency: newEventState.frequency,
+            website: newEventState.url,
+            category: newEventState.category,
+            notes: newEventState.notes,
+            eventDate: newStartState.startDate,
+            groupStartDate: newStartState.startDate,
+            groupEndDate: moment(newStartState.startDate).add(1, "day"),
+            eventNumber: 1,
+            groupTotal: 1,
           }
-        let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
-        addEvents(token, newEvents)
-        .then(()=>{
-            cancelEvent() //reset newEventState, newStartState, newEndState
-            window.location.reload()
-        })
-        .catch(e=>console.error(e))
-      }
-  } else {
-    toast(`Could not add events. Events must have a valid title, numerical amount, and date.`,
+          //add single event.
+          addEvent(token, newEvent)
+          .then(()=>{
+              cancelEvent()
+              window.location.reload()
+          })
+          .catch(e=>console.error(e))
+        } else {
+          //adding MULTIPLE EVENTS. Calculate # of events to create, populate newEvents array.
+          let startingDay = moment(newStartState.startDate).format('X')
+          let endingDay = newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format('X') : moment(newStartState.startDate).add(5, 'years').format('X')
+          let duration = endingDay - startingDay
+          let newEvents = []
+          let occurences = 0
+            switch (newEventState.frequency) {
+              case "weekly":
+                occurences = Math.ceil(duration / 604800)
+                for (let i = 0; i<occurences; i++){
+                  newEvents.push({
+                    title: newEventState.title,
+                    groupId: newEventState.title + "group",
+                    amount: newEventState.amount,
+                    isPayment: newEventState.isPayment,
+                    frequency: newEventState.frequency,
+                    website: newEventState.url,
+                    category: newEventState.category,
+                    notes: newEventState.notes,
+                    eventDate: moment(newStartState.startDate).add(i, "week").format(),
+                    groupStartDate: moment(newStartState.startDate).format(),
+                    groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
+                    eventNumber: i+1,
+                    groupTotal: occurences,
+                  })
+                }
+                break;
+              case "biweekly":
+                occurences = Math.ceil(duration / 1209600)
+                for (let i = 0; i<occurences; i++){
+                  newEvents.push({
+                    title: newEventState.title,
+                    groupId: newEventState.title + "group",
+                    amount: newEventState.amount,
+                    isPayment: newEventState.isPayment,
+                    frequency: newEventState.frequency,
+                    website: newEventState.url,
+                    category: newEventState.category,
+                    notes: newEventState.notes,
+                    eventDate: moment(newStartState.startDate).add(2*i, "week").format(),
+                    groupStartDate: moment(newStartState.startDate).format(),
+                    groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
+                    eventNumber: i+1,
+                    groupTotal: occurences,
+                  })
+                }
+                break;
+              case "monthly":
+                occurences = Math.ceil(duration / 2628333)
+                for (let i = 0; i<occurences; i++){
+                  newEvents.push({
+                    title: newEventState.title,
+                    groupId: newEventState.title + "group",
+                    amount: newEventState.amount,
+                    isPayment: newEventState.isPayment,
+                    frequency: newEventState.frequency,
+                    website: newEventState.url,
+                    category: newEventState.category,
+                    notes: newEventState.notes,
+                    eventDate: moment(newStartState.startDate).add(i, "month").format(),
+                    groupStartDate: moment(newStartState.startDate).format(),
+                    groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
+                    eventNumber: i+1,
+                    groupTotal: occurences,
+                  })
+                }
+                break;
+              case "quarterly":
+                occurences = Math.ceil(duration / 7885000)
+                for (let i = 0; i<occurences; i++){
+                  newEvents.push({
+                    title: newEventState.title,
+                    groupId: newEventState.title + "group",
+                    amount: newEventState.amount,
+                    isPayment: newEventState.isPayment,
+                    frequency: newEventState.frequency,
+                    website: newEventState.url,
+                    category: newEventState.category,
+                    notes: newEventState.notes,
+                    eventDate: moment(newStartState.startDate).add(3*i, "month").format(),
+                    groupStartDate: moment(newStartState.startDate).format(),
+                    groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
+                    eventNumber: i+1,
+                    groupTotal: occurences,
+                  })
+                }
+                break;
+              case "biannual":
+                occurences = Math.ceil(duration / 15770000)
+                for (let i = 0; i<occurences; i++){
+                  newEvents.push({
+                    title: newEventState.title,
+                    groupId: newEventState.title + "group",
+                    amount: newEventState.amount,
+                    isPayment: newEventState.isPayment,
+                    frequency: newEventState.frequency,
+                    website: newEventState.url,
+                    category: newEventState.category,
+                    notes: newEventState.notes,
+                    eventDate: moment(newStartState.startDate).add(6*i, "month").format(),
+                    groupStartDate: moment(newStartState.startDate).format(),
+                    groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
+                    eventNumber: i+1,
+                    groupTotal: occurences,
+                  })
+                }
+                break;
+              case "annual":
+                occurences = Math.ceil(duration / 31536000)
+                for (let i = 0; i<occurences; i++){
+                  newEvents.push({
+                    title: newEventState.title,
+                    groupId: newEventState.title + "group",
+                    amount: newEventState.amount,
+                    isPayment: newEventState.isPayment,
+                    frequency: newEventState.frequency,
+                    website: newEventState.url,
+                    category: newEventState.category,
+                    notes: newEventState.notes,
+                    eventDate: moment(newStartState.startDate).add(i, "year").format(),
+                    groupStartDate: moment(newStartState.startDate).format(),
+                    groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
+                    eventNumber: i+1,
+                    groupTotal: occurences,
+                  })
+                }
+                break;
+              case "biennial":
+                occurences = Math.ceil(duration / 63080000)
+                for (let i = 0; i<occurences; i++){
+                  newEvents.push({
+                    title: newEventState.title,
+                    groupId: newEventState.title + "group",
+                    amount: newEventState.amount,
+                    isPayment: newEventState.isPayment,
+                    frequency: newEventState.frequency,
+                    website: newEventState.url,
+                    category: newEventState.category,
+                    notes: newEventState.notes,
+                    eventDate: moment(newStartState.startDate).add(2*i, "year").format(),
+                    groupStartDate: moment(newStartState.startDate).format(),
+                    groupEndDate: newEndState.endDate ? moment(newEndState.endDate).add(1, 'day').format() : moment(newStartState.startDate).add(5, 'years').format(),
+                    eventNumber: i+1,
+                    groupTotal: occurences,
+                  })
+                }
+                break;
+            }
+          let token = JSON.parse(JSON.stringify(localStorage.getItem("token")))
+          addEvents(token, newEvents)
+          .then(()=>{
+              cancelEvent() //reset newEventState, newStartState, newEndState
+              window.location.reload()
+          })
+          .catch(e=>console.error(e))
+        }
+    } else {
+    toast(`Could not add event(s). Events must have a valid title, amount, and date.`,
     {autoClose: 9000,hideProgressBar: true,type: "error"})
   }
 }
@@ -768,7 +768,7 @@ const MyCalendar = () => {
         .catch(e=>console.error(e))
       }
     } else {
-        toast(`Could not edit events. Events must have a valid title, numerical amount, and date.`,
+        toast(`Could not edit event(s). Events must have a valid title, amount, and date.`,
         {autoClose: 9000,hideProgressBar: true,type: "error"})
     }
   }
@@ -960,7 +960,7 @@ const MyCalendar = () => {
         
         <ColorPreferences/>
         
-        {/* CALENDAR (contained in div.row) */}
+        {/* CALENDAR */}
         <div className = "row" style={{backgroundColor: "ghostwhite", padding: "1vw"}}>
           <FullCalendar 
             defaultView="dayGridMonth"
@@ -978,7 +978,7 @@ const MyCalendar = () => {
           />
         </div>
         
-        {/* EVENT INFO CARD (when calendar event clicked) */}{/* needs styling */}
+        {/* EVENT INFO CARD (when calendar event clicked) */}
         <div className="row">
           <a ref={eventCard} className="modal-trigger" href='#eventCard'></a>
           <Modal id="eventCard" className="center-align teal lighten-5"
@@ -1298,7 +1298,7 @@ const MyCalendar = () => {
                   borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid"
                   }}>
               </div></div>
-
+              
               {/* DELETE MODAL 2nd ROW: Selected Event(s) to delete */}
               {newEventState.editingGroup ? 
               <>
@@ -1430,20 +1430,34 @@ const MyCalendar = () => {
           >
             <br></br>
             <form action="#">
-              <h5>Are you sure you want to move this group?</h5>
+              <h5>{newEventState.groupTotal == 1 ? "Are you sure you want to move this event?":"Are you sure you want to move this group?"}</h5>
               <h4>{newEventState.title}</h4>
               <div className="row">
                 <div className="col s12 m6 l6 purple lighten-3">
-                  <h6 style={{fontWeight: "600"}}>~Original Group Dates~</h6>
-                  <h6>{moment(newStartState.startDate).format("MMMM Do, YYYY")}</h6>
-                  <h6>through</h6>
-                  <h6>{moment(newEndState.endDate).format("MMMM Do, YYYY")}</h6>
+                  {newEventState.groupTotal == 1 ? 
+                  <>
+                    <h6 style={{fontWeight: "600"}}>~Original Event Date~</h6>
+                    <h6>{moment(newStartState.startDate).format("MMMM Do, YYYY")}</h6>
+                  </>
+                  :<>
+                    <h6 style={{fontWeight: "600"}}>~Original Group Dates~</h6>
+                    <h6>{moment(newStartState.startDate).format("MMMM Do, YYYY")}</h6>
+                    <h6>through</h6>
+                    <h6>{moment(newEndState.endDate).format("MMMM Do, YYYY")}</h6>
+                  </>}
                 </div>
                 <div className="col s12 m6 l6 green lighten-3">
-                  <h6 style={{fontWeight: "600"}}>~New Group Dates~</h6>
-                  <h6>{moment(editEventState.eventDate).format("MMMM Do, YYYY")}</h6>
-                  <h6>through</h6>
-                  <h6>{moment(editEndState.endDate).format("MMMM Do, YYYY")}</h6>
+                  {newEventState.groupTotal == 1 ? 
+                  <>
+                    <h6 style={{fontWeight: "600"}}>~New Event Date~</h6>
+                    <h6>{moment(editEventState.eventDate).format("MMMM Do, YYYY")}</h6>
+                  </>
+                  :<>
+                    <h6 style={{fontWeight: "600"}}>~New Group Dates~</h6>
+                    <h6>{moment(editEventState.eventDate).format("MMMM Do, YYYY")}</h6>
+                    <h6>through</h6>
+                    <h6>{moment(editEndState.endDate).format("MMMM Do, YYYY")}</h6>
+                  </>}
                 </div>
               </div>
               <p>This will effect the amount, notes, category, and URL settings of all events in group. </p>
