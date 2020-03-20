@@ -1274,30 +1274,34 @@ const MyCalendar = () => {
             <br></br>
             <form action="#">
               {/* DELETE MODAL 1st ROW: Group versus single event*/}
-              <div className="row"> 
-                <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
-                  <label>
-                    <div className="col s4 m5 l5 right-align">
-                      <h6 style={newEventState.editingGroup ? {display:"inline"}:{fontWeight: 600, color: "blue", display:"inline"}}>Delete Single Event</h6>
-                    </div>
-                    <div className="col s3 m2 l2">
-                      <input id="deleteGroupSwitch" onChange={deleteGroupSwitch} type="checkbox"/>
-                      <span className="lever"></span>
-                    </div>
-                    <div className="col s5 m5 l5 left-align">
-                      <h6 style={newEventState.editingGroup ? {fontWeight: 600, color: "deeppink", display:"inline"}:{display:"inline"}}>Delete Group of Events</h6>
-                    </div>
-                  </label>
+              {newEventState.groupTotal==1 ? null:
+              <>
+                <div className="row"> 
+                  <div className="switch groupSwitch row"> {/* EDIT GROUP OR ONE EVENT */}
+                    <label>
+                      <div className="col s4 m5 l5 right-align">
+                        <h6 style={newEventState.editingGroup ? {display:"inline"}:{fontWeight: 600, color: "blue", display:"inline"}}>Delete Single Event</h6>
+                      </div>
+                      <div className="col s3 m2 l2">
+                        <input id="deleteGroupSwitch" onChange={deleteGroupSwitch} type="checkbox"/>
+                        <span className="lever"></span>
+                      </div>
+                      <div className="col s5 m5 l5 left-align">
+                        <h6 style={newEventState.editingGroup ? {fontWeight: 600, color: "deeppink", display:"inline"}:{display:"inline"}}>Delete Group of Events</h6>
+                      </div>
+                    </label>
+                  </div>
                 </div>
-              </div>
 
-              <div className="row"><div id="modalDivider"
-                style={{
-                  width: "100%", height: "4px", 
-                  borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
-                  borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid"
-                  }}>
-              </div></div>
+                <div className="row"><div id="modalDivider"
+                  style={{
+                    width: "100%", height: "4px", 
+                    borderTopWidth:"1px", borderTopColor:"purple", borderTopStyle: "solid",
+                    borderBottomWidth:"1px", borderBottomColor:"purple", borderBottomStyle:"solid"
+                    }}>
+                </div></div>
+              </>
+              }
               
               {/* DELETE MODAL 2nd ROW: Selected Event(s) to delete */}
               {newEventState.editingGroup ? 
@@ -1324,7 +1328,7 @@ const MyCalendar = () => {
         {/* QUICK ADD MODAL */}
         <div className="row">
           <a ref={quickAddModal} className="modal-trigger" href='#quickAddModal'></a>
-          <Modal id="quickAddModal" className="center-align"
+          <Modal id="quickAddModal" className="center-align purple lighten-5"
               actions={[
                 <Button onClick={cancelEvent} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
                   Close
@@ -1416,7 +1420,7 @@ const MyCalendar = () => {
         {/* QUICK MOVE MODAL */}
         <div className="row">
           <a ref={quickMoveModal} className="modal-trigger" href='#quickMoveModal'></a>
-          <Modal id="quickMoveModal" className="center-align"
+          <Modal id="quickMoveModal" className="center-align blue lighten-5"
               actions={[
                 <Button onClick={cancelMove} flat modal="close" node="button" className="purple white-text waves-effect waves-light hoverable" id="editBtn">
                   Cancel Move
