@@ -22,6 +22,7 @@ const LoggedinNav = () => {
           <li id="hovEffect" className="tab left"><Link to="/mycalendar">Calendar <i className="fas fa-calendar-alt tiny"></i></Link></li>
           <li id="hovEffect" className="tab"><Link to="/mystatement">Statement <i className="far fa-file-alt tiny"></i></Link></li>
           <li id="hovEffect" className="tab"><Link to="/mycharts">Charts <i class="fas fa-chart-pie tiny"></i></Link></li>
+          <li id="hovEffect" className="tab"><Link to="/help">Help <i class="fas fa-question-circle tiny"></i></Link></li>
           <li id="hovEffect" className="tab right" onClick={logout}><Link to="/"><i className="fas fa-sign-out-alt"></i></Link></li>
         </ul>
       </div>
