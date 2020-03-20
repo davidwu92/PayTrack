@@ -39,6 +39,7 @@ const MyCalendar = () => {
   })
   
   //QUICK-ADD EVENT (Click Date)
+  const quickPaymentSwitch = () => setNewEventState({...newEventState, isPayment: !document.getElementById('quickPaymentSwitch').checked})
   const quickAddModal = useRef()
   const handleDateClick = (e) =>{ //DONE
     console.log(e)
@@ -1336,7 +1337,7 @@ const MyCalendar = () => {
                       <h6 style={newEventState.isPayment ? {color: "red", display:"inline"}:{display:"inline"}}>I am making a payment.</h6>
                     </div>
                     <div className="col s3 m2 l2">
-                      <input id="paymentSwitch" onChange={paymentSwitch} type="checkbox"/>
+                      <input id="quickPaymentSwitch" onChange={quickPaymentSwitch} type="checkbox"/>
                       <span className="lever"></span>
                     </div>
                     <div className="col s5 m5 l5 left-align">
