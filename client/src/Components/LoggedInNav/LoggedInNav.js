@@ -15,7 +15,7 @@ const LoggedinNav = () => {
   return (
     <nav id="bottomNav" className="nav-extended black">
       <div className="nav-wrapper" id="navWrapper">
-        <div className="brand-logo" id="nav">PayTrack </div>
+      <div className="brand-logo" style={window.screen.width < 996 ? null:{paddingLeft:"20px"}}>{"PayTrack"}</div>
       </div>
       <div className="nav-content">
         <ul className="tabs tabs-transparent">
