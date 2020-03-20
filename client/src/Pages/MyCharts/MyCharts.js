@@ -284,6 +284,7 @@ const MyCharts = () => {
       <div id="chartContainer">
         {/* <button onClick={testButton}>Testing Button</button> */}
         <h2 className="center white-text">My Charts</h2>
+        <h6 className = 'center white-text'>View graphs of your financial activity for specific months or years.</h6>
         {/* <AddEventModal /> */}
         <ColorPreferences/>
         {/* BAR CHART, PIE CHART */}

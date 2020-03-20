@@ -243,8 +243,9 @@ const MyStatement = () => {
   return (
     <>
       <div className="container">
-        <button onClick={seeTableState}>TABLE STATE </button>
+        {/* <button onClick={seeTableState}>TABLE STATE </button> */}
         <h2 className="center white-text">My Statements</h2>
+        <h6 className = 'center white-text'>See a detailed summary of your financial activity. Select specific categories, months, and/or years to include in your statement.</h6>
         {/* 1st ROW: FILTERS for Category, Month, Year */}
         <div className="row" id="myStatementFirstRow">
           {/* YEAR SELECTOR */}
