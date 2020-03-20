@@ -26,7 +26,7 @@ const ColorPreferences = () => {
     getColors(token)
       .then(({data})=>{
         setColorState({...colorState, colorArray: data.colorPreferences})
-        console.log(colorState)
+        // console.log(colorState)
       })
       .catch(e=>console.error(e))
   },[])

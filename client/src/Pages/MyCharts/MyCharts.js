@@ -148,12 +148,12 @@ const MyCharts = () => {
     getEventData()
   }, [])
 
-//YEAR/MONTH GRAPH DATA
+//TIME SELECTION
   const [timeState, setTimeState] = useState({
     yearConstraint: 2020,
     monthConstraint: 0
   })
-
+//TIME BUTTONS
   const lastMonth = () => setTimeState({...timeState, monthConstraint: timeState.monthConstraint ? (timeState.monthConstraint + 11)%12 : moment(Date.now()).month()})
   const thisMonth = () => setTimeState({...timeState, monthConstraint: moment(Date.now()).month()+1})
   const nextMonth = () => setTimeState({...timeState, monthConstraint: timeState.monthConstraint ? (timeState.monthConstraint +1)%12 : moment(Date.now()).month()+2})
@@ -191,24 +191,25 @@ const MyCharts = () => {
   }
   //Sum of EACH category in the given year, month, thrown into an array of numbers.
   const categorySumArr = timeIntervalTotals(timeState.yearConstraint, timeState.monthConstraint) 
-  const positiveCatSumArr = categorySumArr.map((value)=>(Math.abs(value)))
 
 //BAR CHART STUFF
-const barData = [
-  {category: 'Housing', monthTotal: categorySumArr[0], yearTotal:100},
-  {category: 'Insurance', monthTotal: categorySumArr[1],yearTotal:100},
-  {category: 'Loan', monthTotal: categorySumArr[2],yearTotal:100},
-  {category: 'Taxes', monthTotal: categorySumArr[3],yearTotal:100},
-  {category: 'Family', monthTotal: categorySumArr[4],yearTotal:100},
-  {category: 'Recreation', monthTotal: categorySumArr[5],yearTotal:100},
-  {category: 'Income', monthTotal: categorySumArr[6],yearTotal:100},
-  {category: 'Other', monthTotal: categorySumArr[7],yearTotal:100},
-  {category: 'All', monthTotal: categorySumArr.reduce((total, num)=>total+num),yearTotal:100},
-]
+  const barData = [
+    {category: 'Housing', monthTotal: categorySumArr[0], yearTotal:100},
+    {category: 'Insurance', monthTotal: categorySumArr[1],yearTotal:100},
+    {category: 'Loan', monthTotal: categorySumArr[2],yearTotal:100},
+    {category: 'Taxes', monthTotal: categorySumArr[3],yearTotal:100},
+    {category: 'Family', monthTotal: categorySumArr[4],yearTotal:100},
+    {category: 'Recreation', monthTotal: categorySumArr[5],yearTotal:100},
+    {category: 'Income', monthTotal: categorySumArr[6],yearTotal:100},
+    {category: 'Other', monthTotal: categorySumArr[7],yearTotal:100},
+    {category: 'All', monthTotal: categorySumArr.reduce((total, num)=>total+num),yearTotal:100},
+  ]
 
 //~~~~~~PIE CHART STUFF~~~~~~
   const [radiiState, setRadiiState] = useState({})
-    
+
+  const positiveCatSumArr = categorySumArr.map((value)=>(Math.abs(value)))
+
   let pieData = [
     [{category: 'Housing',value: Math.abs(categorySumArr[0]),fill: eventState.colorPreferences[0]}],
     [{category: 'Insurance',value: Math.abs(categorySumArr[1]),fill: eventState.colorPreferences[1]}],
@@ -243,25 +244,39 @@ const barData = [
   }, [])
 
 //~~~~~~LINE GRAPH STUFF~~~~~~
-  const [chartState, setChartState] = useState({
-    variable: ''
-  })
+  const getMonthlyData = (yearConstraint) =>{
+    let monthlyExpenses = [0,0,0,0,0,0,0,0,0,0,0,0]
+    let monthlyIncome = [0,0,0,0,0,0,0,0,0,0,0,0]
+    eventState.events.forEach((event)=>{
+      if(moment(event.date).year() == yearConstraint){
+        event.extendedProps.isPayment ?
+        monthlyExpenses[moment(event.date).month()]=monthlyExpenses[moment(event.date).month()] + event.extendedProps.amount
+        :
+        monthlyIncome[moment(event.date).month()]=monthlyIncome[moment(event.date).month()] + event.extendedProps.amount
+      }
+    })
+    return({monthlyExpenses, monthlyIncome})
+  }
+  let monthObject = getMonthlyData(timeState.yearConstraint)
 
   const lineData = [
-  {month: 'January', monthExpense: 400, monthIncome: 800, monthBalance: 400},
-  {month: 'February', monthExpense: 300, monthIncome: 900, monthBalance: 500},
-  {month: 'March', monthExpense: 300, monthIncome: 200, monthBalance: 600},
-  {month: 'April', monthExpense: 200, monthIncome: 500, monthBalance: 700},
-  {month: 'June', monthExpense: 300, monthIncome: 750, monthBalance: 800},
-  {month: 'July', monthExpense: 300, monthIncome: 750, monthBalance: 900},
-  {month: 'August', monthExpense: 300, monthIncome: 750, monthBalance: 500},
-  {month: 'September', monthExpense: 300, monthIncome: 750, monthBalance: 600},
-  {month: 'October', monthExpense: 300, monthIncome: 750, monthBalance: 700},
-  {month: 'November', monthExpense: 300, monthIncome: 750, monthBalance: 800},
-  {month: 'December', monthExpense: 198, monthIncome: 975, monthBalance: 900},]
+    {month: 0},
+    {month: "January", Expense: -monthObject.monthlyExpenses[0], Income: monthObject.monthlyIncome[0], Balance: monthObject.monthlyIncome[0]-monthObject.monthlyExpenses[0]},
+    {month: "February", Expense: -monthObject.monthlyExpenses[1], Income: monthObject.monthlyIncome[1], Balance: monthObject.monthlyIncome[1]-monthObject.monthlyExpenses[1]},
+    {month: "March", Expense: -monthObject.monthlyExpenses[2], Income: monthObject.monthlyIncome[2], Balance: monthObject.monthlyIncome[2]-monthObject.monthlyExpenses[2]},
+    {month: "April", Expense: -monthObject.monthlyExpenses[3], Income: monthObject.monthlyIncome[3], Balance: monthObject.monthlyIncome[3]-monthObject.monthlyExpenses[3]},
+    {month: "May", Expense: -monthObject.monthlyExpenses[4], Income: monthObject.monthlyIncome[4], Balance: monthObject.monthlyIncome[4]-monthObject.monthlyExpenses[4]},
+    {month: "June", Expense: -monthObject.monthlyExpenses[5], Income: monthObject.monthlyIncome[5], Balance: monthObject.monthlyIncome[5]-monthObject.monthlyExpenses[5]},
+    {month: "July", Expense: -monthObject.monthlyExpenses[6], Income: monthObject.monthlyIncome[6], Balance: monthObject.monthlyIncome[6]-monthObject.monthlyExpenses[6]},
+    {month: "August", Expense: -monthObject.monthlyExpenses[7], Income: monthObject.monthlyIncome[7], Balance: monthObject.monthlyIncome[7]-monthObject.monthlyExpenses[7]},
+    {month: "September", Expense: -monthObject.monthlyExpenses[8], Income: monthObject.monthlyIncome[8], Balance: monthObject.monthlyIncome[8]-monthObject.monthlyExpenses[8]},
+    {month: "October", Expense: -monthObject.monthlyExpenses[9], Income: monthObject.monthlyIncome[9], Balance: monthObject.monthlyIncome[9]-monthObject.monthlyExpenses[9]},
+    {month: "November", Expense: -monthObject.monthlyExpenses[10], Income: monthObject.monthlyIncome[10], Balance: monthObject.monthlyIncome[10]-monthObject.monthlyExpenses[10]},
+    {month: "December", Expense: -monthObject.monthlyExpenses[11], Income: monthObject.monthlyIncome[11], Balance: monthObject.monthlyIncome[11]-monthObject.monthlyExpenses[11]}
+  ]
 
   const testButton = () => {
-    console.log(eventState)
+    console.log(monthObject)
     // console.log(moment(Date.now()()).year())
   }
   return(
@@ -271,7 +286,6 @@ const barData = [
         <h2 className="center white-text">My Charts</h2>
         {/* <AddEventModal /> */}
         
-        
         {/* BAR CHART, PIE CHART */}
         <div className="row white" style={{width:"96%"}}>
           <div className="row center">
@@ -279,7 +293,7 @@ const barData = [
               {timeState.monthConstraint ? moment().month(timeState.monthConstraint-1).format("MMMM, ") : null}
               {timeState.yearConstraint}
             </h4>
-            
+            {/* TIME BUTTONS */}
             <div className="col s12 m6 l6">
               <button className="btn purple btn-small" onClick={lastMonth}>{"<"}</button>
               <span> </span>
@@ -359,23 +373,24 @@ const barData = [
           </div> {/* END PIECHART */}
         </div> 
         
-
         {/* LINE CHART */}
-        <div className="row white">
-          <LineChart 
-            width={window.screen.width < 900 ? window.screen.width*0.89 : window.screen.width*0.5}
-            height={ window.screen.width <900 ? window.screen.height*0.3 : 350}
-            data={lineData} 
-            style={{ backgroundColor: '#FFFFFF' }}>
-            <CartesianGrid stroke="#ccc" />
-            <XAxis datakey="month" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="monthExpense" stroke="#AA2200" />
-            <Line type="monotone" dataKey="monthIncome" stroke="#DDDDDD" />
-            <Line type="monotone" dataKey="monthBalance" stroke="#0000FF" />
-          </LineChart>
+        <div className="row white" style={{width:"96%"}}>
+            <h4 className="center">{timeState.yearConstraint} Monthly Totals </h4>
+            <LineChart 
+              width={window.screen.width < 900 ? window.screen.width*0.89 : window.screen.width*0.8}
+              height={ window.screen.width <900 ? window.screen.height*0.3 : 350}
+              data={lineData} 
+              style={{ backgroundColor: '#FFFFFF' }}>
+              <CartesianGrid strokeDasharray="3, 3" />
+              <Tooltip />
+              <Legend />
+              <ReferenceLine y={0} stroke="#000" />
+              <XAxis datakey="month" padding={{right:window.screen.width < 900 ? window.screen.width*0.8/12 : window.screen.width*0.75/12}}/>
+              <YAxis />
+              <Line type="monotone" dataKey="Expense" stroke="#AA2200" />
+              <Line type="monotone" dataKey="Income" stroke="#008000" />
+              <Line type="monotone" dataKey="Balance" stroke="#8A2BE2" />
+            </LineChart>
         </div>
 
     </div>
