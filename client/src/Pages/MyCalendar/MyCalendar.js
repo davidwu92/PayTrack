@@ -962,7 +962,7 @@ const MyCalendar = () => {
         <ColorPreferences/>
         
         {/* CALENDAR */}
-        <div className = "row" style={{backgroundColor: "ghostwhite", padding: "1vw"}}>
+        <div className = "row" style={{backgroundColor: "ghostwhite", padding: "1vw", borderStyle: "outset", borderColor: "lavender"}}>
           <FullCalendar 
             defaultView="dayGridMonth"
             header={{
