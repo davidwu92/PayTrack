@@ -243,8 +243,9 @@ const MyStatement = () => {
   return (
     <>
       <div className="container">
-        <button onClick={seeTableState}>TABLE STATE </button>
+        {/* <button onClick={seeTableState}>TABLE STATE </button> */}
         <h2 className="center white-text">My Statements</h2>
+        <h6 className = 'center white-text'>See a detailed summary of your financial activity. Select specific categories, months, and/or years to include in your statement.</h6>
         {/* 1st ROW: FILTERS for Category, Month, Year */}
         <div className="row" id="myStatementFirstRow">
           {/* YEAR SELECTOR */}
@@ -435,7 +436,7 @@ const MyStatement = () => {
                       marginTop: "10px", marginBottom:"10px"
                       }}>
                   </div>
-                <div className="row">
+                <div className="row" style={{display:"flex", flexWrap:"wrap"}}>
                   <div className="left col s12 m6 l6 purple lighten-4">
                     <h6 style={{fontWeight:"600"}}>~Event Details~</h6>
                     <div style={{width: "50%", position:"relative", left:"25%", padding:"3px", paddingRight:"5px",paddingLeft:"5px",

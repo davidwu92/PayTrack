@@ -155,7 +155,7 @@ const MyCharts = () => {
   })
 //TIME BUTTONS
   const lastMonth = () => setTimeState({...timeState, monthConstraint: timeState.monthConstraint ? (timeState.monthConstraint + 11)%12 : moment(Date.now()).month()})
-  const thisMonth = () => setTimeState({...timeState, monthConstraint: moment(Date.now()).month()+1})
+  const thisMonth = () => setTimeState({yearConstraint: moment(Date.now()).year(), monthConstraint: moment(Date.now()).month()+1})
   const nextMonth = () => setTimeState({...timeState, monthConstraint: timeState.monthConstraint ? (timeState.monthConstraint +1)%12 : moment(Date.now()).month()+2})
   const lastYear = () => setTimeState({yearConstraint: timeState.yearConstraint -1, monthConstraint: 0})
   const thisYear = () => setTimeState({yearConstraint: moment(Date.now()).year(), monthConstraint: 0})
@@ -282,39 +282,39 @@ const MyCharts = () => {
   return(
     <>
       <div id="chartContainer">
-        <button onClick={testButton}>Testing Button</button>
+        {/* <button onClick={testButton}>Testing Button</button> */}
         <h2 className="center white-text">My Charts</h2>
+        <h6 className = 'center white-text'>View graphs of your financial activity for specific months or years.</h6>
         {/* <AddEventModal /> */}
-        
+        <ColorPreferences/>
         {/* BAR CHART, PIE CHART */}
-        <div className="row white" style={{width:"96%"}}>
+        <div className="row white" style={{width:"96%", borderStyle: "outset", borderColor: "lavender"}}>
           <div className="row center">
-            <h4>{"Expenditures by Category: "}
-              {timeState.monthConstraint ? moment().month(timeState.monthConstraint-1).format("MMMM, ") : null}
+            <h5>{timeState.monthConstraint ? moment().month(timeState.monthConstraint-1).format("MMMM, ") : null}
               {timeState.yearConstraint}
-            </h4>
+              {" Category Totals"}
+            </h5>
             {/* TIME BUTTONS */}
             <div className="col s12 m6 l6">
-              <button className="btn purple btn-small" onClick={lastMonth}>{"<"}</button>
+              <button className="btn purple btn-small" onClick={lastMonth}>{"< Last"}</button>
               <span> </span>
               <button className="btn purple btn-small" onClick={thisMonth}>This Month</button>
               <span> </span>
-              <button className="btn purple btn-small" onClick={nextMonth}>{">"}</button>
+              <button className="btn purple btn-small" onClick={nextMonth}>{"Next >"}</button>
             </div>
             <div className="col s12 m6 l6">
-              <button className="btn green btn-small" onClick={lastYear}>{"<<"}</button>
+              <button className="btn green btn-small" onClick={lastYear}>{"<< Last"}</button>
               <span> </span>
               <button className="btn green btn-small" onClick={thisYear}>This Year</button>
               <span> </span>
-              <button className="btn green btn-small" onClick={nextYear}>{">>"}</button>
+              <button className="btn green btn-small" onClick={nextYear}>{"Next >>"}</button>
             </div>
           </div>
-          <ColorPreferences/>
           {/* BAR CHART */}
           <div className="col s12 m7 l7">
             <BarChart
-              width={window.screen.width < 900 ? window.screen.width*0.89 : window.screen.width*0.5}
-              height={ window.screen.width <900 ? window.screen.height*0.3 : 350}
+              width={window.screen.width < 996 ? window.screen.width*0.95 : window.screen.width*0.5}
+              height={ window.screen.width <996 ? window.screen.height*0.3 : 350}
               data={barData}
               margin={{
                 top: 20, right: 30, left: 0, bottom: 0,
@@ -336,8 +336,8 @@ const MyCharts = () => {
           
           {/* PIE CHART */}
           <div className="col s12 m5 l5">
-            <PieChart width={window.screen.width < 900 ? window.screen.width*0.89 : window.screen.width*0.25}
-               height={370} style={{ backgroundColor: '#FFFFFF' }}>
+            <PieChart width={window.screen.width < 996 ? window.screen.width*0.89 : window.screen.width*0.25}
+               height={350} style={{ backgroundColor: '#FFFFFF' }}>
               <Tooltip />
               {
                 (() => {
@@ -374,11 +374,11 @@ const MyCharts = () => {
         </div> 
         
         {/* LINE CHART */}
-        <div className="row white" style={{width:"96%"}}>
-            <h4 className="center">{timeState.yearConstraint} Monthly Totals </h4>
+        <div className="row white" style={{width:"96%", borderStyle: "outset", borderColor: "lavender"}}>
+            <h5 className="center">{timeState.yearConstraint} Monthly Totals </h5>
             <LineChart 
-              width={window.screen.width < 900 ? window.screen.width*0.89 : window.screen.width*0.8}
-              height={ window.screen.width <900 ? window.screen.height*0.3 : 350}
+              width={window.screen.width < 996 ? window.screen.width*0.89 : window.screen.width*0.92}
+              height={ window.screen.width <996 ? window.screen.height*0.3 : 350}
               data={lineData} 
               style={{ backgroundColor: '#FFFFFF' }}>
               <CartesianGrid strokeDasharray="3, 3" />

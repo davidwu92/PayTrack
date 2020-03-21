@@ -13,6 +13,7 @@ import Register from './Pages/Register'
 import MyCalendar from './Pages/MyCalendar'
 import MyCharts from './Pages/MyCharts'
 import MyStatement from './Pages/MyStatement'
+import Help from './Pages/Help'
 
 // import UserContext from './utils/UserContext'
 import './app.css'
@@ -61,6 +62,12 @@ function App() {
           <Route exact path="/mystatement">
             <LoggedInNav/>
             <MyStatement />
+          </Route>
+        </Switch>
+        <Switch>
+          <Route exact path="/help">
+            <LoggedInNav/>
+            <Help />
           </Route>
         </Switch>
 
