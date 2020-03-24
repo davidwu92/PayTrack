@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react'
 import {Button} from 'react-materialize'
-import './ColorPreferences.css'
 import UserAPI from '../../utils/UserAPI'
 
 const { getColors, editColors } = UserAPI

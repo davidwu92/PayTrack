@@ -1,7 +1,6 @@
 //Pages/Home.js LANDING PAGE
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import './home.css'
 import calendarHome from './CalendarHome.png'
 import statementsHome from './StatementsHome.png'
 import chartsHome from './ChartsHome.png'

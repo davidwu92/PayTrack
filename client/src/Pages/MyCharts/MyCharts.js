@@ -14,7 +14,6 @@ import UserAPI from '../../utils/UserAPI'
 import EventAPI from '../../utils/EventAPI'
 import ColorPreferences from '../../Components/ColorPreferences'
 
-import './myCharts.css'
 // import AddEventModal from '../../Components/AddEventModal'
 //I like "pop up from bottom", multi-step addEventModal style a lot. --David
 //If anyone else is working on this, please use my code from MyCalendar to make it functional and usable on both pages!

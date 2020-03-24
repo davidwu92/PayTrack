@@ -1,0 +1,13 @@
+
+
+@media only screen 
+and (min-device-width : 300px)
+and (max-device-width: 995px) {
+
+}
+@media only screen 
+and (min-device-width : 996px) {
+  #navTitle {
+    padding-left:20px;
+  }
+}

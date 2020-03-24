@@ -6,7 +6,7 @@ const Navbar = () => {
   return (
     <nav className="nav-extended black">
       <div className="nav-wrapper" id="navWrapper">
-        <div className="brand-logo" id="navTitle" style={window.screen.width < 996 ? null:{paddingLeft:"20px"}}><Link to="/">PayTrack</Link></div>
+        <div className="brand-logo" id="navTitle"><Link to="/">PayTrack</Link></div>
       </div>
       <div className="nav-content">
         <ul className="tabs tabs-transparent">
