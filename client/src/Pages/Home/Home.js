@@ -1,9 +1,9 @@
 //Pages/Home.js LANDING PAGE
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-// import calendarHome from './CalendarHome.png'
-// import statementsHome from './StatementsHome.png'
-// import chartsHome from './ChartsHome.png'
+import calendarHome from './CalendarHome.png'
+import statementsHome from './StatementsHome.png'
+import chartsHome from './ChartsHome.png'
 
 const Home = () => {
   const history = useHistory()
@@ -26,12 +26,12 @@ const Home = () => {
             <h5>Quickly add, edit, and remove groups of recurring financial events.</h5>
           </div>
           <div className="col s12 m7 l7 center-align">
-            {/* <img src={calendarHome} style={window.screen.width < 996 ? {opacity:"0.85",width:"85vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}:{opacity:"0.85", width:"30vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}}></img> */}
+            <img src={calendarHome} style={window.screen.width < 996 ? {opacity:"0.85",width:"85vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}:{opacity:"0.85", width:"30vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}}></img>
           </div>
         </div>
         <div className="row green" style={{padding: "20px", margin:"0px"}}>
           <div className="col s12 m7 l7 center-align">
-            {/* <img src={statementsHome} style={window.screen.width < 996 ? {opacity:"0.85",width:"85vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}:{opacity:"0.85", width:"30vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}}></img> */}
+            <img src={statementsHome} style={window.screen.width < 996 ? {opacity:"0.85",width:"85vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}:{opacity:"0.85", width:"30vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}}></img>
           </div>
           <div className="col s12 m5 l5 center">
             <h5>View auto-generated monthly and yearly summaries of your expenditures and income.</h5>
@@ -43,7 +43,7 @@ const Home = () => {
             <h5>Generate graphs and charts of your financial activity over time.</h5>
           </div>
           <div className="col s12 m7 l7 center-align">
-            {/* <img src={chartsHome} style={window.screen.width < 996 ? {opacity:"0.85",width:"85vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}:{opacity:"0.85", width:"30vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}}></img> */}
+            <img src={chartsHome} style={window.screen.width < 996 ? {opacity:"0.85",width:"85vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}:{opacity:"0.85", width:"30vw", borderStyle: "outset", borderColor: "lavender", borderRadius:"5%"}}></img>
           </div>
         </div>
       </div>
